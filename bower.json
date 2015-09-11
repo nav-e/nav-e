@@ -1,0 +1,19 @@
+{
+  "name": "GoogleFrontend",
+  "version": "1.0.0",
+  "homepage": "https://github.com/Greennav/greennav",
+  "license": "apache2",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "src/main/webapp/libs",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "polymer": "Polymer/polymer",
+    "paper-elements": "PolymerElements/paper-elements",
+    "iron-elements": "PolymerElements/iron-elements"
+  }
+}

@@ -1,0 +1,73 @@
+<link rel="import" href="../libs/polymer/polymer.html">
+<link rel="import" href="../libs/iron-ajax/iron-ajax.html">
+
+<dom-module id="gn-adr-decoder">
+	<template>
+		<iron-ajax
+			id="ajax"
+			verbose
+			url="[[url]]"
+			handle-as="json"
+			last-response="{{vertex}}"
+			on-response="_done"></iron-ajax>
+	</template>
+</dom-module>
+
+<script>
+	(function() {
+		var geocoder = new google.maps.Geocoder();
+		Polymer({
+			is : 'gn-adr-decoder',
+			properties : {
+				address : String,
+				url : {
+					type : String,
+					notify : true
+				},
+				coordinates : {
+					type : Object,
+					notify : true,
+				},
+				vertex : {
+					type : String,
+					notify : true
+				},
+				doit : {
+					type : Object,
+					notify : true,
+					value : function() {
+						return $.proxy(this._doit, this);
+					}
+				}
+			},
+			_doit : function() {
+				var t = this;
+				if (t.address) {
+					geocoder.geocode({
+						address : t.address,
+						region : 'de'
+					}, function(results, status) {
+						if (status === google.maps.GeocoderStatus.OK) {
+							var c = results[0].geometry.location;
+							var lat = c.lat();
+							var lon = c.lng();
+							t.coordinates = {
+								lat: lat,
+								lon: lon
+							};
+							t.url = GreenNav.webservice + "/greennav/vertices/nearest?lat="
+									+ lat + "&lon=" + lon;
+							t.$.ajax.generateRequest();
+						} else {
+							console.log("error");
+							t.fire('error');
+						}
+					});
+				}
+			},
+			_done : function() {
+				this.fire('done');
+			}
+		});
+	})();
+</script>

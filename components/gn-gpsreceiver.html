@@ -1,0 +1,47 @@
+<link rel="import" href="../libs/polymer/polymer.html">
+<link rel="import" href="app-data.html"></link>
+
+<dom-module id="gn-gpsreceiver">
+  <app-data key="location" data="{{location}}"></app-data>
+</dom-module>
+
+<script>
+	(function() {
+		Polymer({
+			is : 'gn-gpsreceiver',
+			properties : {
+				location : {
+					type : Object,
+					value : null,
+					notify : true
+				},
+				actimel : {
+					type : Boolean,
+					value : false,
+					notify : true
+				}
+			},
+			gpsupdate : function (lat, lon) {
+				this.location = {
+					lat: lat,
+					lon: lon
+				};
+				this.actimel = true;
+			},
+			ready : function() {
+				window.gpsreceiver = this;
+				if (android.registerGPSCallback) {
+					android.registerGPSCallback("window.gpsreceiver.gpsupdate");
+					this.actimel = true;
+				}
+				var x = 0;
+				var f = function() {
+					x += 0.1;
+					window.gpsreceiver.gpsupdate(45 + Math.sin(x), 11 + Math.cos(x))
+					setTimeout(f, 2000)
+				}
+				f();
+			}
+		});
+	})();
+</script>

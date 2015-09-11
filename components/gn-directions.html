@@ -1,0 +1,84 @@
+<link rel="import" href="../libs/polymer/polymer.html">
+
+<dom-module id="gn-directions">
+<style>
+ul {
+	display: block;
+	font-size: 70%;
+	height: 200px;
+	overflow: auto;
+	border: none;
+	padding: 10px;
+}
+
+li {
+	list-style: none;
+	text-decoration: dashed;
+}
+
+img {
+	vertical-align: middle;
+	padding-right: 10px;
+	width: 10px;
+}
+</style>
+<template>
+	<ul>
+		<template is="dom-repeat" items="[[route]]" filter="isTurn">
+			<li on-click="causeFire">
+				<img src="[[image(item.turn)]]"></image>
+				<span>[[item.street]]</span>
+			</li>
+		</template>
+	</ul>
+</template> </dom-module>
+
+<script>
+	(function() {
+		Polymer({
+			is : 'gn-directions',
+			properties : {
+				route : {
+					type : Array,
+					observer : 'update'
+				},
+				color : String,
+				choice : {
+					type : Object,
+					notify : true
+				}
+			},
+			ready : function () {
+				$(this).hide();
+			},
+			update : function(route) {
+				if (route) {
+					$(this).show();
+				} else {
+					$(this).hide();
+				}
+			},
+			image : function(turn) {
+				var translations = {
+					1 : "straight",
+					2 : "left",
+					3 : "right",
+					4 : "20left",
+					5 : "20right",
+					6 : "left",
+					7 : "right",
+					20 : "roundabout",
+					21 : "roundabout-out"
+				}
+				return "images/" + translations[turn] + ".png";
+			},
+			isTurn : function(item) {
+				return item.turn > 0;
+			},
+			causeFire : function(e) {
+				this.choice = e.model.item;
+				this.fire('bla', this.choice);
+			}
+		});
+	})();
+</script>

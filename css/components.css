@@ -1,0 +1,20 @@
+paper-input {
+	--paper-input-container-color: #009900;
+}
+
+paper-tabs {
+	--paper-tabs-selection-bar-color: #009900;
+}
+
+paper-button, paper-tabs {
+	background-color: #ccffcc;
+}
+
+paper-dropdown-menu {
+	width: 100%;
+	--paper-dropdown-menu-button: {
+		width: 100%;
+		padding: 0px;
+	};
+	--paper-input-container-color: #009900;
+}

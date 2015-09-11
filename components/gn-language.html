@@ -1,0 +1,68 @@
+<link rel="import" href="../libs/polymer/polymer.html">
+<link rel="import" href="../libs/paper-button/paper-button.html">
+
+<dom-module id="gn-language">
+	<link rel="import" type="css" href="../css/components.css">
+	<template>
+		<app-data id="appdata" key="language" data="{{lang}}"></app-data>
+		<paper-button on-click="toggle">[[lang.switchlanguage]]</paper-button>
+	</template>
+</dom-module>
+
+<script>
+	(function() {
+
+		var languages = {};
+		
+		/**
+		 * The default English terms.
+		 */
+		languages.english = {
+			start : 'Start',
+			destination : 'Destination',
+			vehicle : 'Vehicle',
+			energy : 'Battery state',
+			computeroute : 'Compute route',
+			computerange : 'Compute range',
+			route : 'Routing',
+			range : 'Range',
+			info : 'Info',
+			contact : 'Contact',
+			switchlanguage : 'Deutsch',
+			close : 'Close'
+		};
+
+		/**
+		 * Extend the English language (default values) and override them with German
+		 * terms.
+		 */
+		 languages.german = $.extend({}, languages.english, {
+			start : 'Start',
+			destination : 'Ziel',
+			vehicle : 'Fahrzeug',
+			energy : 'Ladezustand',
+			computeroute : 'Route berechnen',
+			computerange : 'Reichweite berechnen',
+			route : 'Route',
+			range : 'Erreichbarkeit',
+			info : 'Info',
+			contact : 'Kontakt',
+			switchlanguage : 'English',
+			close : 'Schließen'
+		});
+		
+		Polymer({
+			is : 'gn-language',
+			attached : function() {
+				this.$.appdata.data = languages.german; 
+			},
+			toggle : function() {
+				if (this.$.appdata.data === languages.german) {
+					this.$.appdata.data = languages.english;
+				} else {
+					this.$.appdata.data = languages.german;
+				}
+			}
+		});
+	})();
+</script>

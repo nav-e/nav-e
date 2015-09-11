@@ -1,0 +1,200 @@
+<link rel="import" href="../libs/polymer/polymer.html">
+
+<link rel="import" href="gn-routing-service.html"></link>
+<link rel="import" href="gn-range-service.html"></link>
+
+<link rel="import" href="gn-gpsreceiver.html"></link>
+<link rel="import" href="gn-adr-decoder.html"></link>
+
+<link rel="import" href="gn-directions.html"></link>
+<link rel="import" href="gn-vehicle-list.html"></link>
+<link rel="import" href="gn-map.html"></link>
+
+<link rel="import" href="gn-header.html"></link>
+<link rel="import" href="gn-dyn-adr.html"></link>
+<link rel="import" href="app-data.html"></link>
+
+<link rel="import" href="../libs/iron-icons/iron-icons.html" rel="import">
+<link rel="import" href="../libs/iron-pages/iron-pages.html"></link>
+<link rel="import" href="../libs/iron-meta/iron-meta.html"></link>
+<link rel="import" href="../libs/iron-media-query/iron-media-query.html"></link>
+<link rel="import" href="../libs/paper-tabs/paper-tabs.html"></link>
+<link rel="import" href="../libs/paper-input/paper-input.html"></link>
+<link rel="import" href="../libs/paper-header-panel/paper-header-panel.html"></link>
+<link rel="import" href="../libs/paper-toast/paper-toast.html"></link>
+
+<dom-module id="gn-main">
+<link rel="import" type="css" href="../css/components.css">
+<template>
+<paper-header-panel>
+	<!-- Header -->
+	<gn-header class="paper-header"></gn-header>
+	<app-data key="language" data="{{lang}}"></app-data>
+	<iron-media-query query="(max-width: 500px)" query-matches="{{bla}}"></iron-media-query>
+<div class="content">
+
+	<!-- Input -->
+	<div id="gninput">
+		<paper-tabs selected="{{selected}}">
+			<paper-tab>[[lang.route]]</paper-tab>
+			<paper-tab>[[lang.range]]</paper-tab>
+		</paper-tabs>
+		<div>
+		<gn-dyn-adr label="[[lang.start]]" value="{{start}}"></gn-dyn-adr>
+		<iron-pages selected="[[selected]]">
+			<paper-input label="[[lang.destination]]" value="{{desti}}" on-change="coding2"></paper-input>
+		</iron-pages>
+		<gn-vehicle-list label="[[lang.vehicle]]" vehicle="{{vehicle}}"></gn-vehicle-list>
+		<paper-input
+			id="battery" label="[[lang.energy]]"
+			onchange="document.querySelector('#errortoast').show()"
+			value="{{battery}}"></paper-input>
+		<iron-pages class="button-panel" selected="[[selected]]">
+			<paper-button on-click="startrouting">[[lang.computeroute]]</paper-button>
+			<paper-button on-click="startranging">[[lang.computerange]]</paper-button>
+		</iron-pages>
+		</div>
+	</div>
+
+<!-- Processing -->
+<gn-adr-decoder address="[[start]]" vertex="{{x}}" coordinates="{{xcoord}}" doit="{{coding1}}"></gn-adr-decoder>
+<gn-adr-decoder address="[[desti]]" vertex="{{y}}" coordinates="{{ycoord}}" doit="{{coding2}}"></gn-adr-decoder>
+
+<gn-routing-service id="energyrouting" start="[[x]]" destination="[[y]]" vehicle="[[vehicle]]" battery="[[battery]]" opt="energy" route="{{energyroute}}"></gn-routing-service>
+<gn-routing-service id="distancerouting" start="[[x]]" destination="[[y]]" vehicle="[[vehicle]]" battery="[[battery]]" opt="distance" route="{{distanceroute}}"></gn-routing-service>
+<gn-routing-service id="timerouting" start="[[x]]" destination="[[y]]" vehicle="[[vehicle]]" battery="[[battery]]" opt="time" route="{{timeroute}}"></gn-routing-service>
+
+<gn-range-service start="[[x]]" vehicle="[[vehicle]]" battery="[[battery]]" range="{{range}}" doit="{{startranging}}"></gn-range-service> <!-- Output -->
+
+<gn-map id="map">
+	<gn-marker lat="[[xcoord.lat]]" lon="[[xcoord.lon]]"></gn-marker>
+	<gn-marker hidden="[[selectedRouting(selected)]]" lat="[[ycoord.lat]]" lon="[[ycoord.lon]]"></gn-marker>
+	<gn-polyline hidden="[[selectedRouting(selected)]]" values="[[energyroute]]" color="green"></gn-polyline>
+	<gn-polyline hidden="[[selectedRouting(selected)]]" values="[[distanceroute]]" color="blue"></gn-polyline>
+	<gn-polyline hidden="[[selectedRouting(selected)]]" values="[[timeroute]]"></gn-polyline>
+	<gn-polygon hidden="[[!selectedRouting(selected)]]" values="[[range]]"></gn-polygon>
+</gn-map>
+
+<template is="dom-if" if="[[selectedRouting(selected)]]">
+	<div id="directions">
+		<paper-tabs selected="{{selectedroute}}" >
+			<paper-tab>energy</paper-tab>
+			<paper-tab>time</paper-tab>
+			<paper-tab>distance</paper-tab>
+		</paper-tabs>
+		<iron-pages selected="[[selectedroute]]">
+			<gn-directions route="[[energyroute]]"></gn-directions>
+			<gn-directions route="[[timeroute]]"></gn-directions>
+			<gn-directions route="[[distanceroute]]"></gn-directions>
+		</iron-pages>
+	</div>
+</template>
+
+</div>
+</paper-header-panel>
+
+	<paper-toast id="errortoast" text="[[errortext]]"></paper-toast>
+
+</template>
+</dom-module>
+
+<script>
+	(function() {
+		'use strict';
+
+		Polymer({
+			is : 'gn-main',
+			properties : {
+				errortext : {
+					type : String,
+					observer : '_err'
+				}
+			},
+			ready : function() {
+				this.selected = 0;
+				$(window).on("popstate", $.proxy(this, this.loadFromURL));
+				this.loadFromURL();
+			},
+			_simpleURLEncoder : function(params) {
+				var res = "";
+				var first = true;
+				for ( var i in params) {
+					if (!first)
+						res += "&";
+					res += i + "=" + encodeURI(params[i]);
+					first = false;
+				}
+				return res;
+			},
+			_simpleURLDecoder : function(url) {
+				var index = url.indexOf('?');
+				if (index < 0)
+					return null;
+				var params = url.slice(index + 1).split('&');
+				var res = {};
+				for (var i = 0; i < params.length; i++) {
+					var paramsplit = params[i].split('=');
+					res[paramsplit[0]] = decodeURI(paramsplit[1]);
+				}
+				return res;
+			},
+			selectedRouting : function(selected) {
+				return selected == 0;
+			},
+			loadFromURL : function() {
+				var state = this._simpleURLDecoder(window.location.href)
+				if (!state) {
+					// Maybe reset everything?
+					this.selected = 0;
+					this.start = "";
+					this.desti = "";
+					this.x = "0";
+					this.y = "0";
+					this.battery = "";
+					return;
+				}
+				switch (state.page) {
+				case "routing":
+					// TODO: show routing page (for mobile device)
+					this.selected = 0;
+					this.start = state.start;
+					this.desti = state.desti;
+					// FIXME: You can not set the default vehicle with polymer dropdowns!!!
+					//this.vehicle = state.vehicle;
+					this.battery = state.battery;
+					this.coding1();
+					this.coding2();
+					break;
+				case "range":
+					// TODO: show range page (for mobile device)
+					this.selected = 1;
+					this.start = state.start;
+					// FIXME: You can not set the default vehicle with polymer dropdowns!!!
+					//this.vehicle = state.vehicle;
+					this.battery = state.battery;
+					this.coding1();
+					break;
+				}
+			},
+			startrouting : function() {
+				var state = {
+					page : "routing",
+					start : this.start,
+					desti : this.desti,
+					vehicle : this.vehicle,
+					battery : this.battery
+				};
+				// We don't put the state in the history, just in the url
+				history.pushState(null, "routing", "#?" + this._simpleURLEncoder(state));
+				this.$.energyrouting.doit();
+				this.$.distancerouting.doit();
+				this.$.timerouting.doit();
+			},
+			_err : function() {
+				console.log('bla');
+				this.$.errortoast.show();
+			}
+		});
+
+	})();
+</script>

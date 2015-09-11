@@ -1,0 +1,81 @@
+<link rel="import" href="../libs/polymer/polymer.html">
+<link rel="import" href="../libs/paper-dialog/paper-dialog.html">
+<link rel="import" href="../libs/paper-dialog-scrollable/paper-dialog-scrollable.html">
+
+<dom-module id="gn-contact">
+	<link rel="import" type="css" href="../css/components.css">
+	<template>
+<paper-dialog id="modal" modal>
+
+	<div style="float:right;">
+		<paper-button dialog-confirm autofocus>[[lang.close]]</paper-button>
+	</div>
+	<h4>Green Navigation - Kontakt</h4>
+    
+	<paper-dialog-scrollable>
+	<img
+	  src="https://www.isp.uni-luebeck.de/sites/default/files/pictures/18416%20H.%20Sch%C3%B6nfelder%20Set%203%20%281%29Cd.Jpg"
+	  style="height: 150px; float: left; margin: 5px 5px 5px 5px;" />
+		<table>
+			<tr>
+				<td>Name</td>
+				<td>Ren&eacute; Sch&ouml;nfelder</td>
+			</tr>
+			<tr>
+				<td>Website:&nbsp;</td>
+				<td><a href="https://www.isp.uni-luebeck.de/staff/schoenfr">https://www.isp.uni-luebeck.de/staff/schoenfr</a></td>
+			</tr>
+			<tr>
+				<td style="vertical-align: top;">Adresse:&nbsp;</td>
+				<td>Institut f&uuml;r Softwaretechnik und Programmiersprachen Universit&auml;t zu L&uuml;beck <br />
+					Ratzeburger Allee 160 <br /> 23562 L&uuml;beck <br /> Deutschland
+				</td>
+			</tr>
+			<tr>
+				<td>Telefon:&nbsp;</td>
+				<td>+49 451 500 5688</td>
+			</tr>
+			<tr>
+				<td>B&uuml;ro:&nbsp;</td>
+				<td>Haus 64, Raum 83 (Erdgeschoss)</td>
+			</tr>
+		</table>
+
+		<h5>Haftung</h5>
+		
+		<p>
+		Diese Seite ist ein Teil der Internetpr&auml;senz des Instituts f&uuml;r
+		Softwaretechnik und Programmiersprachen an der Universit&auml;t zu L&uuml;beck.
+		Weitere Informationen finden Sie hier:
+		<a href="https://www.isp.uni-luebeck.de/impressum.html">https://www.isp.uni-luebeck.de/impressum.html</a>.
+		</p>
+		
+		<p>
+		Trotz sorgf&auml;ltiger inhaltlicher Kontrolle &uuml;bernehmen wir keine Haftung f&uuml;r Inhalte externer Links.
+		F&uuml;r den Inhalt der verlinkten Seiten sind ausschlie&szlig;lich die jeweiligen Betreiber verantwortlich.
+		</p>
+	</paper-dialog-scrollable>
+</paper-dialog>
+	</template>
+</dom-module>
+
+<script>
+	(function() {
+		Polymer({
+			is : 'gn-contact',
+			properties : {
+				show: {
+					type: Object,
+					notify: true
+				},
+				lang: Object
+			},
+			ready : function () {
+				var self = this;
+				this.show = function() {
+					self.$.modal.open();
+				}
+			},
+		});
+	})();
+</script>

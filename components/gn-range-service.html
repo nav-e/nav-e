@@ -1,0 +1,63 @@
+<link rel="import" href="../libs/polymer/polymer.html">
+<link rel="import" href="../libs/iron-ajax/iron-ajax.html">
+
+<dom-module id="gn-range-service">
+	<template>
+		<iron-ajax
+			id="ajax"
+			verbose
+			url="[[url]]"
+			handle-as="json"
+			last-response="{{resp}}"
+			on-response="_done"
+			headers='{"Accept": "text/plain;charset=UTF-8"}'></iron-ajax>
+	</template>
+</dom-module>
+
+<script>
+	Polymer({
+		is : 'gn-range-service',
+		properties : {
+			start : String,
+			vehicle : String,
+			battery : String,
+			algorithm : String,
+			url : {
+				type: String,
+				computed: '_valueschanged(start, vehicle, battery)',
+				notify: true
+			},
+			resp : {
+				type : Object,
+				notify : true
+			},
+			range : {
+				type : Array,
+				notify : true,
+				computed : '_ajaxresponse(resp)'
+			},
+			doit : {
+				type : Object,
+				notify: true,
+				value : function () { return $.proxy(this._doit, this); }
+			}
+		},
+		_doit : function () {
+			this.$.ajax.generateRequest();
+		},
+		_done : function () {
+			this.fire('done');
+		},
+		_valueschanged : function(start, vehicle, battery) {
+			if (start && vehicle && battery) {
+				return GreenNav.webservice + '/greennav/vehicles/' + vehicle
+						+ '/ranges/' + start + '?battery=' + battery + '&&algorithm=EnergyAStar';
+			}
+		},
+		_ajaxresponse : function(resp) {
+			if (resp) {
+				return resp.rangePoints;
+			}
+		},
+	});
+</script>
