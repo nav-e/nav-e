@@ -82,12 +82,27 @@ gn-map { /* Map is placed below header */
 	div#header {
 		background-color: red;
 	}
-	gn-map, #directions {
+
+	/* Default, show starting screen */
+	div.content > #map,
+	div.content > #directions {
 		display: none;
 	}
-	#gninput {
+	div.content > #gnunput {
 		width: 100%;
 		margin: 0;
 	}
-}
 
+	/* After clicking on 'start routing', show map */
+	div.routing > #gninput,
+	div.routing > #directions {
+		display: none;
+	}
+	div.routing > #map {
+		display: block;
+		position: absolute;
+		width: 100%;
+		height: 100%;
+		z-index: 0;
+	}
+}
