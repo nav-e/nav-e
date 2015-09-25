@@ -174,11 +174,20 @@ div#mapcontainer {
 			is : 'gn-map',
 			properties : {
 				zoom : Number,
-				center : Object
+				center : Object,
+				map : Object
+			},
+			listeners : {
+				refresh: 'refresh'
+			},
+			refresh : function () {
+				console.log("refresssshing!")
+				google.maps.event.trigger(this.map, 'resize');
 			},
 			attached : function() {
 				// Create a map object
 				var g = new google.maps.Map(this.$.mapcontainer, options);
+				this.map = g;
 				var add = function(node) {
 					if (node.addToMap && typeof node.addToMap === 'function') {
 						node.addToMap(g);

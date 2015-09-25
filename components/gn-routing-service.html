@@ -49,7 +49,6 @@
 							t.url = GreenNav.webservice + "/greennav/vehicles/" + t.vehicle
 								+ "/routes/" + t.start + "-" + t.destination
 								+ "/opt/" + t.opt + "?battery=" + t.battery + "&algorithm=EnergyAStar";
-							console.log("do it", t.url);
 							t.$.ajax.generateRequest();
 						}
 					};

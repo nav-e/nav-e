@@ -33,7 +33,7 @@
 		<paper-header-panel>
 			<gn-header class="paper-header"></gn-header>
 
-			<div class="content">
+			<div class$="[[state]]">
 
 				<!-- Input -->
 				<div id="gninput">
@@ -127,7 +127,8 @@
 					observer : '_err'
 				},
 				state : {
-					type : String
+					type : String,
+					value : "content"
 				}
 			},
 			selectedRouting : function(selected) {
@@ -135,95 +136,89 @@
 			},
 			ready : function() {
 				this.selected = 0;
-				$(window).on("popstate", $.proxy(this, this.loadFromURL));
-				this.loadFromURL();
-			},
-			loadFromURL : function() {
-				var state = this._simpleURLDecoder(window.location.href)
-				if (!state) {
-					// Maybe reset everything?
-					this.selected = 0;
-					this.start = "";
-					this.desti = "";
-					this.x = "0";
-					this.y = "0";
-					this.battery = "";
-					return;
-				}
-				switch (state.page) {
-				case "routing":
-					// TODO: show routing page (for mobile device)
-					this.selected = 0;
-					this.start = state.start;
-					this.desti = state.desti;
-					this.vehicle = state.vehicle;
-					this.battery = state.battery;
-					this.coding1();
-					this.coding2();
-					var t = this;
-					setTimeout(function() {
-						console.log(t, t.x, t.start, t.xcoord)
-						t.$.energyrouting.doit();
-						t.$.distancerouting.doit();
-						t.$.timerouting.doit();
-					},5000);
-					break;
-				case "range":
-					// TODO: show range page (for mobile device)
-					this.selected = 1;
-					this.start = state.start;
-					this.vehicle = state.vehicle;
-					this.battery = state.battery;
-					this.coding1();
-					break;
-				}
+				// $(window).on("popstate", $.proxy(this, this.loadFromURL));
+				// this.loadFromURL();
 			},
 			startrouting : function() {
+				// TODO: Check if input is valid
 				this.state = "routing";
-				// var state = {
-				// 	page : "routing",
-				// 	start : this.start,
-				// 	desti : this.desti,
-				// 	vehicle : this.vehicle,
-				// 	battery : this.battery
-				// };
-				// // We don't put the state in the history, just in the url
-				// history.pushState(null, "routing", "#?" + this._simpleURLEncoder(state));
+				// workaround for missing resize event on google maps:
+				this.$.map.fire("refresh");
 				this.$.energyrouting.doit();
 				this.$.distancerouting.doit();
 				this.$.timerouting.doit();
 			},
 			_err : function() {
-				console.log('bla');
+				console.log('TODO: Make this a better error messaging widget :)');
 				this.$.errortoast.show();
 			},
+			// loadFromURL : function() {
+			// 	var state = this._simpleURLDecoder(window.location.href)
+			// 	if (!state) {
+			// 		// Maybe reset everything?
+			// 		this.selected = 0;
+			// 		this.start = "";
+			// 		this.desti = "";
+			// 		this.x = "0";
+			// 		this.y = "0";
+			// 		this.battery = "";
+			// 		return;
+			// 	}
+			// 	switch (state.page) {
+			// 	case "routing":
+			// 		// TODO: show routing page (for mobile device)
+			// 		this.selected = 0;
+			// 		this.start = state.start;
+			// 		this.desti = state.desti;
+			// 		this.vehicle = state.vehicle;
+			// 		this.battery = state.battery;
+			// 		this.coding1();
+			// 		this.coding2();
+			// 		var t = this;
+			// 		setTimeout(function() {
+			// 			console.log(t, t.x, t.start, t.xcoord)
+			// 			t.$.energyrouting.doit();
+			// 			t.$.distancerouting.doit();
+			// 			t.$.timerouting.doit();
+			// 		},5000);
+			// 		break;
+			// 	case "range":
+			// 		// TODO: show range page (for mobile device)
+			// 		this.selected = 1;
+			// 		this.start = state.start;
+			// 		this.vehicle = state.vehicle;
+			// 		this.battery = state.battery;
+			// 		this.coding1();
+			// 		break;
+			// 	}
+			// },
 			// Encodes a (flat) JSON object into URL parameters
 			// example: {a=5,b=7} is encoded as "a=5&b=7"
-			_simpleURLEncoder : function(params) {
-				var res = "";
-				var first = true;
-				for ( var i in params) {
-					if (!first)
-						res += "&";
-					res += i + "=" + encodeURI(params[i]);
-					first = false;
-				}
-				return res;
-			},
+			// _simpleURLEncoder : function(params) {
+			// 	var res = "";
+			// 	var first = true;
+			// 	for ( var i in params) {
+			// 		if (!first)
+			// 			res += "&";
+			// 		res += i + "=" + encodeURI(params[i]);
+			// 		first = false;
+			// 	}
+			// 	return res;
+			// },
 			// Decodes URL parameters into a (flat) JSON object
 			// example: "...?a=5&b=7" is decoded to {a="5",b="7"}
-			_simpleURLDecoder : function(url) {
-				var index = url.indexOf('?');
-				if (index < 0)
-					return null;
-				var params = url.slice(index + 1).split('&');
-				var res = {};
-				for (var i = 0; i < params.length; i++) {
-					var paramsplit = params[i].split('=');
-					res[paramsplit[0]] = decodeURI(paramsplit[1]);
-				}
-				return res;
-			}
+			// _simpleURLDecoder : function(url) {
+			// 	var index = url.indexOf('?');
+			// 	if (index < 0)
+			// 		return null;
+			// 	var params = url.slice(index + 1).split('&');
+			// 	var res = {};
+			// 	for (var i = 0; i < params.length; i++) {
+			// 		var paramsplit = params[i].split('=');
+			// 		res[paramsplit[0]] = decodeURI(paramsplit[1]);
+			// 	}
+			// 	return res;
+			// }
 		});
 
 	})();
