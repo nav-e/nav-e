@@ -88,7 +88,7 @@ gn-map { /* Map is placed below header */
 	div.content > #directions {
 		display: none;
 	}
-	div.content > #gnunput {
+	div.content > #gninput {
 		width: 100%;
 		margin: 0;
 	}
