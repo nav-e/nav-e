@@ -7,22 +7,21 @@
 <dom-module id="gn-vehicle-list">
 	<link rel="import" type="css" href="../css/components.css">
 	<template>
-		<iron-ajax
-			id="ajax"
-			verbose
-			auto
-			url="[[url]]"
-			handle-as="json"
-			last-response="{{vehicles}}"
-			></iron-ajax>
-			<div class="pdm">
-		<paper-dropdown-menu label="{{label}}" selected-item-label="{{vehicle}}">
-			<paper-menu class="dropdown-content">
+		<iron-ajax id="ajax" verbose auto url="[[url]]" handle-as="json" last-response="{{vehicles}}"></iron-ajax>
+		<div class="pdm">
+			<span>[[label]]</span>
+			<select id="sel">
 				<template is="dom-repeat" items="[[vehicles]]">
-					<paper-item>[[item]]</paper-item>
+					<option value="[[item]]">[[item]]</option>
 				</template>
-			</paper-menu>
-		</paper-dropdown-menu>
+			</select>
+			<!--paper-dropdown-menu label="{{label}}" selected-item-label="{{vehicle}}">
+				<paper-menu class="dropdown-content">
+					<template is="dom-repeat" items="[[vehicles]]">
+						<paper-item>[[item]]</paper-item>
+					</template>
+				</paper-menu>
+			</paper-dropdown-menu-->
 		</div>
 	</template>
 </dom-module>
@@ -40,8 +39,31 @@
 			},
 			vehicle : {
 				type : String,
-				notify : true
+				notify : true,
+				observer : '_vehicleChanged'
+			},
+			vehicles : {
+				type : Array,
+				notify : true,
+				observer : '_vehicleChanged'
 			}
+		},
+		_vehicleChanged : function () {
+			var t = this;
+			// Wait until repeater has put all elements inside select
+			var f = function() {
+				if (t.$.sel.value != t.vehicle) {
+					t.$.sel.value = t.vehicle;
+					setTimeout(f, 50);
+				}
+			};
+			f();
+		},
+		ready : function () {
+			var t = this;
+			this.$.sel.addEventListener("change", function () {
+				t.vehicle = t.$.sel.options[t.$.sel.selectedIndex].text;
+			});
 		}
 	});
 })();

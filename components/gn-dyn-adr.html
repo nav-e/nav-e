@@ -1,10 +1,10 @@
-<link rel="import" href="../libs/polymer/polymer.html">
-<link rel="import" href="../libs/paper-input/paper-input.html">
+<link rel="import" href="../libs/polymer/polymer.html"></link>
+<link rel="import" href="../libs/paper-input/paper-input.html"></link>
 <link rel="import" href="../libs/paper-checkbox/paper-checkbox.html"></link>
 <link rel="import" href="gn-gpsreceiver.html"></link>
 
 <dom-module id="gn-dyn-adr">
-	<link rel="import" type="css" href="../css/components.css">
+	<link rel="import" type="css" href="../css/components.css"></link>
 <style>
 :host.gps {
 	display: block;
@@ -17,7 +17,7 @@
 }
 </style>
 	<template>
-		<gn-gpsreceiver actimel="{{gpsactive}}" location="{{location}}"></gn-gpsreceiver>
+		<gn-gpsreceiver active="{{gpsactive}}" location="{{location}}"></gn-gpsreceiver>
 		<!-- iron-ajax
 			id="ajax"
 			verbose
@@ -29,6 +29,7 @@
 		<paper-input label="[[label]]" value="{{value}}"></paper-input>
 		<template is="dom-if" if="[[gpsactive]]">
 			<paper-checkbox checked>GPS</paper-checkbox>
+			<iron-icon icon="arrow-drop-down" suffix></iron-icon>
 		</template>
 		<div style="clear:both"></div>
 	</template>
