@@ -14,6 +14,8 @@
 <link rel="import" href="gn-dyn-adr.html"></link>
 <link rel="import" href="app-data.html"></link>
 
+<link rel="import" href="gn-path-follower.html"></link>
+
 <link rel="import" href="../libs/iron-icons/iron-icons.html"></link>
 <link rel="import" href="../libs/iron-pages/iron-pages.html"></link>
 <link rel="import" href="../libs/iron-meta/iron-meta.html"></link>
@@ -70,6 +72,9 @@
 				</div>
 
 <!-- Processing -->
+<gn-gpsreceiver active="{{gpsactive}}" location="{{location}}"></gn-gpsreceiver>
+<gn-path-follower path="[[energyroute]]" gps="[[location]]" from="{{pathfollowfrom}}" to="{{pathfollowto}}" dist="{{pathfollowdist}}"></gn-path-follower>
+
 <gn-adr-decoder address="[[start]]" vertex="{{x}}" coordinates="{{xcoord}}" doit="{{coding1}}"></gn-adr-decoder>
 <gn-adr-decoder address="[[desti]]" vertex="{{y}}" coordinates="{{ycoord}}" doit="{{coding2}}"></gn-adr-decoder>
 
@@ -85,11 +90,12 @@
 				<!-- Map -->
 				<gn-map id="map">
 					<gn-marker lat="[[xcoord.lat]]" lon="[[xcoord.lon]]"></gn-marker>
-					<gn-marker hidden="[[selectedRouting(selected)]]" lat="[[ycoord.lat]]" lon="[[ycoord.lon]]"></gn-marker>
-					<gn-polyline hidden="[[selectedRouting(selected)]]" values="[[energyroute]]" color="green"></gn-polyline>
-					<gn-polyline hidden="[[selectedRouting(selected)]]" values="[[distanceroute]]" color="blue"></gn-polyline>
-					<gn-polyline hidden="[[selectedRouting(selected)]]" values="[[timeroute]]"></gn-polyline>
-					<gn-polygon hidden="[[!selectedRouting(selected)]]" values="[[range]]"></gn-polygon>
+					<gn-marker visible="[[selectedRouting(selected)]]" lat="[[ycoord.lat]]" lon="[[ycoord.lon]]"></gn-marker>
+					<gn-marker visible="[[gpsactive]]" lat="[[location.lat]]" lon="[[location.lon]]"></gn-marker>
+					<gn-polyline visible="[[selectedRouting(selected)]]" values="[[energyroute]]" color="green"></gn-polyline>
+					<gn-polyline visible="[[selectedRouting(selected)]]" values="[[distanceroute]]" color="blue"></gn-polyline>
+					<gn-polyline visible="[[selectedRouting(selected)]]" values="[[timeroute]]"></gn-polyline>
+					<gn-polygon visible="[[!selectedRouting(selected)]]" values="[[range]]"></gn-polygon>
 				</gn-map>
 
 				<!-- Directions -->
@@ -129,6 +135,17 @@
 				state : {
 					type : String,
 					value : "content"
+				},
+				pathfollowdist : {
+					type : Number,
+					observer : 'bla'
+				}
+			},
+			bla : function () {
+				if (this.pathfollowdist < 5 && this.state == "routing") {
+					this.state = "directions";
+				} else if (this.pathfollowdist >= 5 && this.state == "directions") {
+					this.state = "routing";
 				}
 			},
 			selectedRouting : function(selected) {

@@ -34,8 +34,15 @@ div#mapcontainer {
 		Polymer({
 			is : 'gn-marker',
 			properties : {
-				hidden : {
+				marker : {
+					type : Object,
+					value : function() {
+						return new google.maps.Marker();
+					}
+				},
+				visible : {
 					type : Boolean,
+					value : true,
 					observer : 'toggle'
 				},
 				lat : {
@@ -45,16 +52,10 @@ div#mapcontainer {
 				lon : {
 					type : String,
 					observer : 'up'
-				},
-				marker : {
-					type : Object,
-					value : function() {
-						return new google.maps.Marker();
-					}
 				}
 			},
-			toggle : function (hidden) {
-				this.marker.setVisible(hidden);
+			toggle : function (visible) {
+				this.marker.setVisible(visible);
 			},
 			up : function() {
 				this.marker.setPosition(new google.maps.LatLng(this.lat,
@@ -83,8 +84,9 @@ div#mapcontainer {
 						});
 					}
 				},
-				hidden : {
+				visible : {
 					type : Boolean,
+					value : true,
 					observer : 'toggle'
 				},
 				values : {
@@ -100,8 +102,8 @@ div#mapcontainer {
 			changeColor : function () {
 				this.polyline.strokeColor = this.color;
 			},
-			toggle : function (hidden) {
-				this.polyline.setVisible(hidden);
+			toggle : function (visible) {
+				this.polyline.setVisible(visible);
 			},
 			up : function() {
 				if (this.values) {
@@ -126,14 +128,6 @@ div#mapcontainer {
 		Polymer({
 			is : 'gn-polygon',
 			properties : {
-				hidden : {
-					type : Boolean,
-					observer : 'toggle'
-				},
-				values : {
-					type : Object,
-					observer : 'up'
-				},
 				polygon : {
 					type : Object,
 					value : function() {
@@ -145,10 +139,19 @@ div#mapcontainer {
 							fillOpacity : 0.33
 						});
 					}
+				},
+				visible : {
+					type : Boolean,
+					value : true,
+					observer : 'toggle'
+				},
+				values : {
+					type : Object,
+					observer : 'up'
 				}
 			},
-			toggle : function (hidden) {
-				this.polygon.setVisible(hidden);
+			toggle : function (visible) {
+				this.polygon.setVisible(visible);
 			},
 			up : function() {
 				if (this.values) {
