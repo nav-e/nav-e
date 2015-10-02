@@ -34,13 +34,6 @@
 					android.registerGPSCallback("window.gpsreceiver.gpsupdate");
 					this.active = true;
 				}
-				var x = 0;
-				var f = function() {
-					x += 0.1;
-					window.gpsreceiver.gpsupdate(45 + Math.sin(x), 11 + Math.cos(x))
-					setTimeout(f, 2000)
-				}
-				f();
 			}
 		});
 	})();
