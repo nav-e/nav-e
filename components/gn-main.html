@@ -15,6 +15,7 @@
 <link rel="import" href="app-data.html"></link>
 
 <link rel="import" href="gn-path-follower.html"></link>
+<link rel="import" href="gn-gps-route-simulator.html"></link>
 
 <link rel="import" href="../libs/iron-icons/iron-icons.html"></link>
 <link rel="import" href="../libs/iron-pages/iron-pages.html"></link>
@@ -30,6 +31,9 @@
 	<template>
 
 		<app-data key="language" data="{{lang}}"></app-data>
+		<app-data key="location" data="{{location}}"></app-data>
+		<gn-gps-route-simulator active="{{gpsactive}}" path="{{energyroute}}" location="{{location}}"></gn-gps-route-simulator>
+		<!--gn-gpsreceiver active="{{gpsactive}}"></gn-gpsreceiver-->
 
 		<!-- Header -->
 		<paper-header-panel>
@@ -72,8 +76,7 @@
 				</div>
 
 <!-- Processing -->
-<gn-gpsreceiver active="{{gpsactive}}" location="{{location}}"></gn-gpsreceiver>
-<gn-path-follower path="[[energyroute]]" gps="[[location]]" from="{{pathfollowfrom}}" to="{{pathfollowto}}" dist="{{pathfollowdist}}"></gn-path-follower>
+<gn-path-follower path="[[energyroute]]" gps="[[location]]" from="{{pathfollowfrom}}" to="{{pathfollowto}}" next="{{pathfollownext}}" dist="{{pathfollowdist}}"></gn-path-follower>
 
 <gn-adr-decoder address="[[start]]" vertex="{{x}}" coordinates="{{xcoord}}" doit="{{coding1}}"></gn-adr-decoder>
 <gn-adr-decoder address="[[desti]]" vertex="{{y}}" coordinates="{{ycoord}}" doit="{{coding2}}"></gn-adr-decoder>
@@ -88,7 +91,7 @@
 <gn-range-service start="[[x]]" vehicle="[[vehicle]]" battery="[[battery]]" range="{{range}}" doit="{{startranging}}"></gn-range-service> 
 
 				<!-- Map -->
-				<gn-map id="map">
+				<gn-map id="map" center="[[location]]">
 					<gn-marker lat="[[xcoord.lat]]" lon="[[xcoord.lon]]"></gn-marker>
 					<gn-marker visible="[[selectedRouting(selected)]]" lat="[[ycoord.lat]]" lon="[[ycoord.lon]]"></gn-marker>
 					<gn-marker visible="[[gpsactive]]" lat="[[location.lat]]" lon="[[location.lon]]"></gn-marker>
@@ -107,7 +110,7 @@
 							<paper-tab>distance</paper-tab>
 						</paper-tabs>
 						<iron-pages selected="[[selectedroute]]">
-							<gn-directions route="[[energyroute]]"></gn-directions>
+							<gn-directions route="[[route]]"></gn-directions>
 							<gn-directions route="[[timeroute]]"></gn-directions>
 							<gn-directions route="[[distanceroute]]"></gn-directions>
 						</iron-pages>
@@ -142,9 +145,10 @@
 				}
 			},
 			bla : function () {
-				if (this.pathfollowdist < 5 && this.state == "routing") {
+				if (this.pathfollowdist <= 50 && this.state == "routing") {
 					this.state = "directions";
-				} else if (this.pathfollowdist >= 5 && this.state == "directions") {
+					console.log(this.pathfollownext, this.pathfollowdist);
+				} else if (this.pathfollowdist > 50 && this.state == "directions") {
 					this.state = "routing";
 				}
 			},

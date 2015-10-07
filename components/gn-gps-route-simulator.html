@@ -1,0 +1,64 @@
+<link rel="import" href="../libs/polymer/polymer.html"></link>
+
+<dom-module id="gn-gps-route-simulator"></dom-module>
+
+<script>
+	(function() {
+		Polymer({
+			is : 'gn-gps-route-simulator',
+			properties : {
+				path : {
+					type : Object,
+					observer : "setPath"
+				},
+				location : {
+					type : Object,
+					value : null,
+					notify : true
+				},
+				distance : {
+					type : Number,
+					value : 0,
+					notify : true
+				},
+				timer : {
+					type : Number
+				}
+			},
+			setPath : function (path) {
+				clearTimeout(this.timer);
+				this.distance = 0;
+				this._step();
+			},
+			_surfDistance : function (a, b) {
+				// degree to radian
+				var alat = a.latitude * Math.PI / 180.0;
+				var blat = b.latitude * Math.PI / 180.0;
+				var alon = a.longitude * Math.PI / 180.0;
+				var blon = b.longitude * Math.PI / 180.0;
+				return 6378137.0 * Math.acos(Math.cos(alat) * Math.cos(blat) * (Math.cos(alon - blon)) + Math.sin(alat) * Math.sin(blat));
+			},
+			_step : function () {
+				// assume 50 kmh = 50.000m/3600s = 14m/s
+				this.distance += 14*3;
+				var curr = 0;
+				for (var i = 0; i < this.path.length - 1; i++) {
+					var a = this.path[i];
+					var b = this.path[i + 1];
+					var abdist = this._surfDistance(a, b);
+					var prev = curr;
+					curr += abdist;
+					if (curr >= this.distance) {
+						var p = (this.distance - prev) / abdist; 
+						this.location = {
+							lat : a.latitude * (1 - p) + b.latitude * p,
+							lon : a.longitude * (1 - p) + b.longitude * p
+						}
+						break;
+					}
+				}
+				this.timer = setTimeout($.proxy(this._step, this), 1000);
+			}
+		});
+	})();
+</script>
