@@ -177,14 +177,20 @@ div#mapcontainer {
 			is : 'gn-map',
 			properties : {
 				zoom : Number,
-				center : Object,
-				map : Object
+				center : {
+					type : Object,
+					observer : "setCenter"
+				},
+				map : Object,
+			},
+			setCenter : function (center) {
+				if (this.map)
+					this.map.setCenter(new google.maps.LatLng(center.lat, center.lon));
 			},
 			listeners : {
 				refresh: 'refresh'
 			},
 			refresh : function () {
-				console.log("refresssshing!")
 				google.maps.event.trigger(this.map, 'resize');
 			},
 			attached : function() {
