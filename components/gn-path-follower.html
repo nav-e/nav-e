@@ -72,7 +72,7 @@
 					var c = this.path[i];
 					var d = this._surfDistance(prev, c);
 					best.dist += d
-					if (c.turn > 1) {
+					if (c.turn > 0) {
 						this.next = c;
 						break;
 					}

@@ -83,10 +83,6 @@
 
 <gn-routing-service id="energyrouting" start="[[x]]" destination="[[y]]" vehicle="[[vehicle]]" battery="[[battery]]" opt="energy"
 	route="{{energyroute}}"></gn-routing-service>
-<gn-routing-service id="distancerouting" start="[[x]]" destination="[[y]]" vehicle="[[vehicle]]" battery="[[battery]]" opt="distance"
-	route="{{distanceroute}}"></gn-routing-service>
-<gn-routing-service id="timerouting" start="[[x]]" destination="[[y]]" vehicle="[[vehicle]]" battery="[[battery]]" opt="time"
-	route="{{timeroute}}"></gn-routing-service>
 
 <gn-range-service start="[[x]]" vehicle="[[vehicle]]" battery="[[battery]]" range="{{range}}" doit="{{startranging}}"></gn-range-service> 
 
@@ -96,24 +92,13 @@
 					<gn-marker visible="[[selectedRouting(selected)]]" lat="[[ycoord.lat]]" lon="[[ycoord.lon]]"></gn-marker>
 					<gn-marker visible="[[gpsactive]]" lat="[[location.lat]]" lon="[[location.lon]]"></gn-marker>
 					<gn-polyline visible="[[selectedRouting(selected)]]" values="[[energyroute]]" color="green"></gn-polyline>
-					<gn-polyline visible="[[selectedRouting(selected)]]" values="[[distanceroute]]" color="blue"></gn-polyline>
-					<gn-polyline visible="[[selectedRouting(selected)]]" values="[[timeroute]]"></gn-polyline>
 					<gn-polygon visible="[[!selectedRouting(selected)]]" values="[[range]]"></gn-polygon>
 				</gn-map>
 
 				<!-- Directions -->
 				<template is="dom-if" if="[[selectedRouting(selected)]]">
 					<div id="directions">
-						<paper-tabs selected="{{selectedroute}}" >
-							<paper-tab>energy</paper-tab>
-							<paper-tab>time</paper-tab>
-							<paper-tab>distance</paper-tab>
-						</paper-tabs>
-						<iron-pages selected="[[selectedroute]]">
-							<gn-directions route="[[route]]"></gn-directions>
-							<gn-directions route="[[timeroute]]"></gn-directions>
-							<gn-directions route="[[distanceroute]]"></gn-directions>
-						</iron-pages>
+						<gn-directions route="[[energyroute]]" emph="[[emph]]" next="[[pathfollownext]]"></gn-directions>
 					</div>
 				</template>
 
@@ -142,14 +127,20 @@
 				pathfollowdist : {
 					type : Number,
 					observer : 'bla'
+				},
+				emph : {
+					type : Boolean,
+					value : 0
 				}
 			},
 			bla : function () {
-				if (this.pathfollowdist <= 50 && this.state == "routing") {
+				if (this.pathfollowdist <= 100 && this.state == "routing") {
 					this.state = "directions";
-					console.log(this.pathfollownext, this.pathfollowdist);
-				} else if (this.pathfollowdist > 50 && this.state == "directions") {
+					this.emph = 1;
+				} else if (this.pathfollowdist > 100 && this.state == "directions") {
 					this.state = "routing";
+					this.$.map.fire("refresh");
+					this.emph = 0;
 				}
 			},
 			selectedRouting : function(selected) {
@@ -166,8 +157,6 @@
 				// workaround for missing resize event on google maps:
 				this.$.map.fire("refresh");
 				this.$.energyrouting.doit();
-				this.$.distancerouting.doit();
-				this.$.timerouting.doit();
 			},
 			_err : function() {
 				console.log('TODO: Make this a better error messaging widget :)');

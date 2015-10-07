@@ -1,4 +1,5 @@
 <link rel="import" href="../libs/polymer/polymer.html"></link>
+<link rel="import" href="../libs/iron-pages/iron-pages.html"></link>
 
 <dom-module id="gn-directions">
 <style>
@@ -23,14 +24,20 @@ img {
 }
 </style>
 <template>
-	<ul>
-		<template is="dom-repeat" items="[[route]]" filter="isTurn">
-			<li on-click="causeFire">
-				<img src="[[image(item.turn)]]"></image>
-				<span>[[item.street]]</span>
-			</li>
-		</template>
-	</ul>
+	<iron-pages selected="[[emph]]">
+		<ul>
+			<template is="dom-repeat" items="[[route]]" filter="isTurn">
+				<li style$="[[item.style]]" on-click="causeFire">
+					<img src="[[image(item.turn)]]"></img>
+					<span>[[item.street]]</span>
+				</li>
+			</template>
+		</ul>
+		<div style="background-color: red; text-align: center;">
+			<img style="width:150px; height:150px;" src="[[image(next.turn)]]"></img>
+			<p style="font-size:150%;">[[next.street]]</p>
+		</div>
+	</iron-pages>
 </template> </dom-module>
 
 <script>
@@ -46,6 +53,23 @@ img {
 				choice : {
 					type : Object,
 					notify : true
+				},
+				next : {
+					type : Object,
+					observer : "_next"
+				},
+				emph : {
+					type : Number,
+					value : 0
+				}
+			},
+			_next : function (item) {
+				for (var i = 0; i < this.route.length; i++) {
+					if (this.route[i] == item) {
+						this.set("route."+i+".style", "background-color: green;");
+					} else {
+						this.set("route."+i+".style", "background-color: white;");
+					}
 				}
 			},
 			ready : function () {
