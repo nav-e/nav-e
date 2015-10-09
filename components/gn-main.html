@@ -87,7 +87,7 @@
 <gn-range-service start="[[x]]" vehicle="[[vehicle]]" battery="[[battery]]" range="{{range}}" doit="{{startranging}}"></gn-range-service> 
 
 				<!-- Map -->
-				<gn-map id="map" center="[[location]]">
+				<gn-map id="map" center="[[location]]" heading="[[heading]]">
 					<gn-marker lat="[[xcoord.lat]]" lon="[[xcoord.lon]]"></gn-marker>
 					<gn-marker visible="[[selectedRouting(selected)]]" lat="[[ycoord.lat]]" lon="[[ycoord.lon]]"></gn-marker>
 					<gn-marker visible="[[gpsactive]]" lat="[[location.lat]]" lon="[[location.lon]]"></gn-marker>
@@ -137,6 +137,7 @@
 				if (this.pathfollowdist <= 100 && this.state == "routing") {
 					this.state = "directions";
 					this.emph = 1;
+					this.heading += 20;
 				} else if (this.pathfollowdist > 100 && this.state == "directions") {
 					this.state = "routing";
 					this.$.map.fire("refresh");

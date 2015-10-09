@@ -25,10 +25,12 @@ div#mapcontainer {
 
 		// TODO: make these attributes
 		var options = {
-			zoom : 8,
+			zoom : 14,
 			center : new google.maps.LatLng(53.8344, 10.7042),
-			mapTypeId : google.maps.MapTypeId.ROADMAP,
-			scaleControl : true
+			mapTypeId : google.maps.MapTypeId.SATELLITE,
+			scaleControl : true,
+			rotateControl: true,
+			heading : 90
 		};
 
 		Polymer({
@@ -181,11 +183,21 @@ div#mapcontainer {
 					type : Object,
 					observer : "setCenter"
 				},
+				heading : {
+					type : Number,					
+					observer : "setHeading"
+				},
 				map : Object,
 			},
 			setCenter : function (center) {
-				if (this.map)
+				if (this.map){
 					this.map.setCenter(new google.maps.LatLng(center.lat, center.lon));
+					}
+			},
+			setHeading : function (heading) {
+				if (this.map){
+					this.map.setHeading(heading);
+				}				
 			},
 			listeners : {
 				refresh: 'refresh'
