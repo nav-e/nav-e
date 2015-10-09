@@ -22,6 +22,8 @@ img {
 	padding-right: 10px;
 	width: 10px;
 }
+
+
 </style>
 <template>
 	<iron-pages selected="[[emph]]">
@@ -33,7 +35,8 @@ img {
 				</li>
 			</template>
 		</ul>
-		<div style="background-color: red; text-align: center;">
+		
+		<div class="highlighted-directions">
 			<img style="width:150px; height:150px;" src="[[image(next.turn)]]"></img>
 			<p style="font-size:150%;">[[next.street]]</p>
 		</div>
