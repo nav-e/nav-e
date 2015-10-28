@@ -1,0 +1,86 @@
+<link rel="import" href="../libs/polymer/polymer.html"></link>
+<link rel="import" href="../libs/iron-ajax/iron-ajax.html"></link>
+
+<dom-module id="gn-path-follower"></dom-module>
+
+<script>
+	Polymer({
+		is : 'gn-path-follower',
+		properties : {
+			path : Object,
+			gps : {
+				type: Object,
+				observer: 'update'
+			},
+			from : {
+				type: Object,
+				notify: true
+			},
+			to : {
+				type: Object,
+				notify: true
+			},
+			next : {
+				type : Object,
+				notify : true
+			},
+			dist : {
+				type: Number,
+				notify: true,
+				value: 1 // debug
+			},
+			lost : {
+				type : Boolean,
+				value : false
+			}
+		},
+		_surfDistance : function (a, b) {
+			// degree to radian
+			var alat = a.latitude * Math.PI / 180.0;
+			var blat = b.latitude * Math.PI / 180.0;
+			var alon = a.longitude * Math.PI / 180.0;
+			var blon = b.longitude * Math.PI / 180.0;
+			return 6378137.0 * Math.acos(Math.cos(alat) * Math.cos(blat) * (Math.cos(alon - blon)) + Math.sin(alat) * Math.sin(blat));
+		},
+		// update values because gps data changed
+		// approximate the current edge and compute distance to next direction
+		update : function() {
+			if (this.path && this.gps) {
+				// for each edge e in this.path
+				var best = { r : 100 };
+				for (var i = 0; i < this.path.length - 1; i++) {
+					var a = this.path[i];
+					var b = this.path[i + 1];
+					var c = { latitude: this.gps.lat, longitude: this.gps.lon };
+					var ac = this._surfDistance(a, c);
+					var cb = this._surfDistance(c, b);
+					var ab = this._surfDistance(a, b);
+					var r = (ac + cb) / ab;
+					if (r < best.r) {
+						best.r = r;
+						best.i = i;
+						best.from = a;
+						best.to = b;
+						best.dist = cb;
+					}
+				}
+				this.from = best.from;
+				this.to = best.to;
+
+				var prev = this.path[best.i + 1];
+				for (var i = best.i + 1; i < this.path.length - 1; i++) {
+					var c = this.path[i];
+					var d = this._surfDistance(prev, c);
+					best.dist += d
+					if (c.turn > 0) {
+						this.next = c;
+						break;
+					}
+					prev = c;
+				}
+
+				this.dist = best.dist;
+			}
+		},
+	});
+</script>

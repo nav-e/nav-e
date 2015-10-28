@@ -1,4 +1,4 @@
-<link rel="import" href="../libs/polymer/polymer.html">
+<link rel="import" href="../libs/polymer/polymer.html"></link>
 
 <dom-module id="gn-map">
 <style>
@@ -25,17 +25,26 @@ div#mapcontainer {
 
 		// TODO: make these attributes
 		var options = {
-			zoom : 8,
+			zoom : 14,
 			center : new google.maps.LatLng(53.8344, 10.7042),
-			mapTypeId : google.maps.MapTypeId.ROADMAP,
-			scaleControl : true
+			mapTypeId : google.maps.MapTypeId.SATELLITE,
+			scaleControl : true,
+			rotateControl: true,
+			heading : 90
 		};
 
 		Polymer({
 			is : 'gn-marker',
 			properties : {
-				hidden : {
+				marker : {
+					type : Object,
+					value : function() {
+						return new google.maps.Marker();
+					}
+				},
+				visible : {
 					type : Boolean,
+					value : true,
 					observer : 'toggle'
 				},
 				lat : {
@@ -45,16 +54,10 @@ div#mapcontainer {
 				lon : {
 					type : String,
 					observer : 'up'
-				},
-				marker : {
-					type : Object,
-					value : function() {
-						return new google.maps.Marker();
-					}
 				}
 			},
-			toggle : function (hidden) {
-				this.marker.setVisible(hidden);
+			toggle : function (visible) {
+				this.marker.setVisible(visible);
 			},
 			up : function() {
 				this.marker.setPosition(new google.maps.LatLng(this.lat,
@@ -83,8 +86,9 @@ div#mapcontainer {
 						});
 					}
 				},
-				hidden : {
+				visible : {
 					type : Boolean,
+					value : true,
 					observer : 'toggle'
 				},
 				values : {
@@ -100,8 +104,8 @@ div#mapcontainer {
 			changeColor : function () {
 				this.polyline.strokeColor = this.color;
 			},
-			toggle : function (hidden) {
-				this.polyline.setVisible(hidden);
+			toggle : function (visible) {
+				this.polyline.setVisible(visible);
 			},
 			up : function() {
 				if (this.values) {
@@ -126,14 +130,6 @@ div#mapcontainer {
 		Polymer({
 			is : 'gn-polygon',
 			properties : {
-				hidden : {
-					type : Boolean,
-					observer : 'toggle'
-				},
-				values : {
-					type : Object,
-					observer : 'up'
-				},
 				polygon : {
 					type : Object,
 					value : function() {
@@ -145,10 +141,19 @@ div#mapcontainer {
 							fillOpacity : 0.33
 						});
 					}
+				},
+				visible : {
+					type : Boolean,
+					value : true,
+					observer : 'toggle'
+				},
+				values : {
+					type : Object,
+					observer : 'up'
 				}
 			},
-			toggle : function (hidden) {
-				this.polygon.setVisible(hidden);
+			toggle : function (visible) {
+				this.polygon.setVisible(visible);
 			},
 			up : function() {
 				if (this.values) {
@@ -174,11 +179,36 @@ div#mapcontainer {
 			is : 'gn-map',
 			properties : {
 				zoom : Number,
-				center : Object
+				center : {
+					type : Object,
+					observer : "setCenter"
+				},
+				heading : {
+					type : Number,					
+					observer : "setHeading"
+				},
+				map : Object,
+			},
+			setCenter : function (center) {
+				if (this.map){
+					this.map.setCenter(new google.maps.LatLng(center.lat, center.lon));
+					}
+			},
+			setHeading : function (heading) {
+				if (this.map){
+					this.map.setHeading(heading);
+				}				
+			},
+			listeners : {
+				refresh: 'refresh'
+			},
+			refresh : function () {
+				google.maps.event.trigger(this.map, 'resize');
 			},
 			attached : function() {
 				// Create a map object
 				var g = new google.maps.Map(this.$.mapcontainer, options);
+				this.map = g;
 				var add = function(node) {
 					if (node.addToMap && typeof node.addToMap === 'function') {
 						node.addToMap(g);

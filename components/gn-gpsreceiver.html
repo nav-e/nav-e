@@ -1,4 +1,4 @@
-<link rel="import" href="../libs/polymer/polymer.html">
+<link rel="import" href="../libs/polymer/polymer.html"></link>
 <link rel="import" href="app-data.html"></link>
 
 <dom-module id="gn-gpsreceiver">
@@ -15,7 +15,7 @@
 					value : null,
 					notify : true
 				},
-				actimel : {
+				active : {
 					type : Boolean,
 					value : false,
 					notify : true
@@ -26,21 +26,14 @@
 					lat: lat,
 					lon: lon
 				};
-				this.actimel = true;
+				this.active = true;
 			},
 			ready : function() {
 				window.gpsreceiver = this;
 				if (android.registerGPSCallback) {
 					android.registerGPSCallback("window.gpsreceiver.gpsupdate");
-					this.actimel = true;
+					this.active = true;
 				}
-				var x = 0;
-				var f = function() {
-					x += 0.1;
-					window.gpsreceiver.gpsupdate(45 + Math.sin(x), 11 + Math.cos(x))
-					setTimeout(f, 2000)
-				}
-				f();
 			}
 		});
 	})();
