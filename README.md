@@ -1,4 +1,4 @@
-# seed-element
+# gn-map element
 
 An element providing a starting point for your own reusable Polymer elements.
 
