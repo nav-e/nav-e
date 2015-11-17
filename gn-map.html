@@ -1,0 +1,248 @@
+<link rel="import" href="../libs/polymer/polymer.html"></link>
+
+<dom-module id="gn-map">
+	<style>
+		:host {
+			display: block;
+		}
+
+		div#mapcontainer {
+			width: 100%;
+			height: 100%;
+		}
+	</style>
+	<template>
+		<div id="mapcontainer"></div>
+		<content></content> 
+	</template> 
+</dom-module>
+
+<dom-module id="gn-marker"></dom-module>
+<dom-module id="gn-polyline"></dom-module>
+<dom-module id="gn-polygon"></dom-module>
+
+<script>
+	(function() {
+		'use strict';
+
+		// TODO: make these attributes
+		var options = {
+			zoom : 14,
+			center : new google.maps.LatLng(53.8344, 10.7042),
+			mapTypeId : google.maps.MapTypeId.SATELLITE,
+			scaleControl : true,
+			rotateControl: true,
+			heading : 90
+		};
+
+		Polymer({
+			is : 'gn-marker',
+			properties : {
+				marker : {
+					type : Object,
+					value : function() {
+						return new google.maps.Marker();
+					}
+				},
+				visible : {
+					type : Boolean,
+					value : true,
+					observer : 'toggle'
+				},
+				lat : {
+					type : String,
+					observer : 'up'
+				},
+				lon : {
+					type : String,
+					observer : 'up'
+				}
+			},
+			toggle : function (visible) {
+				this.marker.setVisible(visible);
+			},
+			up : function() {
+				this.marker.setPosition(new google.maps.LatLng(this.lat,
+					this.lon));
+				this.marker.setTitle('hallo welt');
+			},
+			addToMap : function(map) {
+				this.up();
+				this.marker.setMap(map);
+			},
+			removeFromMap : function() {
+				this.marker.setMap(null);
+			}
+		});
+
+		Polymer({
+			is : 'gn-polyline',
+			properties : {
+				polyline : {
+					type : Object,
+					value : function() {
+						return new google.maps.Polyline({
+							strokeColor : 'red',
+							strokeOpacity : 0.6,
+							strokeWeight : 2.5
+						});
+					}
+				},
+				visible : {
+					type : Boolean,
+					value : true,
+					observer : 'toggle'
+				},
+				values : {
+					type : Object,
+					observer : 'up'
+				},
+				color : {
+					type : String,
+					value : 'red',
+					observer : 'changeColor'
+				}
+			},
+			changeColor : function () {
+				this.polyline.strokeColor = this.color;
+			},
+			toggle : function (visible) {
+				this.polyline.setVisible(visible);
+			},
+			up : function() {
+				if (this.values) {
+					var nodes = [];
+					for (var i = 0; i < this.values.length; i++) {
+						var lat = this.values[i].latitude;
+						var lon = this.values[i].longitude;
+						nodes[i] = new google.maps.LatLng(lat, lon);
+					}
+					this.polyline.setPath(nodes);
+				}
+			},
+			addToMap : function(map) {
+				this.up();
+				this.polyline.setMap(map);
+			},
+			removeFromMap : function() {
+				this.polyline.setMap(null);
+			}
+		});
+
+Polymer({
+	is : 'gn-polygon',
+	properties : {
+		polygon : {
+			type : Object,
+			value : function() {
+				return new google.maps.Polygon({
+					strokeColor : '#FF0000',
+					strokeOpacity : 1,
+					strokeWeight : 2,
+					fillColor : '#FF0000',
+					fillOpacity : 0.33
+				});
+			}
+		},
+		visible : {
+			type : Boolean,
+			value : true,
+			observer : 'toggle'
+		},
+		values : {
+			type : Object,
+			observer : 'up'
+		}
+	},
+	toggle : function (visible) {
+		this.polygon.setVisible(visible);
+	},
+	up : function() {
+		if (this.values) {
+			var nodes = [];
+			for (var i = 0; i < this.values.length; i++) {
+				var lat = this.values[i].latitude;
+				var lon = this.values[i].longitude;
+				nodes[i] = new google.maps.LatLng(lat, lon);
+			}
+			this.polygon.setPaths(nodes);
+		}
+	},
+	addToMap : function(map) {
+		this.up();
+		this.polygon.setMap(map);
+	},
+	removeFromMap : function() {
+		this.polygon.setMap(null);
+	}
+});
+
+Polymer({
+	is : 'gn-map',
+	properties : {
+		zoom : Number,
+		center : {
+			type : Object,
+			observer : "setCenter"
+		},
+		heading : {
+			type : Number,					
+			observer : "setHeading"
+		},
+		map : Object,
+	},
+	setCenter : function (center) {
+		if (this.map){
+			this.map.setCenter(new google.maps.LatLng(center.lat, center.lon));
+		}
+	},
+	setHeading : function (heading) {
+		if (this.map){
+			this.map.setHeading(heading);
+		}				
+	},
+	listeners : {
+		refresh: 'refresh'
+	},
+	refresh : function () {
+		google.maps.event.trigger(this.map, 'resize');
+	},
+	attached : function() {
+				// Create a map object
+				var g = new google.maps.Map(this.$.mapcontainer, options);
+				this.map = g;
+				var add = function(node) {
+					if (node.addToMap && typeof node.addToMap === 'function') {
+						node.addToMap(g);
+					}
+				};
+				var remove = function(node) {
+					node.removeFromMap();
+				};
+
+				// Extract the slice function so that we can use forEach
+				// on various object collections
+				var s = Array.prototype.slice;
+
+				// For each child in this element, try to add it
+				s.call(Polymer.dom(this).node.children).forEach(add);
+
+				// Listen to any changes in the tree
+				new MutationObserver(function(mutations) {
+					mutations.forEach(function(mutation) {
+						// Try to add them
+						s.call(mutation.addedNodes).forEach(add);
+						// or try to remove them
+						s.call(mutation.removedNodes).forEach(remove);
+					});
+				}).observe(this, {
+					childList : true
+				});
+			},
+			_addElement : function(node) {
+
+			}
+		});
+
+})();
+</script>
