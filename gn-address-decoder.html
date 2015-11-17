@@ -1,0 +1,43 @@
+<script type="text/javascript" src="../jquery/dist/jquery.min.js"></script>
+
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../iron-ajax/iron-ajax.html"></link>
+
+<dom-module id="gn-address-decoder">
+	<template>
+		<iron-ajax
+			id="ajax"
+			verbose
+			url="http://nominatim.openstreetmap.org/search"
+			params='{{ajaxBody}}'
+			handle-as="json"
+			on-response="_finishedGeocoding">
+		</iron-ajax>
+	</template>
+</dom-module>
+
+<script>
+	Polymer({
+		is : 'gn-address-decoder',
+		properties : {
+			address : {
+				type : Object,
+				notify : true
+			},
+			input : String,
+			ajaxBody : {
+				type : Object,
+				computed : '_processBody(input)'
+			}
+		},
+		_finishedGeocoding : function (request) {
+			this.address = request.detail.response[0];
+		},
+		_processBody : function (input) {
+			return {"format" : "json", "q" : input};
+		},
+		getGeocodeAddress : function() {
+			this.$.ajax.generateRequest();
+		}
+	});
+</script>

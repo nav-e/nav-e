@@ -1,0 +1,44 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="gn-address-decoder.html"> 
+
+<!--
+An example (basic) implementatin of gn-search elements (UI only)
+
+@demo
+-->
+
+<dom-module id="gn-basic-search">
+	<template>
+	    <!-- Databinding for gn-search
+	      @param input address (String) 
+	      @param output query (osm object)
+	    -->
+
+	    <gn-address-decoder address="{{ address }}" input="{{ query }}"></gn-address-decoder>
+	    
+	    <!-- Input binds query and button onclick performs search -->
+
+	    <input value="{{ query::input }}">
+	    <button onclick="javascript:document.querySelector('gn-address-decoder').getGeocodeAddress()">Search</button>
+	    
+	    <!-- Example usage of output data -->
+
+	    <table>
+	      <tr>
+	        <td>Open Street Map Id</td>
+	        <td>Longitude</td>
+	        <td>Latitude</td>
+	        <td>Display Name</td>
+	      </tr>
+	      <tr>
+	        <td>{{ address.osm_id }}</td>
+	        <td>{{ address.lon }}</td>
+	        <td>{{ address.lat }}</td>
+	        <td>{{ address.display_name }}</td>
+	      </tr>
+	    </table>
+	</template>
+	<script>	
+		Polymer({is : 'gn-basic-search'});
+	</script>
+</dom-module>
