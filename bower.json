@@ -1,0 +1,26 @@
+{
+  "name": "gn-map",
+  "version": "0.0.1",
+  "description": "Greennav polymer web component contains functions and views around the map.",
+  "keywords": [
+    "web-component",
+    "web-components",
+    "polymer",
+    "greennav",
+    "map"
+  ],
+  "main": "gn-map.html",
+  "license": "https://github.com/Greennav/gn-map/blob/master/LICENSE",
+  "homepage": "http://greennav.github.io/",
+  "ignore": [
+    "/.*",
+    "/demo/"
+  ],
+  "dependencies": {
+    "polymer": "Polymer/polymer#^1.0.0"
+  },
+  "devDependencies": {
+    "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",
+    "web-component-tester": "*"
+  }
+}
