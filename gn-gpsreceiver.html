@@ -1,0 +1,32 @@
+<link rel="import" href="../polymer/polymer.html"></link>
+
+<dom-module id="gn-gpsreceiver">
+</dom-module>
+
+<script>
+	Polymer({
+		is : 'gn-gpsreceiver',
+		properties : {
+			location : {
+				type : Object,
+				value : null,
+				notify : true
+			},
+			active : {
+				type : Boolean,
+				value : false,
+				notify : true
+			}
+		},
+		gpsupdate : function (lat, lon) {
+			this.location = {
+				lat: lat,
+				lon: lon
+			};
+			this.active = true;
+		},
+		ready : function() {
+			window.gpsreceiver = this;
+		}
+	});
+</script>

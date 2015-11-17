@@ -1,0 +1,28 @@
+{
+  "name": "gn-search",
+  "version": "0.0.1",
+  "description": "Greennav polymer web component sums up input component, vehicle list and server communication.",
+  "keywords": [
+    "web-component",
+    "web-components",
+    "polymer",
+    "search",
+    "greennav"
+  ],
+  "main": "gn-search.html",
+  "license": "https://github.com/Greennav/gn-search/blob/master/LICENSE",
+  "homepage": "http://greennav.github.io/",
+  "ignore": [
+    "/.*",
+    "/demo/"
+  ],
+  "dependencies": {
+    "polymer": "Polymer/polymer#^1.0.0",
+    "jquery": "~2.1.4",
+    "paper-elements": "PolymerElements/paper-elements"
+  },
+  "devDependencies": {
+    "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",
+    "web-component-tester": "*"
+  }
+}
