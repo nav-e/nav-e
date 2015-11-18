@@ -1,0 +1,74 @@
+<link rel="import" href="../libs/polymer/polymer.html">
+<link rel="import" href="../libs/paper-input/paper-input.html"></link>
+<link rel="import" href="../libs/gn-search/gn-address-decoder.html"> 
+<link rel="import" href="../libs/gn-search/gn-vehicle-list.html"> 
+
+<dom-module id="gn-search">
+	<template>
+	    <!-- Databinding for gn-search
+	      @param input address (String) 
+	      @param output query (osm object)
+	    -->
+
+	    <gn-address-decoder address="{{ startAddress }}" input="{{ startQuery }}"></gn-address-decoder>
+	    <gn-address-decoder address="{{ destinationAddress }}" input="{{ destinationQuery }}"></gn-address-decoder>
+
+		<!-- Input -->
+		<div id="gninput">
+			<paper-tabs selected="{{selected}}">
+				<paper-tab>Routing</paper-tab>
+				<paper-tab>Range</paper-tab>
+			</paper-tabs>
+			<div>
+				<div>{{ startAddress.lat }}</div>
+				<!-- Start -->
+				<paper-input label="Start" value="{{ startQuery::input }}"></paper-input>
+
+				<!-- Destination -->
+				<iron-pages selected="[[selected]]">
+					<paper-input label="Destination" value="{{ destinationQuery::input }}"></paper-input>
+				</iron-pages>
+				
+				<!-- Vehicle -->
+				<gn-vehicle-list label="Vehicle" vehicle="{{ vehicle }}"></gn-vehicle-list>
+
+				<!-- Battery -->
+				<paper-input
+					id="battery" label="Battery state"
+					onchange="document.querySelector('#errortoast').show()"
+					value="{{ battery }}"></paper-input>
+
+				<!-- Buttons -->
+				<iron-pages class="button-panel" selected="[[selected]]">
+					<paper-button on-click="startrouting">Compute route</paper-button>
+					<paper-button on-click="startranging">Compute range</paper-button>
+				</iron-pages>
+			</div>
+		</div>
+ 
+	    <!-- Input binds query and button onclick performs search -->
+
+	    <input value="">
+	    <button onclick="javascript:document.querySelector('gn-address-decoder').getGeocodeAddress()">Search</button>
+	    
+	    <!-- Example usage of output data 
+
+	    <table>
+	      <tr>
+	        <td>Open Street Map Id</td>
+	        <td>Longitude</td>
+	        <td>Latitude</td>
+	        <td>Display Name</td>
+	      </tr>
+	      <tr>
+	        <td>{{ address.osm_id }}</td>
+	        <td>{{ address.lon }}</td>
+	        <td>{{ address.lat }}</td>
+	        <td>{{ address.display_name }}</td>
+	      </tr>
+	    </table> 								-->
+	</template>
+	<script>	
+		Polymer({is : 'gn-search'});
+	</script>
+</dom-module>

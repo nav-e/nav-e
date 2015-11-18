@@ -13,6 +13,49 @@ body {
 	font: 13px "Lucida Grande", Tahoma, Verdana, Arial, sans-serif;
 }
 
+/***** Header *****/
+
+#header {
+	position: relative;
+	height: 70px;
+	border-bottom: 1px solid #888888;
+	z-index: 5;
+	overflow: hidden;
+}
+
+#header_logo {
+	font-size: 15px;
+	margin: 2px 0px 0px 10px;
+	float: left;
+}
+
+#header_nav {
+	position: absolute;
+	right: 0px;
+	margin: 5px;
+	color: #Ob5c26;
+	float: right;
+}
+
+#header_nav paper-button {
+	width: 90px;
+}
+
+#error {
+	position: absolute;
+	top: 5px;
+	right: 5px;
+	color: #FF0000;
+}
+
+#header_nav a:link, #header_nav a:visited {
+	text-decoration: none;
+}
+
+#header_nav a:hover {
+	text-decoration: underline;
+}
+
 /***** Style sheet for links *****/
 
 a:link, a:visited, a:active {
@@ -65,7 +108,6 @@ a:hover, a:active {
 /***** Style sheet for map in the background *****/
 
 gn-map { /* Map is placed below header */
-	position: absolute;
 	width: 100%;
 	height: 100%;
 	z-index: 0;
