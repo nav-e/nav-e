@@ -1,5 +1,6 @@
 <link rel="import" href="../libs/polymer/polymer.html">
-<link rel="import" href="../libs/paper-input/paper-input.html"></link>
+<link rel="import" href="../libs/paper-input/paper-input.html">
+<link rel="import" href="../libs/paper-card/paper-card.html">
 <link rel="import" href="../libs/gn-search/gn-address-decoder.html"> 
 <link rel="import" href="../libs/gn-search/gn-vehicle-list.html"> 
 
@@ -14,7 +15,7 @@
 	    <gn-address-decoder address="{{ destinationAddress }}" input="{{ destinationQuery }}"></gn-address-decoder>
 
 		<!-- Input -->
-		<div id="gninput">
+		<paper-card elevation="0">
 			<paper-tabs selected="{{selected}}">
 				<paper-tab>Routing</paper-tab>
 				<paper-tab>Range</paper-tab>
@@ -40,11 +41,11 @@
 
 				<!-- Buttons -->
 				<iron-pages class="button-panel" selected="[[selected]]">
-					<paper-button on-click="startrouting">Compute route</paper-button>
-					<paper-button on-click="startranging">Compute range</paper-button>
+					<paper-button on-click="startrouting" raised class="color">Compute route</paper-button>
+					<paper-button on-click="startranging" raised>Compute range</paper-button>
 				</iron-pages>
 			</div>
-		</div>
+		</paper-card>
  
 	    <!-- Input binds query and button onclick performs search -->
 
