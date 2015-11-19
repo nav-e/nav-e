@@ -15,6 +15,8 @@
     "polymer": "Polymer/polymer",
     "paper-elements": "PolymerElements/paper-elements",
     "iron-elements": "PolymerElements/iron-elements",
+    "gn-map": "https://github.com/Greennav/gn-map.git",
+    "gn-search" : "https://github.com/Greennav/gn-search.git",
     "jquery": "~2.1.4"
   }
 }
