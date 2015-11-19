@@ -1,4 +1,18 @@
 /***** General definitions *****/
-body {
-	font: 13px "Lucida Grande", Tahoma, Verdana, Arial, sans-serif;
+@import url(https://fonts.googleapis.com/css?family=Open+Sans);
+html, body {
+	height: 100%;
+	margin: 0;	
+}
+
+gn-map {
+	height: 100%;
+}
+
+paper-toolbar {
+	height: 100%;
+}
+
+html {
+	font-family: 'Open Sans', sans-serif;
 }
