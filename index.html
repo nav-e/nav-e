@@ -7,9 +7,10 @@
   <link rel="stylesheet" type="text/css" href="css/style.css">
 
   <script type="text/javascript" src="libs/webcomponentsjs/webcomponents.js"></script>
-  <script type="text/javascript" src="libs/jquery/dist/jquery.min.js"></script>
 
   <link rel="import" href="components/gn-ui-search.html">
+  <link rel="import" href="components/gn-ui-contact.html">
+  <link rel="import" href="components/gn-ui-information.html">
   
   <link rel="import" href="libs/iron-flex-layout/classes/iron-flex-layout.html">
   <link rel="import" href="libs/gn-map/gn-map.html">
@@ -31,15 +32,18 @@
 <body class="fullbleed layout vertical">
   <template is="dom-bind">
     
-    <paper-drawer-panel mode="waterfall">
-      <div drawer>
+    <paper-drawer-panel>
+      
+      <paper-header-panel drawer>
         <paper-toolbar>
           <h3>Menu</h3>
         </paper-toolbar>
-        <gn-ui-search></gn-ui-search>
-        <paper-button onclick="document.querySelector('#info-modal').toggle()">Info</paper-button>
-        <paper-button onclick="document.querySelector('#contact-modal').toggle()">Contact</paper-button>
-      </div>
+        <div main>
+          <gn-ui-search></gn-ui-search>
+          <paper-button onclick="document.querySelector('#info-modal').toggle()">Info</paper-button>
+          <paper-button onclick="document.querySelector('#contact-modal').toggle()">Contact</paper-button>  
+        </div>
+      </paper-header-panel>
         
       <paper-header-panel main>
         <paper-toolbar>
@@ -47,7 +51,9 @@
           <span class="flex"></span>
           <h3>GreenNavigation</h3>
         </paper-toolbar>
-        <gn-map></gn-map>
+        
+        <google-map class="content fit"></google-map>
+        
       </paper-header-panel>
 
     </paper-drawer-panel>
@@ -63,44 +69,11 @@
       </div>
       <h4>Green Navigation - Kontakt</h4>
       <paper-dialog-scrollable>
-        <img src="https://www.isp.uni-luebeck.de/sites/default/files/pictures/18416%20H.%20Sch%C3%B6nfelder%20Set%203%20%281%29Cd.Jpg" style="height: 150px; float: left; margin: 5px 5px 5px 5px;" />
-        <table>
-          <tr>
-            <td>Name</td>
-            <td>Ren&eacute; Sch&ouml;nfelder</td>
-          </tr>
-          <tr>
-            <td>Website:&nbsp;</td>
-            <td><a href="https://www.isp.uni-luebeck.de/staff/schoenfr">https://www.isp.uni-luebeck.de/staff/schoenfr</a></td>
-          </tr>
-          <tr>
-            <td style="vertical-align: top;">Adresse:&nbsp;</td>
-            <td>Institut f&uuml;r Softwaretechnik und Programmiersprachen Universit&auml;t zu L&uuml;beck <br />
-              Ratzeburger Allee 160 <br /> 23562 L&uuml;beck <br /> Deutschland
-            </td>
-          </tr>
-          <tr>
-            <td>Telefon:&nbsp;</td>
-            <td>+49 451 500 5688</td>
-          </tr>
-          <tr>
-            <td>B&uuml;ro:&nbsp;</td>
-            <td>Haus 64, Raum 83 (Erdgeschoss)</td>
-          </tr>
-        </table>
-        <h5>Haftung</h5>
-        <p>
-          Diese Seite ist ein Teil der Internetpr&auml;senz des Instituts f&uuml;r
-          Softwaretechnik und Programmiersprachen an der Universit&auml;t zu L&uuml;beck.
-          Weitere Informationen finden Sie hier:
-          <a href="https://www.isp.uni-luebeck.de/impressum.html">https://www.isp.uni-luebeck.de/impressum.html</a>.
-        </p>
-        <p>
-          Trotz sorgf&auml;ltiger inhaltlicher Kontrolle &uuml;bernehmen wir keine Haftung f&uuml;r Inhalte externer Links.
-          F&uuml;r den Inhalt der verlinkten Seiten sind ausschlie&szlig;lich die jeweiligen Betreiber verantwortlich.
-        </p>
+        <gn-ui-contact></gn-ui-contact>
       </paper-dialog-scrollable>
     </paper-dialog>
+    
+    
     <!-- Info  dialog -->
     <paper-dialog id="info-modal" modal>
       <div style="float:right;">
@@ -108,34 +81,11 @@
       </div>
       <h4>Green Navigation - Information</h4>
       <paper-dialog-scrollable>
-        <p>
-          Diese Webanwendung entsteht im
-          Rahmen der Forschung zur gr&uuml;nen Navigation am Institut f&uuml;r Softwaretechik und Programmiersprachen (ISP) an
-          der Universit&auml;t zu L&uuml;beck. Im Vergleich zu anderen Routenplanern ist das Ziel von Green Navigation einen
-          m&ouml;glichst energieeffizienten Weg zu berechnen. Desweiteren ist es m&ouml;glich, die Reichweite von
-          Elektrofahrzeugen abh&auml;ngig von ihrem Ladezustand zu berechnen. <br /> Im Rahmen dieser Forschung waren
-          verschiedene studentische Projektarbeiten beteiligt. Weitere Informationen finden Sie auf unserer Homepage.
-        </p>
-        <h5>H&auml;ufig gestellte Fragen</h5>
-        <ul>
-          <li>Warum funktioniert die Strecke von A nach B nicht?</li>
-        </ul>
-          Hierf&uuml;r kann es verschiedene Gr&uuml;nde geben. Da Green Navigation derzeit nur das Gebiet Schleswig-Holstein
-          umfasst, k&ouml;nnen Start- und Zielpunkt auch nur aus Schleswig Holstein gew&auml;hlt werden. Wir arbeiten bereits an
-          der Integration deutschlandweiter Daten. Eine weitere M&ouml;glichkeit w&auml;re, dass der Routing-Server derzeit
-          nicht verf&uuml;gbar ist (beispielsweise aufgrund von Wartungsarbeiten).
-        <ul>
-          <li>Wo finde ich weitere Informationen zur Funktionsweise von GreenNav?</li>
-        </ul>
-          Wir verweise dabei auf die unten angegebenen Links. Hier finden Sie eine etwas detailliertere Beschreibung von
-          GreenNav.
-        <h5>Links</h5>
-        <ul>
-          <li><a href="https://www.isp.uni-luebeck.de/research/projects/green-navigation" target="_blank">Homepage des ISP</a></li>
-          <li><a href="http://redmine.isp.uni-luebeck.de/" target="_blank">Redmine f&uuml;r Entwickler</a></li>
-        </ul>
+        <gn-ui-information></gn-ui-information>
       </paper-dialog-scrollable>
     </paper-dialog>
+    
+    
   </template>
 </body>
 </html>

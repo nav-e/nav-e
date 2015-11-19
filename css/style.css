@@ -1,15 +1,8 @@
 /***** General definitions *****/
 @import url(https://fonts.googleapis.com/css?family=Open+Sans);
+
 html, body {
-	height: 100%;
-	margin: 0;	
-}
-
-gn-map {
-	height: 100%;
-}
-
-paper-toolbar {
+	width: 100%;
 	height: 100%;
 }
 
