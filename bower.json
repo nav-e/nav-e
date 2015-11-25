@@ -1,0 +1,17 @@
+{
+  "name": "gn-api",
+  "version": "0.0.1",
+  "main": "gn-api.html",
+  "ignore": [
+    "/.*",
+    "/test/"
+  ],
+  "dependencies": {
+    "polymer": "Polymer/polymer#^1.2.0",
+    "iron-ajax": "PolymerElements/iron-ajax#~1.1.1"
+  },
+  "devDependencies": {
+    "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",
+    "google-map": "GoogleWebComponents/google-map#~1.1.7"
+  }
+}

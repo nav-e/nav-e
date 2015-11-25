@@ -1,0 +1,98 @@
+<!doctype html>
+
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+    <title>gn-api Demo</title>
+    
+    <script src="../../webcomponentsjs/webcomponents-lite.min.js"></script>
+    
+    <link rel="import" href="../../google-map/google-map.html">
+    <link rel="import" href="../../google-map/google-map-marker.html">
+    <link rel="import" href="../../google-map/google-map-point.html">
+    <link rel="import" href="../../google-map/google-map-poly.html">
+    
+    <link rel="import" href="../gn-api.html">
+    
+    <style>
+      google-map {
+        height: 600px;
+        width: 600px;
+      }
+    </style>
+  </head>
+  <body unresolved>
+
+    <template is="dom-bind">
+      <gn-api
+        vehicles="{{vehicles}}"
+        range="{{range}}"
+        route="{{route}}"
+        start-osm-id="2062506923"
+        target-osm-id="27473197"
+        battery="5"
+        vehicle="Sam"></gn-api>
+      
+      <p>{{vehicles}}</p>
+      
+      <h2>Route (information)</h2>
+      <p>Algorithm: {{route.algorithm}}</p>
+      <p>Battery: {{route.batteryStatus}}</p>
+      <p>Time: {{route.time}}</p>
+      
+      <h2>Route (list)</h2>
+      
+      <google-map latitude="53.8394057" longitude="10.7092572" zoom="16">
+        
+        <!-- Route as black line -->
+        <google-map-poly>
+          <template is="dom-repeat" items="{{route.route}}">
+            <google-map-point 
+              longitude="{{item.longitude}}" 
+              latitude="{{item.latitude}}"></google-map-point>
+          </template>
+        </google-map-poly>
+        
+        <!-- Each point as marker with description -->
+        <template is="dom-repeat" items="{{route.route}}">
+          <google-map-marker 
+            longitude="{{item.longitude}}" 
+            latitude="{{item.latitude}}"
+            title="{{item.street}}">
+              <p>turn: {{item.turn}}</p>
+              <p>{{item.street}}</p>  
+          </google-map-marker>
+        </template>
+        
+      </google-map>
+      
+      <button onclick="document.querySelector('gn-api').getRoute()">route</button>
+      
+      <h2>Range</h2>
+      <p>Algorithm: {{range.algorithm}}</p>
+      <p>Battery: {{range.batteryStatus}}</p>
+      
+      <h2>Range (polygon)</h2>
+        <google-map latitude="53.8394057" longitude="10.7092572" zoom="10">
+          
+          <!-- Range as filled polygon -->
+          <google-map-poly fill-color="blue" fill-opacity=".5" closed>
+            <template is="dom-repeat" items="{{range.rangePoints}}">
+              <google-map-point
+                longitude="{{item.longitude}}"
+                latitude="{{item.latitude}}"></google-map-point>
+            </template>
+          </google-map-poly>
+          
+          <google-map-marker
+            latitude="{{range.initialPoint.latitude}}"
+            longitude="{{range.initialPoint.longitude}}"></google-map-marker>
+          
+        </google-map>
+      
+      <button onclick="document.querySelector('gn-api').getRange()">range</button>
+    </template>
+
+  </body>
+</html>
