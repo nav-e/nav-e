@@ -31,9 +31,7 @@
 </head>
 <body class="fullbleed layout vertical">
   <template is="dom-bind">
-    
     <paper-drawer-panel>
-      
       <paper-header-panel drawer>
         <paper-toolbar>
           <h3>Menu</h3>
@@ -41,7 +39,7 @@
         <div main>
           <gn-ui-search></gn-ui-search>
           <paper-button onclick="document.querySelector('#info-modal').toggle()">Info</paper-button>
-          <paper-button onclick="document.querySelector('#contact-modal').toggle()">Contact</paper-button>  
+          <paper-button onclick="document.querySelector('#contact-modal').toggle()">Contact</paper-button>      
         </div>
       </paper-header-panel>
         
@@ -51,16 +49,9 @@
           <span class="flex"></span>
           <h3>GreenNavigation</h3>
         </paper-toolbar>
-        
         <google-map class="content fit"></google-map>
-        
       </paper-header-panel>
-
     </paper-drawer-panel>
-      
-      
-      
-      
       
     <!-- Contact dialog -->
     <paper-dialog id="contact-modal" modal>
@@ -84,7 +75,6 @@
         <gn-ui-information></gn-ui-information>
       </paper-dialog-scrollable>
     </paper-dialog>
-    
     
   </template>
 </body>
