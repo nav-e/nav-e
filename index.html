@@ -15,6 +15,7 @@
   <link rel="import" href="libs/iron-flex-layout/classes/iron-flex-layout.html">
   <link rel="import" href="libs/gn-map/gn-map.html">
   <link rel="import" href="libs/paper-styles/paper-styles.html">
+  <link rel="import" href="libs/gn-api/gn-api.html">
   <link rel="import" href="libs/paper-button/paper-button.html">
   <link rel="import" href="libs/paper-menu-button/paper-menu-button.html">
   <link rel="import" href="libs/paper-icon-button/paper-icon-button.html">
@@ -31,7 +32,7 @@
 </head>
 <body class="fullbleed layout vertical">
   <template is="dom-bind">
-    
+    <gn-api></gn-api>
     <paper-drawer-panel>
       
       <paper-header-panel drawer>
@@ -41,7 +42,7 @@
         <div main>
           <gn-ui-search></gn-ui-search>
           <paper-button onclick="document.querySelector('#info-modal').toggle()">Info</paper-button>
-          <paper-button onclick="document.querySelector('#contact-modal').toggle()">Contact</paper-button>  
+          <paper-button onclick="document.querySelector('#contact-modal').toggle()">Contact</paper-button>      
         </div>
       </paper-header-panel>
         
@@ -51,16 +52,9 @@
           <span class="flex"></span>
           <h3>GreenNavigation</h3>
         </paper-toolbar>
-        
         <google-map class="content fit"></google-map>
-        
       </paper-header-panel>
-
     </paper-drawer-panel>
-      
-      
-      
-      
       
     <!-- Contact dialog -->
     <paper-dialog id="contact-modal" modal>
