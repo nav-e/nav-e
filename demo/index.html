@@ -12,12 +12,38 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
-    <title>gn-basic-search Demo</title>
+    <title>gn-search Demo</title>
     <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
-    <link rel="import" href="../gn-basic-search.html">
+    <link rel="import" href="../gn-search.html">
   </head>
   <body>
     <p>An example of <code>&lt;gn-basic-search element&gt;</code>:</p>
-    <gn-basic-search></gn-basic-search>
+    <template is="dom-bind">
+      <!-- Databinding for gn-search
+        @param input address (String) 
+        @param output query (osm object)
+      -->
+      <gn-search address="{{ address }}" input="{{ query }}"></gn-search>
+      
+      <!-- Input binds query and button onclick performs search -->
+      <input value="{{ query::input }}">
+      <button onclick="javascript:document.querySelector('gn-search').getGeocodeAddress()">Search</button>
+      
+      <!-- Example usage of output data -->
+      <table>
+        <tr>
+          <td>Open Street Map Id</td>
+          <td>Longitude</td>
+          <td>Latitude</td>
+          <td>Display Name</td>
+        </tr>
+        <tr>
+          <td>{{ address.osm_id }}</td>
+          <td>{{ address.lon }}</td>
+          <td>{{ address.lat }}</td>
+          <td>{{ address.display_name }}</td>
+        </tr>
+      </table>
+    </template>
   </body>
 </html>

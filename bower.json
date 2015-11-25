@@ -1,5 +1,5 @@
 {
-  "name": "gn-basic-search",
+  "name": "gn-search",
   "version": "0.0.1",
   "description": "Greennav polymer web component sums up input component, vehicle list and server communication.",
   "keywords": [
@@ -9,7 +9,7 @@
     "search",
     "greennav"
   ],
-  "main": "gn-basic-search.html",
+  "main": "gn-search.html",
   "license": "https://github.com/Greennav/gn-search/blob/master/LICENSE",
   "homepage": "http://greennav.github.io/",
   "ignore": [
