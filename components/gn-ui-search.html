@@ -1,8 +1,12 @@
 <link rel="import" href="../libs/polymer/polymer.html">
 <link rel="import" href="../libs/paper-input/paper-input.html">
 <link rel="import" href="../libs/paper-card/paper-card.html">
-<link rel="import" href="../libs/gn-search/gn-address-decoder.html"> 
-<link rel="import" href="../libs/gn-search/gn-vehicle-list.html"> 
+<link rel="import" href="../libs/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../libs/paper-menu/paper-menu.html">
+<link rel="import" href="../libs/paper-item/paper-item.html">
+<link rel="import" href="../libs/paper-button/paper-button.html">
+<link rel="import" href="../libs/gn-search/gn-search.html">
+<link rel="import" href="../libs/gn-api/gn-api.html">
 
 <dom-module id="gn-ui-search">
 	<template>
@@ -10,9 +14,17 @@
 	      @param input address (String) 
 	      @param output query (osm object)
 	    -->
+	    <gn-api
+	        vehicles="{{ vehicles }}"
+	        range="{{ range }}"
+	        route="{{ route }}"
+	        start-osm-id="{{ start.osm_id }}"
+	        target-osm-id="{{ destination.osm_id }}"
+	        battery="{{ battery }}"
+	        vehicle="{{ vehicle }}"></gn-api>
 
-	    <gn-address-decoder address="{{ startAddress }}" input="{{ startQuery }}"></gn-address-decoder>
-	    <gn-address-decoder address="{{ destinationAddress }}" input="{{ destinationQuery }}"></gn-address-decoder>
+	    <gn-search id="start" address="{{ start }}" input="{{ startQuery }}"></gn-search>
+	    <gn-search id="destination" address="{{ destination }}" input="{{ destinationQuery }}"></gn-search>
 
 		<!-- Input -->
 		<paper-card elevation="0">
@@ -31,7 +43,13 @@
 				</iron-pages>
 				
 				<!-- Vehicle -->
-				<gn-vehicle-list label="Vehicle" vehicle="{{ vehicle }}"></gn-vehicle-list>
+				<paper-dropdown-menu label="vehicle" selected-item-label="{{ vehicle }}">
+					<paper-menu class="dropdown-content" selected="0">
+						<template is="dom-repeat" items="{{ vehicles }}">
+							<paper-item>{{ item }}</paper-item>
+						</template>
+					</paper-menu>
+				</paper-dropdown-menu>
 
 				<!-- Battery -->
 				<paper-input
@@ -46,30 +64,18 @@
 				</iron-pages>
 			</div>
 		</paper-card>
- 
-	    <!-- Input binds query and button onclick performs search -->
-
-	    <input value="">
-	    <button onclick="javascript:document.querySelector('gn-address-decoder').getGeocodeAddress()">Search</button>
-	    
-	    <!-- Example usage of output data 
-
-	    <table>
-	      <tr>
-	        <td>Open Street Map Id</td>
-	        <td>Longitude</td>
-	        <td>Latitude</td>
-	        <td>Display Name</td>
-	      </tr>
-	      <tr>
-	        <td>{{ address.osm_id }}</td>
-	        <td>{{ address.lon }}</td>
-	        <td>{{ address.lat }}</td>
-	        <td>{{ address.display_name }}</td>
-	      </tr>
-	    </table> 								-->
 	</template>
 	<script>	
-		Polymer({is : 'gn-ui-search'});
+		Polymer({
+			is : 'gn-ui-search',
+			startrouting : function() {
+				document.querySelector('#start').getGeocodeAddress();
+				document.querySelector('#destination').getGeocodeAddress();
+				
+				//TODO: getGeocodeAddress is to slow for getRoute.. Callback, Waitloop, etc? 
+				
+				document.querySelector('gn-api').getRoute();
+			}
+		});
 	</script>
 </dom-module>
