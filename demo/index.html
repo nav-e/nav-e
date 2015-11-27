@@ -1,13 +1,9 @@
 <!doctype html>
-<!--
-@license
-Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
-This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
-The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
-The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
-Code distributed by Google as part of the polymer project is also
-subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
--->
+<link rel="import" href="../gn-map.html"></link>
+<link rel="import" href="../gn-marker.html"></link>
+<link rel="import" href="../gn-polyline.html"></link>
+<link rel="import" href="../gn-polygon.html"></link>
+
 <html>
   <head>
     <meta charset="utf-8">
@@ -17,12 +13,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <link rel="import" href="../gn-map.html">
   </head>
   <body>
-
-    <p>An example of <code>&lt;gn-map element&gt;</code>:</p>
-
-    <gn-map>
-      <gn-marker lat="53.837" lon="10.7"></gn-marker>
-    </gn-map>
-
+    <template>
+      <p>An example of <code>&lt;gn-map element&gt;</code>:</p>
+	<gn-map id="map" center="[[location]]" rotation="[[rotation]]">
+	  <gn-marker lat="[[xcoord.lat]]" lon="[[xcoord.lon]]"></gn-marker>
+	    <gn-marker visible="[[selectedRouting(selected)]]" lat="[[ycoord.lat]]" lon="[[ycoord.lon]]"></gn-marker>
+	    <gn-marker visible="[[gpsactive]]" lat="[[location.lat]]" lon="[[location.lon]]"></gn-marker>
+	    <gn-polyline visible="[[selectedRouting(selected)]]" values="[[energyroute]]" color="green"></gn-polyline>
+	    <gn-polygon visible="[[!selectedRouting(selected)]]" values="[[range]]" color="red"></gn-polygon>
+	  </gn-map>
+    </template>
   </body>
 </html>

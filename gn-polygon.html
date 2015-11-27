@@ -1,0 +1,82 @@
+<link rel="import" href="../polymer/polymer.html"></link>
+
+<dom-module id="gn-polygon">
+
+  <script>
+    'use strict';
+    
+    /*
+     * Default behavior: Behavior for map polygons of no specific type
+     * 
+     * Prints information text for every not-implemented method.
+     * All methods defined in specific behaviors override these defaults.
+     */
+    /*PolygonBehaviors.DefaultBehavior = { 
+      up : function () {
+	console.log("gn-polygon.html: up() is not implemented");
+      },
+      toggle : function (visible) {
+	console.log("gn-polygon.html: toggle(visible) is not implemented");
+      },
+      addToMap : function (map) {
+	console.log("gn-polygon.html: addToMap(map) is not implemented");
+      },
+      removeFromMap : function () {
+	console.log("gn-polygon.html: removeFromMap() is not implemented");
+      }
+    };*/
+    
+    /*
+     * Polygon Polymer: 
+     * 	Polygons are defined by a bunch of coordinates which get connected in order to highlight an area on the map.
+     *	The last and the first coordinate should be connected.
+     *	They consist of Strokes and a filled Area.
+     */
+    Polymer({
+      is: "gn-polygon",
+        
+      /* 
+       * Behaviors: Polymer Methods/Properties which override eachother from left to right.
+       *
+       * Usage:		The leftmost behavior should be the DefaultBehavior (defined above the Polymer)
+       * 		The rightmost behavior should be the specific behavior*
+       * Example:	behaviors : [DefaultBehavior, SpecificBehavior]
+       * 
+       * *: The DefaultBehavior gets overwritten by the specific Behavior which is defined by the variable "mapBehavior".
+       *    For more information look up the commentary in "js/gn-map.js".
+       */
+      behaviors : [
+	MapFeatureBehaviors.DefaultBehavior,
+	//PolygonBehaviors.DefaultBehavior, 
+	eval("MapFeatureBehaviors." + mapBehavior + "Behavior"),
+	eval("PolygonBehaviors." + mapBehavior + "Behavior")],
+      
+      properties : {
+	visible : {
+	  type : Boolean,
+	  value : true,
+	  observer : 'toggle'
+	},
+	values : {
+	  type : Object,
+	  observer : 'up'
+	},
+	color : {
+	  type : String,
+	  value : 'red',
+	  observer : 'changeColor'
+	},
+	/*valuesYellow : {
+	  type : Object,
+	  observer : 'up'
+	},
+	valuesGreen : {
+	  type : Object,
+	  observer : 'up'
+	}*/
+      }  
+    });
+  </script>
+  
+</dom-module>
+
