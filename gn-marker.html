@@ -1,0 +1,76 @@
+<link rel="import" href="../polymer/polymer.html"></link>
+
+<dom-module id="gn-marker">
+  
+  <script>
+    'use strict';
+    
+    /*
+     * Default behavior: Behavior for map markers of no specific type
+     * 
+     * Prints information text for every not-implemented method.
+     * All methods defined in specific behaviors override these defaults.
+     */
+    /*MarkerBehaviors.DefaultBehavior = { 
+      up : function () {
+	console.log("gn-marker.html: up() is not implemented");
+      },
+      toggle : function (visible) {
+	console.log("gn-marker.html: toggle(visible) is not implemented");
+      },
+      addToMap : function (map) {
+	console.log("gn-marker.html: addToMap(map) is not implemented");
+      },
+      removeFromMap : function () {
+	console.log("gn-marker.html: removeFromMap() is not implemented");
+      }
+    };*/
+ 
+    /*
+     * Marker Polymer: 
+     * 	Markers highlight a coordinate on the map.
+     *	They consist of an image or any type of filled geometrical forms like i.e. a circle.
+     */
+    Polymer({
+      is: "gn-marker",
+
+      /* 
+       * Behaviors: Polymer Methods/Properties which override eachother from left to right.
+       *
+       * Usage:		The leftmost behavior should be the DefaultBehavior (defined above the Polymer)
+       * 		The rightmost behavior should be the specific behavior*
+       * Example:	behaviors : [DefaultBehavior, SpecificBehavior]
+       * 
+       * *: The DefaultBehavior gets overwritten by the specific Behavior which is defined by the variable "mapBehavior".
+       *    For more information look up the commentary in "js/gn-map.js".
+       */
+      behaviors : [
+	MapFeatureBehaviors.DefaultBehavior, 
+	//MarkerBehaviors.DefaultBehavior, 
+	eval("MapFeatureBehaviors." + mapBehavior + "Behavior"),
+	eval("MarkerBehaviors." + mapBehavior + "Behavior")],
+    
+      properties : {
+	visible : {
+	  type : Boolean,
+	  value : true,
+	  observer : 'toggle'
+	},
+	lat : {
+	  type : String,
+	  observer : 'up'
+	},
+	lon : {
+	  type : String,
+	  observer : 'up'
+	},
+	label : {
+	  type : String,
+	  value : MapDefaults.markerLabel
+	}
+      }
+    });
+  </script>
+
+</dom-module>
+
