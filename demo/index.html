@@ -1,27 +1,29 @@
 <!doctype html>
-<link rel="import" href="../gn-map.html"></link>
-<link rel="import" href="../gn-marker.html"></link>
-<link rel="import" href="../gn-polyline.html"></link>
-<link rel="import" href="../gn-polygon.html"></link>
-
 <html>
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
     <title>gn-map Demo</title>
     <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
-    <link rel="import" href="../gn-map.html">
+    <link rel="import" href="../gn-map.html"></link>
+    <link rel="import" href="../gn-marker.html"></link>
+    <link rel="import" href="../gn-polyline.html"></link>
+    <link rel="import" href="../gn-polygon.html"></link>
+    <style type="text/css">
+      body, html {height : 100%;}
+    </style>
   </head>
   <body>
-    <template>
+    <template is="dom-bind">
       <p>An example of <code>&lt;gn-map element&gt;</code>:</p>
-	<gn-map id="map" center="[[location]]" rotation="[[rotation]]">
-	  <gn-marker lat="[[xcoord.lat]]" lon="[[xcoord.lon]]"></gn-marker>
-	    <gn-marker visible="[[selectedRouting(selected)]]" lat="[[ycoord.lat]]" lon="[[ycoord.lon]]"></gn-marker>
-	    <gn-marker visible="[[gpsactive]]" lat="[[location.lat]]" lon="[[location.lon]]"></gn-marker>
-	    <gn-polyline visible="[[selectedRouting(selected)]]" values="[[energyroute]]" color="green"></gn-polyline>
-	    <gn-polygon visible="[[!selectedRouting(selected)]]" values="[[range]]" color="red"></gn-polygon>
-	  </gn-map>
+      <input value="{{ type::input }}">
+    	<gn-map id="map" type="{{ type }}" center="{{ location }}" rotation="{{ rotation }}">
+  	    <gn-marker lat="{{ xcoord.lat }}" lon="{{ xcoord.lon }}"></gn-marker>
+  	    <gn-marker visible="{{ selectedRouting(selected) }}" lat="{{ ycoord.lat }}" lon="{{ ycoord.lon }}"></gn-marker>
+  	    <gn-marker visible="{{ gpsactive }}" lat="{{ location.lat }}" lon="{{ location.lon }}"></gn-marker>
+  	    <gn-polyline visible="{{ selectedRouting(selected) }}" values="{{ energyroute }}" color="green"></gn-polyline>
+  	    <gn-polygon visible="{{ !selectedRouting(selected) }}" values="{{ range }}" color="red"></gn-polygon>
+  	  </gn-map>
     </template>
   </body>
 </html>
