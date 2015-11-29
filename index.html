@@ -1,41 +1,81 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!doctype html>
+<html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"></meta>
-<title>Green Navigation</title>
-<link rel="stylesheet" type="text/css" href="css/style.css"></link>
+  <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"></meta>
+  <title>Green Navigation</title>
+  <link rel="import" href="css/theme.html">
+  <link rel="stylesheet" type="text/css" href="css/style.css">
 
-<script type="text/javascript">
-	var GreenNav = GreenNav || {};
-	var android = android || {};
+  <script type="text/javascript" src="libs/webcomponentsjs/webcomponents.js"></script>
 
-	GreenNav.webservice = "https://greennav.isp.uni-luebeck.de";
+  <link rel="import" href="components/gn-ui-search.html">
+  <link rel="import" href="components/gn-ui-contact.html">
+  <link rel="import" href="components/gn-ui-information.html">
+  
+  <link rel="import" href="libs/iron-flex-layout/classes/iron-flex-layout.html">
+  <link rel="import" href="libs/gn-map/gn-map.html">
+  <link rel="import" href="libs/paper-styles/paper-styles.html">
+  <link rel="import" href="libs/paper-button/paper-button.html">
+  <link rel="import" href="libs/paper-menu-button/paper-menu-button.html">
+  <link rel="import" href="libs/paper-icon-button/paper-icon-button.html">
+  <link rel="import" href="libs/paper-dialog/paper-dialog.html">
+  <link rel="import" href="libs/paper-dialog-scrollable/paper-dialog-scrollable.html">
+  <link rel="import" href="libs/paper-drawer-panel/paper-drawer-panel.html">
+  <link rel="import" href="libs/paper-toolbar/paper-toolbar.html">
+  <link rel="import" href="libs/paper-menu/paper-menu.html">
+  <link rel="import" href="libs/paper-scroll-header-panel/paper-scroll-header-panel.html">
+  <link rel="import" href="libs/paper-header-panel/paper-header-panel.html">
+  <link rel="import" href="libs/google-map/google-map.html">
 
-	var x = 0;
-	var f = function() {
-		x += 0.1;
-		if (window.gpsreceiver && window.gpsreceiver.gpsupdate) {
-			window.gpsreceiver.gpsupdate(53.8 + 0.1 * Math.sin(x), 10.8 + 0.1 * Math.cos(x))
-		}
-		setTimeout(f, 2000)
-	}
-//	f();
-
-</script>
-
-<script type="text/javascript" src="libs/webcomponentsjs/webcomponents.js"></script>
-<script type="text/javascript" src="libs/jquery/dist/jquery.min.js"></script>
-
-<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
-<link rel="import" href="components/gn-main.html"></link>
-
-<script>
-	// console.log(window);
-	// console.log(android);
-</script>
 
 </head>
-<body>
-	<gn-main></gn-main>
+<body class="fullbleed layout vertical">
+  <template is="dom-bind">
+    <paper-drawer-panel>
+      <paper-header-panel drawer>
+        <paper-toolbar>
+          <h3>Menu</h3>
+        </paper-toolbar>
+        <div main>
+          <gn-ui-search></gn-ui-search>
+          <paper-button onclick="document.querySelector('#info-modal').toggle()">Info</paper-button>
+          <paper-button onclick="document.querySelector('#contact-modal').toggle()">Contact</paper-button>      
+        </div>
+      </paper-header-panel>
+        
+      <paper-header-panel main>
+        <paper-toolbar>
+          <paper-icon-button icon="menu" paper-drawer-toggle></paper-icon-button>
+          <span class="flex"></span>
+          <h3>GreenNavigation</h3>
+        </paper-toolbar>
+        <google-map class="content fit"></google-map>
+      </paper-header-panel>
+    </paper-drawer-panel>
+      
+    <!-- Contact dialog -->
+    <paper-dialog id="contact-modal" modal>
+      <div style="float:right;">
+        <paper-button dialog-confirm autofocus>Close</paper-button>
+      </div>
+      <h4>Green Navigation - Kontakt</h4>
+      <paper-dialog-scrollable>
+        <gn-ui-contact></gn-ui-contact>
+      </paper-dialog-scrollable>
+    </paper-dialog>
+    
+    
+    <!-- Info  dialog -->
+    <paper-dialog id="info-modal" modal>
+      <div style="float:right;">
+        <paper-button dialog-confirm autofocus>Close</paper-button>
+      </div>
+      <h4>Green Navigation - Information</h4>
+      <paper-dialog-scrollable>
+        <gn-ui-information></gn-ui-information>
+      </paper-dialog-scrollable>
+    </paper-dialog>
+    
+  </template>
 </body>
 </html>

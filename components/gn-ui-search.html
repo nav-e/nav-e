@@ -1,0 +1,81 @@
+<link rel="import" href="../libs/polymer/polymer.html">
+<link rel="import" href="../libs/paper-input/paper-input.html">
+<link rel="import" href="../libs/paper-card/paper-card.html">
+<link rel="import" href="../libs/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../libs/paper-menu/paper-menu.html">
+<link rel="import" href="../libs/paper-item/paper-item.html">
+<link rel="import" href="../libs/paper-button/paper-button.html">
+<link rel="import" href="../libs/gn-search/gn-search.html">
+<link rel="import" href="../libs/gn-api/gn-api.html">
+
+<dom-module id="gn-ui-search">
+	<template>
+	    <!-- Databinding for gn-ui-search
+	      @param input address (String) 
+	      @param output query (osm object)
+	    -->
+	    <gn-api
+	        vehicles="{{ vehicles }}"
+	        range="{{ range }}"
+	        route="{{ route }}"
+	        start-osm-id="{{ start.osm_id }}"
+	        target-osm-id="{{ destination.osm_id }}"
+	        battery="{{ battery }}"
+	        vehicle="{{ vehicle }}"></gn-api>
+
+	    <gn-search id="start" address="{{ start }}" input="{{ startQuery }}"></gn-search>
+	    <gn-search id="destination" address="{{ destination }}" input="{{ destinationQuery }}"></gn-search>
+
+		<!-- Input -->
+		<paper-card elevation="0">
+			<paper-tabs selected="{{selected}}">
+				<paper-tab>Routing</paper-tab>
+				<paper-tab>Range</paper-tab>
+			</paper-tabs>
+			<div>
+				<div>{{ startAddress.lat }}</div>
+				<!-- Start -->
+				<paper-input label="Start" value="{{ startQuery::input }}"></paper-input>
+
+				<!-- Destination -->
+				<iron-pages selected="[[selected]]">
+					<paper-input label="Destination" value="{{ destinationQuery::input }}"></paper-input>
+				</iron-pages>
+				
+				<!-- Vehicle -->
+				<paper-dropdown-menu label="vehicle" selected-item-label="{{ vehicle }}">
+					<paper-menu class="dropdown-content" selected="0">
+						<template is="dom-repeat" items="{{ vehicles }}">
+							<paper-item>{{ item }}</paper-item>
+						</template>
+					</paper-menu>
+				</paper-dropdown-menu>
+
+				<!-- Battery -->
+				<paper-input
+					id="battery" label="Battery state"
+					onchange="document.querySelector('#errortoast').show()"
+					value="{{ battery }}"></paper-input>
+
+				<!-- Buttons -->
+				<iron-pages class="button-panel" selected="[[selected]]">
+					<paper-button on-click="startrouting" raised class="color">Compute route</paper-button>
+					<paper-button on-click="startranging" raised>Compute range</paper-button>
+				</iron-pages>
+			</div>
+		</paper-card>
+	</template>
+	<script>	
+		Polymer({
+			is : 'gn-ui-search',
+			startrouting : function() {
+				document.querySelector('#start').getGeocodeAddress();
+				document.querySelector('#destination').getGeocodeAddress();
+				
+				//TODO: getGeocodeAddress is to slow for getRoute.. Callback, Waitloop, etc? 
+				
+				document.querySelector('gn-api').getRoute();
+			}
+		});
+	</script>
+</dom-module>
