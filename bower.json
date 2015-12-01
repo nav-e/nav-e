@@ -1,25 +1,25 @@
 {
-  "name": "GoogleFrontend",
-  "version": "1.0.0",
-  "homepage": "https://github.com/Greennav/greennav",
-  "license": "apache2",
-  "ignore": [
-    "**/.*",
-    "node_modules",
-    "bower_components",
-    "src/main/webapp/libs",
-    "test",
-    "tests"
-  ],
-  "dependencies": {
-    "polymer": "Polymer/polymer",
-    "paper-elements": "PolymerElements/paper-elements",
-    "iron-elements": "PolymerElements/iron-elements",
-    "gn-map": "Greennav/gn-map",
-    "gn-api": "Greennav/gn-api",
-    "gn-search": "Greennav/gn-search",
-    "osm-maps": "FabianBormann/osm-maps",
-    "address-decoder": "MaxLorenz/address-decoder",
-    "jquery": "~2.1.4"
-  }
+	"name": "GoogleFrontend",
+	"version": "1.0.0",
+	"homepage": "https://github.com/Greennav/greennav",
+	"license": "apache2",
+	"ignore": [
+		"**/.*",
+		"node_modules",
+		"bower_components",
+		"src/main/webapp/libs",
+		"test",
+		"tests"
+	],
+	"dependencies": {
+		"polymer": "Polymer/polymer",
+		"paper-elements": "PolymerElements/paper-elements",
+		"iron-elements": "PolymerElements/iron-elements",
+		"gn-map": "Greennav/gn-map",
+		"gn-api": "Greennav/gn-api",
+		"gn-search": "Greennav/gn-search",
+		"osm-map": "FabianBormann/osm-map",
+		"address-decoder": "MaxLorenz/address-decoder",
+		"jquery": "~2.1.4"
+	}
 }
