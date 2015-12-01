@@ -31,15 +31,17 @@
 </head>
 <body class="fullbleed layout vertical">
   <template is="dom-bind">
-    <paper-drawer-panel>
+    
+    <paper-drawer-panel id="mainMenu">
       <paper-header-panel drawer>
         <paper-toolbar>
           <h3>Menu</h3>
         </paper-toolbar>
         <div main>
-          <gn-ui-search></gn-ui-search>
-          <paper-button onclick="document.querySelector('#info-modal').toggle()">Info</paper-button>
-          <paper-button onclick="document.querySelector('#contact-modal').toggle()">Contact</paper-button>      
+          <gn-ui-search start-address="{{ address }}"></gn-ui-search>
+
+          <!--<paper-button onclick="document.querySelector('#info-modal').toggle()">Info</paper-button>-->
+          <!--<paper-button onclick="document.querySelector('#contact-modal').toggle()">Contact</paper-button>      -->
         </div>
       </paper-header-panel>
         
@@ -49,7 +51,9 @@
           <span class="flex"></span>
           <h3>GreenNavigation</h3>
         </paper-toolbar>
-        <osm-maps class="content fit" latitude="53.834089" longitude="10.703718" zoom="16"></osm-maps>
+        <osm-maps class="content fit" longitude="{{ address.lon }}" latitude="{{ address.lat }}" zoom="10">
+          <osm-layer source="osm" visible="true"></osm-layer>
+        </osm-maps>
       </paper-header-panel>
     </paper-drawer-panel>
       

@@ -1,49 +1,90 @@
 <link rel="import" href="../libs/polymer/polymer.html">
 <link rel="import" href="../libs/paper-input/paper-input.html">
 <link rel="import" href="../libs/paper-card/paper-card.html">
+<link rel="import" href="../libs/paper-tabs/paper-tabs.html">
 <link rel="import" href="../libs/paper-dropdown-menu/paper-dropdown-menu.html">
 <link rel="import" href="../libs/paper-menu/paper-menu.html">
 <link rel="import" href="../libs/paper-item/paper-item.html">
+<link rel="import" href="../libs/paper-slider/paper-slider.html">
 <link rel="import" href="../libs/paper-button/paper-button.html">
+<link rel="import" href="../libs/iron-flex-layout/classes/iron-flex-layout.html">
+<link rel="import" href="../libs/iron-pages/iron-pages.html">
+<link rel="import" href="../libs/iron-icons/maps-icons.html">
 <link rel="import" href="../libs/gn-search/gn-search.html">
 <link rel="import" href="../libs/gn-api/gn-api.html">
 
+<link rel="import" href="../libs/address-decoder/address-decoder.html">
+
 <dom-module id="gn-ui-search">
 	<template>
-	    <!-- Databinding for gn-ui-search
-	      @param input address (String) 
-	      @param output query (osm object)
-	    -->
-	    <gn-api
-	        vehicles="{{ vehicles }}"
-	        range="{{ range }}"
-	        route="{{ route }}"
-	        start-osm-id="{{ start.osm_id }}"
-	        target-osm-id="{{ destination.osm_id }}"
-	        battery="{{ battery }}"
-	        vehicle="{{ vehicle }}"></gn-api>
-
-	    <gn-search id="start" address="{{ start }}" input="{{ startQuery }}"></gn-search>
-	    <gn-search id="destination" address="{{ destination }}" input="{{ destinationQuery }}"></gn-search>
+		<style>
+			.ui {
+				padding: 10px;
+			}
+			
+			.block {
+				white-space: nowrap;
+			}
+			
+			.block * {
+				display: inline-block;
+			}
+		</style>
+		
+		<address-decoder 
+			id="start" 
+			input="{{ startQuery }}" 
+			address="{{ startAddress }}"></address-decoder>
+			
+		<address-decoder 
+			id="target" 
+			input="{{ targetQuery }}" 
+			address="{{ targetAddress }}"></address-decoder>
+		
+		<gn-api
+			vehicles="{{ vehicles }}"
+			range="{{ range }}"
+			route="{{ route }}"
+			start-osm-id="{{ startAddress.osm_id }}"
+			target-osm-id="{{ targetAddress.osm_id }}"
+			battery="{{ battery }}"
+			vehicle="{{ vehicle }}"></gn-api>
+					
 
 		<!-- Input -->
-		<paper-card elevation="0">
-			<paper-tabs selected="{{selected}}">
-				<paper-tab>Routing</paper-tab>
-				<paper-tab>Range</paper-tab>
-			</paper-tabs>
+		<div class="ui">
+			
 			<div>
-				<div>{{ startAddress.lat }}</div>
-				<!-- Start -->
-				<paper-input label="Start" value="{{ startQuery::input }}"></paper-input>
-
-				<!-- Destination -->
-				<iron-pages selected="[[selected]]">
-					<paper-input label="Destination" value="{{ destinationQuery::input }}"></paper-input>
-				</iron-pages>
+				<h3>
+					Route
+					<span class="flex"></span>
+					<paper-icon-button icon="settings"></paper-icon-button>
+				</h3>
 				
+				<!-- Addresses -->
+				<div class="block">
+					<paper-input label="Start" value="{{ startQuery }}"></paper-input>
+					<iron-icon icon="maps:navigation"></iron-icon>
+				</div>
+				
+				<div class="block">
+					<paper-input label="Destination" value="{{ destinationQuery }}"></paper-input>
+					<iron-icon icon="maps:navigation"></iron-icon>
+				</div>
+				
+				<div>
+					<div>Energy</div>
+					<paper-slider min="0" max="100" value="50" pin></paper-slider>
+					<div>Time</div>
+					<paper-slider min="0" max="100" value="50" pin></paper-slider>
+					<div>Distance</div>
+					<paper-slider min="0" max="100" value="50" pin></paper-slider>
+					<div>Cost</div>
+					<paper-slider min="0" max="100" value="50" pin></paper-slider>
+				</div>
+								
 				<!-- Vehicle -->
-				<paper-dropdown-menu label="vehicle" selected-item-label="{{ vehicle }}">
+				<paper-dropdown-menu label="Vehicle" selected-item-label="{{ vehicle }}">
 					<paper-menu class="dropdown-content" selected="0">
 						<template is="dom-repeat" items="{{ vehicles }}">
 							<paper-item>{{ item }}</paper-item>
@@ -54,27 +95,40 @@
 				<!-- Battery -->
 				<paper-input
 					id="battery" label="Battery state"
-					onchange="document.querySelector('#errortoast').show()"
+					auto-validate
+					pattern="100|[1-9][0-9]|[1-9]"
+					error-message="Please enter a number between 1 and 100!"
 					value="{{ battery }}"></paper-input>
-
-				<!-- Buttons -->
-				<iron-pages class="button-panel" selected="[[selected]]">
-					<paper-button on-click="startrouting" raised class="color">Compute route</paper-button>
-					<paper-button on-click="startranging" raised>Compute range</paper-button>
-				</iron-pages>
+				
+				<div class="block">
+					<paper-button on-click="startrouting" raised>
+						<iron-icon icon="maps:map"></iron-icon>
+						Show<br>route
+					</paper-button>
+					<paper-button on-click="startranging" raised>
+						<iron-icon icon="maps:navigation"></iron-icon>
+						Show<br>range
+					</paper-button>
+				</div>
+				
 			</div>
-		</paper-card>
+		</div>
 	</template>
 	<script>	
 		Polymer({
 			is : 'gn-ui-search',
+			
+			properties : {
+				startAddress : {
+					type: Object,
+					notify: true
+				}
+			},
+			
 			startrouting : function() {
 				document.querySelector('#start').getGeocodeAddress();
-				document.querySelector('#destination').getGeocodeAddress();
-				
-				//TODO: getGeocodeAddress is to slow for getRoute.. Callback, Waitloop, etc? 
-				
-				document.querySelector('gn-api').getRoute();
+				document.querySelector('#target').getGeocodeAddress();
+				// document.querySelector('gn-api').getRoute();
 			}
 		});
 	</script>
