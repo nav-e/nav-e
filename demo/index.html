@@ -5,25 +5,41 @@
     <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
     <title>gn-map Demo</title>
     <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
-    <link rel="import" href="../gn-map.html"></link>
-    <link rel="import" href="../gn-marker.html"></link>
-    <link rel="import" href="../gn-poly.html"></link>
-    <link rel="import" href="../gn-point.html"></link>
+    <link rel="import" href="../gn-map.html">
+    <link rel="import" href="../gn-marker.html">
+    <link rel="import" href="../gn-poly.html">
+    <link rel="import" href="../gn-point.html">
+    <link rel="import" href="../../paper-dropdown-menu/paper-dropdown-menu.html">
+    <link rel="import" href="../../paper-menu/paper-menu.html">
+    <link rel="import" href="../../paper-item/paper-item.html">
     <style type="text/css">
-      body, html {height : 100%;}
+      body, html {
+        width: 100%; 
+        height: 100%;
+        margin: 0;
+      }
     </style>
   </head>
   <body>
     <template is="dom-bind">
       <p>An example of <code>&lt;gn-map element&gt;</code>:</p>
-      <gn-map id="map" latitude="53.834089" longitude="10.703718" map-type="GoogleMap">
-  	  <!--  <gn-marker latitude="53" longitude="10"></gn-marker>
+      
+      <paper-dropdown-menu label="Map type" selected-item-label="{{ mapType }}">
+        <paper-menu class="dropdown-content" selected="0">
+          <paper-item>GoogleMap</paper-item>
+          <paper-item>OpenStreetMap</paper-item>
+        </paper-menu>
+      </paper-dropdown-menu>
+      
+      <gn-map class="content fit" 
+        latitude="53.834089" longitude="10.703718" zoom="17" map-type="{{ mapType }}">
+  	    <gn-marker latitude="53.834089" longitude="10.703718"></gn-marker>
   	    <gn-poly color="red" fill>
-          <gn-point latitude="53" longitude="10"></gn-point>
-          <gn-point latitude="54" longitude="10"></gn-point>
-          <gn-point latitude="54" longitude="11"></gn-point>
-          <gn-point latitude="53" longitude="11"></gn-point>
-        </gn-poly> -->
+          <gn-point latitude="53.834089" longitude="10.703718"></gn-point>
+          <gn-point latitude="54.834089" longitude="10.703718"></gn-point>
+          <gn-point latitude="54.834089" longitude="11.703718"></gn-point>
+          <gn-point latitude="53.834089" longitude="11.703718"></gn-point>
+        </gn-poly>
   	  </gn-map>
     });
     </script>

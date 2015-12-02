@@ -19,14 +19,14 @@ Features like markers, polygons or polylines can be attached to the map.
       }
     </style>
 
-    <template is="dom-if" if="{{ _typeIsOpenStreetMap(mapType) }}">
-      <osm-map longitude="{{ longitude }}" latitude="{{ latitude }}">
+    <template is="dom-if" if="{{ typeIsOpenStreetMap(mapType) }}">
+      <osm-map longitude="{{ longitude }}" latitude="{{ latitude }}" zoom="{{ zoom }}">
         <content></content>
       </osm-map>
     </template>
 
-    <template is="dom-if" if="{{ _typeIsGoogleMap(mapType) }}">
-      <google-map longitude="{{ longitude }}" latitude="{{ latitude }}">
+    <template is="dom-if" if="{{ typeIsGoogleMap(mapType) }}">
+      <google-map longitude="{{ longitude }}" latitude="{{ latitude }}" zoom="{{ zoom }}">
         <content></content>
       </google-map>
     </template>
@@ -58,6 +58,16 @@ Features like markers, polygons or polylines can be attached to the map.
       },
 
       /**
+       * A zoom level which will be applied to the map.
+       */
+      zoom: {
+        type: Number,
+        value: 11,
+        notify: true,
+        reflectToAttribute: true
+      },
+
+      /**
        * The map-type is bind by dom-if template to include different type of maps
        * Possible values are "GoogleMap" or "OpenStreetMap".
        */
@@ -75,11 +85,11 @@ Features like markers, polygons or polylines can be attached to the map.
       } 
     },
 
-    _typeIsOpenStreetMap: function(mapType) {
+    typeIsOpenStreetMap: function(mapType) {
         return mapType === 'OpenStreetMap';
     },
 
-    _typeIsGoogleMap: function(mapType) {      
+    typeIsGoogleMap: function(mapType) {      
         return mapType === 'GoogleMap';
     }
   });
