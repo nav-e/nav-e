@@ -19,12 +19,16 @@ Features like markers, polygons or polylines can be attached to the map.
       }
     </style>
 
-    <template is="dom-if" if="_typeIsOpenStreetMap(mapType)">
-      <osm-map><content></content></osm-map>
+    <template is="dom-if" if="{{ _typeIsOpenStreetMap(mapType) }}">
+      <osm-map longitude="{{ longitude }}" latitude="{{ latitude }}">
+        <content></content>
+      </osm-map>
     </template>
 
-    <template is="dom-if" if="_typeIsGoogleMap(mapType)">
-      <google-map><content></content></google-map>
+    <template is="dom-if" if="{{ _typeIsGoogleMap(mapType) }}">
+      <google-map longitude="{{ longitude }}" latitude="{{ latitude }}">
+        <content></content>
+      </google-map>
     </template>
 
   </template>
@@ -33,26 +37,51 @@ Features like markers, polygons or polylines can be attached to the map.
     is: 'gn-map',
 
     properties: {
+      /**
+       * A latitude to center the map on.
+       */
+      latitude: {
+        type: Number,
+        notify: true,
+        value: 53.834089,
+        reflectToAttribute: true
+      },
+
+      /**
+       * A longitude to center the map on.
+       */
+      longitude: {
+        type: Number,
+        notify: true,
+        value: 10.703718,
+        reflectToAttribute: true
+      },
+
+      /**
+       * The map-type is bind by dom-if template to include different type of maps
+       * Possible values are "GoogleMap" or "OpenStreetMap".
+       */
       mapType: {
         type: String,
-        value:"GooleMap",
+        value:"GoogleMap",
         notify: true
       },
 
-      map: Object,
-      center: {
-        type: Object,
-        observer: "setCenter"
-      },
+      /**
+       * Holds the map object and allows to modify values during runtime
+       */
+      map: {
+        type: Object
+      } 
     },
 
     _typeIsOpenStreetMap: function(mapType) {
         return mapType === 'OpenStreetMap';
     },
 
-    _typeIsGoogleMap: function(mapType) {
+    _typeIsGoogleMap: function(mapType) {      
         return mapType === 'GoogleMap';
-    },
+    }
   });
 </script>
 

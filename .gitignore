@@ -9,6 +9,8 @@ node_modules
 /component.json
 /bower_components
 
+.bowerrc
+
 # OS generated files #
 ######################
 .DS_Store

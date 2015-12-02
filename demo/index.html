@@ -16,15 +16,17 @@
   <body>
     <template is="dom-bind">
       <p>An example of <code>&lt;gn-map element&gt;</code>:</p>
-    	<gn-map map-type="GooleMap">
-  	    <gn-marker latitude="53" longitude="10"></gn-marker>
+      <gn-map id="map" latitude="53.834089" longitude="10.703718" map-type="GoogleMap">
+  	  <!--  <gn-marker latitude="53" longitude="10"></gn-marker>
   	    <gn-poly color="red" fill>
           <gn-point latitude="53" longitude="10"></gn-point>
           <gn-point latitude="54" longitude="10"></gn-point>
           <gn-point latitude="54" longitude="11"></gn-point>
           <gn-point latitude="53" longitude="11"></gn-point>
-        </gn-poly>
+        </gn-poly> -->
   	  </gn-map>
+    });
+    </script>
     </template>
   </body>
 </html>
