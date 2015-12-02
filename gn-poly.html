@@ -1,31 +1,27 @@
 <link rel="import" href="../polymer/polymer.html">
-<link rel="import" href="../google-map/google-map-marker.html">
-<link rel="import" href="../osm-map/osm-marker.html">
+<link rel="import" href="../google-map/google-map-poly.html">
+<link rel="import" href="../osm-map/osm-poly.html">
 
-<dom-module id="gn-marker">
+<dom-module id="gn-poly">
   <template>
-
     <template is="dom-if" if="_typeIsOpenStreetMap()">
-      <osm-marker></osm-marker>
+      <osm-poly></osm-poly>
     </template>
-
     <template is="dom-if" if="_typeIsGoogleMap()">
-      <google-marker></google-marker>
+      <google-map-poly></google-map-poly>
     </template>
-
   </template>
   <script>
     Polymer({
-      is: "gn-marker",
+      is: "gn-poly",
       
       _typeIsGoogleMap: function() {
         return document.querySelector('gn-map').typeIsGoogleMap();
       },
 
       _typeIsOpenStreetMap: function() {
-        return document.querySelector('gn-map').typeIsOpenStreetMap();
+        return document.querySelector('gn-map')._typeIsOpenStreetMap();
       },
     });
   </script>
 </dom-module>
-

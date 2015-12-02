@@ -17,7 +17,9 @@
     "/demo/"
   ],
   "dependencies": {
-    "polymer": "Polymer/polymer#^1.0.0"
+    "polymer": "Polymer/polymer#^1.0.0",
+    "osm-map": "FabianBormann/osm-map",
+    "google-map": "GoogleWebComponents/google-map#~1.1.7"
   },
   "devDependencies": {
     "iron-component-page": "PolymerElements/iron-component-page#^1.0.0"

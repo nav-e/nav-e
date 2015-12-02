@@ -7,8 +7,8 @@
     <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
     <link rel="import" href="../gn-map.html"></link>
     <link rel="import" href="../gn-marker.html"></link>
-    <link rel="import" href="../gn-polyline.html"></link>
-    <link rel="import" href="../gn-polygon.html"></link>
+    <link rel="import" href="../gn-poly.html"></link>
+    <link rel="import" href="../gn-point.html"></link>
     <style type="text/css">
       body, html {height : 100%;}
     </style>
@@ -16,13 +16,14 @@
   <body>
     <template is="dom-bind">
       <p>An example of <code>&lt;gn-map element&gt;</code>:</p>
-      <input value="{{ type::input }}">
-    	<gn-map id="map" type="{{ type }}" center="{{ location }}" rotation="{{ rotation }}">
-  	    <gn-marker lat="{{ xcoord.lat }}" lon="{{ xcoord.lon }}"></gn-marker>
-  	    <gn-marker visible="{{ selectedRouting(selected) }}" lat="{{ ycoord.lat }}" lon="{{ ycoord.lon }}"></gn-marker>
-  	    <gn-marker visible="{{ gpsactive }}" lat="{{ location.lat }}" lon="{{ location.lon }}"></gn-marker>
-  	    <gn-polyline visible="{{ selectedRouting(selected) }}" values="{{ energyroute }}" color="green"></gn-polyline>
-  	    <gn-polygon visible="{{ !selectedRouting(selected) }}" values="{{ range }}" color="red"></gn-polygon>
+    	<gn-map map-type="GooleMap">
+  	    <gn-marker latitude="53" longitude="10"></gn-marker>
+  	    <gn-poly color="red" fill>
+          <gn-point latitude="53" longitude="10"></gn-point>
+          <gn-point latitude="54" longitude="10"></gn-point>
+          <gn-point latitude="54" longitude="11"></gn-point>
+          <gn-point latitude="53" longitude="11"></gn-point>
+        </gn-poly>
   	  </gn-map>
     </template>
   </body>
