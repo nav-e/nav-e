@@ -40,11 +40,11 @@ children like polygons, points and markers.
     <template is="dom-if" if="{{ _typeIsGoogleMap(mapType) }}">
       <google-map longitude="{{ longitude }}" latitude="{{ latitude }}" zoom="{{ zoom }}">
         <template is="dom-repeat" items="{{ polygons }}">
-          <goole-map-poly stroke-color$="{{ item.strokeColor }}" width$="{{ item.width}}" fill$="{{ item.fill }}" fill-color$="{{ item.fillColor }}">
+          <google-map-poly stroke-color$="{{ item.strokeColor }}" width$="{{ item.width}}" fill$="{{ item.fill }}" fill-color$="{{ item.fillColor }}">
             <template is="dom-repeat" items="{{ item.points }}">
-              <goole-map-point longitude$="{{ item.longitude }}" latitude$="{{ item.latitude }}"></goole-map-point>
+              <google-map-point longitude$="{{ item.longitude }}" latitude$="{{ item.latitude }}"></google-map-point>
             </template>
-          </goole-map-poly>
+          </google-map-poly>
         </template>  
       </google-map>
     </template>
