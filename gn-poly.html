@@ -1,27 +1,43 @@
 <link rel="import" href="../polymer/polymer.html">
-<link rel="import" href="../google-map/google-map-poly.html">
-<link rel="import" href="../osm-map/osm-poly.html">
 
 <dom-module id="gn-poly">
-  <template>
-    <template is="dom-if" if="_typeIsOpenStreetMap()">
-      <osm-poly></osm-poly>
-    </template>
-    <template is="dom-if" if="_typeIsGoogleMap()">
-      <google-map-poly></google-map-poly>
-    </template>
-  </template>
   <script>
     Polymer({
       is: "gn-poly",
-      
-      _typeIsGoogleMap: function() {
-        return document.querySelector('gn-map').typeIsGoogleMap();
-      },
 
-      _typeIsOpenStreetMap: function() {
-        return document.querySelector('gn-map')._typeIsOpenStreetMap();
+      properties: {
+        strokeColor: {
+          type: String,
+          value: '#0091ea',
+          notify: true
+        },
+
+        width: {
+          type: Number,
+          value: 4,
+          notify: true
+        },
+
+        fill: {
+          type: Boolean,
+          value: false,
+          notify: true
+        },
+
+        fillColor: {
+          type: String,
+          value: 'rgba(0,150,10,0.4)',
+          notify: true
+        },
+
+        points: {
+          type: Array,
+          value: null
+        }
       },
+      ready: function() {
+        this.points = this.queryAllEffectiveChildren('gn-point');
+      }
     });
   </script>
 </dom-module>

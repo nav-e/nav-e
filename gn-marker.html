@@ -5,11 +5,11 @@
 <dom-module id="gn-marker">
   <template>
 
-    <template is="dom-if" if="_typeIsOpenStreetMap()">
+    <template is="dom-if" if="{{ typeIsOpenStreetMap() }}">
       <osm-marker></osm-marker>
     </template>
 
-    <template is="dom-if" if="_typeIsGoogleMap()">
+    <template is="dom-if" if="{{ typeIsGoogleMap() }}">
       <google-marker></google-marker>
     </template>
 
@@ -18,13 +18,13 @@
     Polymer({
       is: "gn-marker",
       
-      _typeIsGoogleMap: function() {
-        return document.querySelector('gn-map').typeIsGoogleMap();
+      typeIsGoogleMap: function() {
+        return Polymer.dom(this).parentNode.typeIsGoogleMap();
       },
 
-      _typeIsOpenStreetMap: function() {
-        return document.querySelector('gn-map').typeIsOpenStreetMap();
-      },
+      typeIsOpenStreetMap: function() {
+        return Polymer.dom(this).parentNode.typeIsOpenStreetMap();
+      }
     });
   </script>
 </dom-module>

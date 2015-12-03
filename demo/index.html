@@ -12,6 +12,9 @@
     <link rel="import" href="../../paper-dropdown-menu/paper-dropdown-menu.html">
     <link rel="import" href="../../paper-menu/paper-menu.html">
     <link rel="import" href="../../paper-item/paper-item.html">
+    <link rel="import" href="../../google-map/google-map.html">
+    <link rel="import" href="../../google-map/google-map-poly.html">
+    <link rel="import" href="../../google-map/google-map-point.html">
     <style type="text/css">
       body, html {
         width: 100%; 
@@ -25,22 +28,23 @@
       <p>An example of <code>&lt;gn-map element&gt;</code>:</p>
       
       <paper-dropdown-menu label="Map type" selected-item-label="{{ mapType }}">
-        <paper-menu class="dropdown-content" selected="0">
-          <paper-item>GoogleMap</paper-item>
+        <paper-menu class="dropdown-content" selected="1">
           <paper-item>OpenStreetMap</paper-item>
+          <paper-item>GoogleMap</paper-item>
         </paper-menu>
       </paper-dropdown-menu>
       
       <gn-map class="content fit" 
         latitude="53.834089" longitude="10.703718" zoom="17" map-type="{{ mapType }}">
-  	    <gn-marker latitude="53.834089" longitude="10.703718"></gn-marker>
-  	    <gn-poly color="red" fill>
-          <gn-point latitude="53.834089" longitude="10.703718"></gn-point>
-          <gn-point latitude="54.834089" longitude="10.703718"></gn-point>
-          <gn-point latitude="54.834089" longitude="11.703718"></gn-point>
-          <gn-point latitude="53.834089" longitude="11.703718"></gn-point>
+ 	  <!--  <gn-marker latitude="53.834089" longitude="10.703718"></gn-marker> -->
+         <gn-poly fill fill-color="rgba(0,10,150,0.4)">
+          <gn-point latitude="53.799089" longitude="10.703718"></gn-point>
+          <gn-point latitude="53.794089" longitude="10.708718"></gn-point>
+          <gn-point latitude="53.789089" longitude="10.703718"></gn-point>
+          <gn-point latitude="53.794089" longitude="10.698718"></gn-point>
         </gn-poly>
   	  </gn-map>
+
     });
     </script>
     </template>

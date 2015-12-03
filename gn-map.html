@@ -1,10 +1,16 @@
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="../google-map/google-map.html">
+<link rel="import" href="../google-map/google-map-poly.html">
+<link rel="import" href="../google-map/google-map-point.html">
 <link rel="import" href="../osm-map/osm-map.html">
+<link rel="import" href="../osm-map/osm-poly.html">
+<link rel="import" href="../osm-map/osm-point.html">
 <!--
     
-Maps are canvases on which the geographical maps get displayed via any given source.
-Features like markers, polygons or polylines can be attached to the map.
+The `gn-map` element provides a wrapper for different map types.
+If attribute map-type change, the changes will apply to all child elements.
+At this time `gn-map` supports `google-map` and `osm-map` and all
+children like polygons, points and markers.
 
 @demo
 -->
@@ -19,15 +25,27 @@ Features like markers, polygons or polylines can be attached to the map.
       }
     </style>
 
-    <template is="dom-if" if="{{ typeIsOpenStreetMap(mapType) }}">
+    <template is="dom-if" if="{{ _typeIsOpenStreetMap(mapType) }}">
       <osm-map longitude="{{ longitude }}" latitude="{{ latitude }}" zoom="{{ zoom }}">
-        <content></content>
+        <template is="dom-repeat" items="{{ polygons }}">
+          <osm-poly stroke-color$="{{ item.strokeColor }}" width$="{{ item.width}}" fill$="{{ item.fill }}" fill-color$="{{ item.fillColor }}">
+            <template is="dom-repeat" items="{{ item.points }}">
+              <osm-point longitude$="{{ item.longitude }}" latitude$="{{ item.latitude }}"></osm-point>
+            </template>
+          </osm-poly>
+        </template>
       </osm-map>
     </template>
 
-    <template is="dom-if" if="{{ typeIsGoogleMap(mapType) }}">
+    <template is="dom-if" if="{{ _typeIsGoogleMap(mapType) }}">
       <google-map longitude="{{ longitude }}" latitude="{{ latitude }}" zoom="{{ zoom }}">
-        <content></content>
+        <template is="dom-repeat" items="{{ polygons }}">
+          <goole-map-poly stroke-color$="{{ item.strokeColor }}" width$="{{ item.width}}" fill$="{{ item.fill }}" fill-color$="{{ item.fillColor }}">
+            <template is="dom-repeat" items="{{ item.points }}">
+              <goole-map-point longitude$="{{ item.longitude }}" latitude$="{{ item.latitude }}"></goole-map-point>
+            </template>
+          </goole-map-poly>
+        </template>  
       </google-map>
     </template>
 
@@ -82,14 +100,23 @@ Features like markers, polygons or polylines can be attached to the map.
        */
       map: {
         type: Object
-      } 
+      },
+
+      polygons: {
+          type: Array,
+          value: null
+      }
     },
 
-    typeIsOpenStreetMap: function(mapType) {
+    ready: function() {
+      this.polygons = this.queryAllEffectiveChildren('gn-poly');
+    },
+
+    _typeIsOpenStreetMap: function(mapType) {
         return mapType === 'OpenStreetMap';
     },
 
-    typeIsGoogleMap: function(mapType) {      
+    _typeIsGoogleMap: function(mapType) {      
         return mapType === 'GoogleMap';
     }
   });
