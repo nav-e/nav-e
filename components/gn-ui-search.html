@@ -155,12 +155,12 @@
 				
 				<div class="block">
 					<paper-button raised
-						on-click="document.querySelector('gn-api').getRoute()">
+						onclick="document.querySelector('gn-api').getRoute()">
 						<iron-icon icon="maps:map"></iron-icon>
 						Show<br>route
 					</paper-button>
 					<paper-button raised
-						on-click="document.querySelector('gn-api').getRange()">
+						onclick="document.querySelector('gn-api').getRange()">
 						<iron-icon icon="maps:navigation"></iron-icon>
 						Show<br>range
 					</paper-button>
@@ -188,6 +188,16 @@
 				},
 				
 				currentAddress: {
+					type: Object,
+					notify: true
+				},
+
+				route: {
+					type: Object,
+					notify: true
+				},
+
+				range: {
 					type: Object,
 					notify: true
 				}
