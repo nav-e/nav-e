@@ -68,11 +68,11 @@
 					zoom="17"
 					map-type="OpenStreetMap">
 
-				   <gn-map-poly>
+				   <gn-poly>
 			          <template is="dom-repeat" items="{{route.route}}">
-			            <google-map-point longitude="{{item.longitude}}" latitude="{{item.latitude}}"></google-map-point>
+			            <gn-point longitude="{{item.longitude}}" latitude="{{item.latitude}}"></gn-point>
 			          </template>
-			        </gn-map-poly>
+			        </gn-poly>
 				</gn-map>
 					
 			</paper-header-panel>
