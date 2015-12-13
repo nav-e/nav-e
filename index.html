@@ -12,9 +12,9 @@
 	<link rel="import" href="components/gn-ui-information.html">
 	<link rel="import" href="components/gn-ui-search.html">
 	
-	<link rel="import" href="libs/osm-map/osm-map.html">
 	<link rel="import" href="libs/gn-map/gn-map.html">
-	
+	<link rel="import" href="libs/gn-map/gn-map-poly.html">
+	<link rel="import" href="libs/gn-map/gn-map-point.html">
 	<link rel="import" href="libs/iron-flex-layout/classes/iron-flex-layout.html">
 	<link rel="import" href="libs/paper-button/paper-button.html">
 	<link rel="import" href="libs/paper-dialog/paper-dialog.html">
@@ -44,6 +44,8 @@
 					<gn-ui-search
 						start-address="{{ startAddress }}"
 						target-address="{{ targetAddress }}"
+						route="{{ route }}"
+						range="{{ range }}"
 						current-address="{{ currentAddress }}"></gn-ui-search>
 
 					<!--<paper-button onclick="document.querySelector('#info-modal').toggle()">Info</paper-button>-->
@@ -60,8 +62,18 @@
 					<h3>GreenNavigation</h3>
 				</paper-toolbar>
 				
-				<osm-map class="content fit" 
-					longitude="{{ currentAddress.lon }}" latitude="{{ currentAddress.lat }}" zoom="17"></osm-map>
+				<gn-map class="content fit" 
+					longitude="{{ currentAddress.lon }}" 
+					latitude="{{ currentAddress.lat }}" 
+					zoom="17"
+					map-type="OpenStreetMap">
+
+				   <gn-poly>
+			          <template is="dom-repeat" items="{{route.route}}">
+			            <gn-point longitude="{{item.longitude}}" latitude="{{item.latitude}}"></gn-point>
+			          </template>
+			        </gn-poly>
+				</gn-map>
 					
 			</paper-header-panel>
 		</paper-drawer-panel>

@@ -18,7 +18,6 @@
 		"gn-map": "Greennav/gn-map",
 		"gn-api": "Greennav/gn-api",
 		"gn-search": "Greennav/gn-search",
-		"osm-map": "FabianBormann/osm-map",
 		"address-decoder": "MaxLorenz/address-decoder",
 		"jquery": "~2.1.4"
 	}
