@@ -24,7 +24,7 @@
     </style>
   </head>
   <body>
-    <template is="dom-bind">
+    <template is="dom-bind" id="demo">
       <p>An example of <code>&lt;gn-map element&gt;</code>:</p>
       
       <!-- <paper-dropdown-menu label="Map type" selected-item-label="{{ mapType }}">
@@ -33,19 +33,35 @@
           <paper-item>GoogleMap</paper-item>
         </paper-menu>
       </paper-dropdown-menu> -->
-      
+      <button on-tap="update">UPDATE</button>
       <gn-map class="content fit" 
         latitude="53.834089" longitude="10.703718" zoom="17" map-type="GoogleMap">
  	  <!--  <gn-marker latitude="53.834089" longitude="10.703718"></gn-marker> -->
-         <gn-poly fill fill-color="rgba(0,10,150,0.4)">
-          <gn-point latitude="53.799089" longitude="10.703718"></gn-point>
-          <gn-point latitude="53.794089" longitude="10.708718"></gn-point>
-          <gn-point latitude="53.789089" longitude="10.703718"></gn-point>
-          <gn-point latitude="53.794089" longitude="10.698718"></gn-point>
+        <gn-poly fill fill-color="rgba(0,10,150,0.4)">
+          <gn-point latitude="53.699089" longitude="10.603718"></gn-point>
+          <gn-point latitude="53.694089" longitude="10.608718"></gn-point>
+          <gn-point latitude="53.689089" longitude="10.603718"></gn-point>
+          <gn-point latitude="53.694089" longitude="10.598718"></gn-point>
+        </gn-poly>
+
+        <gn-poly fill fill-color="rgba(0,10,110,0.4)">
+          <template is="dom-repeat" items="{{ points }}">
+            <gn-point latitude$="{{item.latitude}}" longitude$="{{item.longitude}}"></gn-point>
+          </template>
         </gn-poly>
   	  </gn-map>
+    <script>
+      var demo = document.querySelector('#demo');
+      demo.points = [
+        { latitude : "53.799089", longitude : "10.703718" },
+        { latitude : "53.794089", longitude : "10.708718" },
+        { latitude : "53.789089", longitude : "10.703718" },
+        { latitude : "53.794089", longitude : "10.698718" }
+      ];
 
-    });
+      demo.update = function () {
+        document.querySelector('gn-map').update();
+      }
     </script>
     </template>
   </body>

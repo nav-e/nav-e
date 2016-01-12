@@ -25,7 +25,7 @@ children like polygons, points and markers.
       }
     </style>
 
-    <template is="dom-if" if="{{ _typeIsOpenStreetMap(mapType) }}">
+    <template id="osmMap" is="dom-if" if="{{ _typeIsOpenStreetMap(mapType) }}">
       <osm-map longitude="{{ longitude }}" latitude="{{ latitude }}" zoom="{{ zoom }}">
         <template is="dom-repeat" items="{{ polygons }}">
           <osm-poly stroke-color$="{{ item.strokeColor }}" width$="{{ item.width}}" fill$="{{ item.fill }}" fill-color$="{{ item.fillColor }}">
@@ -37,7 +37,7 @@ children like polygons, points and markers.
       </osm-map>
     </template>
 
-    <template is="dom-if" if="{{ _typeIsGoogleMap(mapType) }}">
+    <template id="googleMap" is="dom-if" if="{{ _typeIsGoogleMap(mapType) }}">
       <google-map longitude="{{ longitude }}" latitude="{{ latitude }}" zoom="{{ zoom }}">
         <template is="dom-repeat" items="{{ polygons }}">
           <google-map-poly stroke-color$="{{ item.strokeColor }}" width$="{{ item.width}}" fill$="{{ item.fill }}" fill-color$="{{ item.fillColor }}">
@@ -49,6 +49,7 @@ children like polygons, points and markers.
       </google-map>
     </template>
 
+    <content></content>
   </template>
 <script>
   Polymer({
@@ -104,12 +105,18 @@ children like polygons, points and markers.
 
       polygons: {
           type: Array,
-          value: null
+          value: function () {
+            return [];
+          },
+          notify: true
       }
     },
-
-    ready: function() {
-      this.polygons = this.queryAllEffectiveChildren('gn-poly');
+    
+    attached: function() {
+      var self = this;
+      this.queryAllEffectiveChildren('gn-poly').forEach(function(polygon) {
+        self.push('polygons', polygon.asObject());
+      });
     },
 
     _typeIsOpenStreetMap: function(mapType) {

@@ -1,6 +1,9 @@
 <link rel="import" href="../polymer/polymer.html">
 
 <dom-module id="gn-poly">
+  <template>
+    <content></content>
+  </template>
   <script>
     Polymer({
       is: "gn-poly",
@@ -32,12 +35,34 @@
 
         points: {
           type: Array,
-          value: null
+          notify: true,
+          value: function() {
+            return [];
+          }
         }
       },
-      ready: function() {
-        this.points = this.queryAllEffectiveChildren('gn-point');
+
+      asObject: function() {
+        console.log(this.points)
+        return {
+          strokeColor: this.strokeColor,
+          width: this.width,
+          fill: this.fill,
+          fillColor: this.fillColor,
+          points : this.points
+        }
+      },
+
+      attached: function () {
+        var self = this;
+        this._observer = Polymer.dom(this).observeNodes( function(info) {
+          self.queryAllEffectiveChildren('gn-point').forEach(function(point) {
+            self.push('points', point.asObject());
+          });
+          self.fire('update-gn-points');
+        });
       }
+
     });
   </script>
 </dom-module>
