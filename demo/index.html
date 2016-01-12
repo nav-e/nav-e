@@ -33,8 +33,8 @@
           <paper-item>GoogleMap</paper-item>
         </paper-menu>
       </paper-dropdown-menu> -->
-      <button on-tap="update">UPDATE</button>
-      <gn-map class="content fit" 
+      <button on-tap="add">Add Polygon</button>
+      <gn-map id="map" class="content fit" 
         latitude="53.834089" longitude="10.703718" zoom="17" map-type="GoogleMap">
  	  <!--  <gn-marker latitude="53.834089" longitude="10.703718"></gn-marker> -->
         <gn-poly fill fill-color="rgba(0,10,150,0.4)">
@@ -52,15 +52,14 @@
   	  </gn-map>
     <script>
       var demo = document.querySelector('#demo');
-      demo.points = [
-        { latitude : "53.799089", longitude : "10.703718" },
-        { latitude : "53.794089", longitude : "10.708718" },
-        { latitude : "53.789089", longitude : "10.703718" },
-        { latitude : "53.794089", longitude : "10.698718" }
-      ];
-
-      demo.update = function () {
-        document.querySelector('gn-map').update();
+      
+      demo.add = function () {
+        demo.points = [
+          { latitude : "53.799089", longitude : "10.703718" },
+          { latitude : "53.794089", longitude : "10.708718" },
+          { latitude : "53.789089", longitude : "10.703718" },
+          { latitude : "53.794089", longitude : "10.698718" }
+        ];
       }
     </script>
     </template>

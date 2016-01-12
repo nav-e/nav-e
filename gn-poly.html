@@ -43,7 +43,6 @@
       },
 
       asObject: function() {
-        console.log(this.points)
         return {
           strokeColor: this.strokeColor,
           width: this.width,
@@ -59,7 +58,7 @@
           self.queryAllEffectiveChildren('gn-point').forEach(function(point) {
             self.push('points', point.asObject());
           });
-          self.fire('update-gn-points');
+          self.fire('update-gn-map');
         });
       }
 
