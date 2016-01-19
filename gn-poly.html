@@ -1,0 +1,67 @@
+<link rel="import" href="../polymer/polymer.html">
+
+<dom-module id="gn-poly">
+  <template>
+    <content></content>
+  </template>
+  <script>
+    Polymer({
+      is: "gn-poly",
+
+      properties: {
+        strokeColor: {
+          type: String,
+          value: '#0091ea',
+          notify: true
+        },
+
+        width: {
+          type: Number,
+          value: 4,
+          notify: true
+        },
+
+        fill: {
+          type: Boolean,
+          value: false,
+          notify: true
+        },
+
+        fillColor: {
+          type: String,
+          value: 'rgba(0,150,10,0.4)',
+          notify: true
+        },
+
+        points: {
+          type: Array,
+          notify: true,
+          value: function() {
+            return [];
+          }
+        }
+      },
+
+      asObject: function() {
+        return {
+          strokeColor: this.strokeColor,
+          width: this.width,
+          fill: this.fill,
+          fillColor: this.fillColor,
+          points : this.points
+        }
+      },
+
+      attached: function () {
+        var self = this;
+        this._observer = Polymer.dom(this).observeNodes( function(info) {
+          self.queryAllEffectiveChildren('gn-point').forEach(function(point) {
+            self.push('points', point.asObject());
+          });
+          self.fire('update-gn-map');
+        });
+      }
+
+    });
+  </script>
+</dom-module>

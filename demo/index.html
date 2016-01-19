@@ -5,25 +5,63 @@
     <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
     <title>gn-map Demo</title>
     <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
-    <link rel="import" href="../gn-map.html"></link>
-    <link rel="import" href="../gn-marker.html"></link>
-    <link rel="import" href="../gn-polyline.html"></link>
-    <link rel="import" href="../gn-polygon.html"></link>
+    <link rel="import" href="../gn-map.html">
+    <link rel="import" href="../gn-marker.html">
+    <link rel="import" href="../gn-poly.html">
+    <link rel="import" href="../gn-point.html">
+    <link rel="import" href="../../paper-dropdown-menu/paper-dropdown-menu.html">
+    <link rel="import" href="../../paper-menu/paper-menu.html">
+    <link rel="import" href="../../paper-item/paper-item.html">
+    <link rel="import" href="../../google-map/google-map.html">
+    <link rel="import" href="../../google-map/google-map-poly.html">
+    <link rel="import" href="../../google-map/google-map-point.html">
     <style type="text/css">
-      body, html {height : 100%;}
+      body, html {
+        width: 100%; 
+        height: 100%;
+        margin: 0;
+      }
     </style>
   </head>
   <body>
-    <template is="dom-bind">
+    <template is="dom-bind" id="demo">
       <p>An example of <code>&lt;gn-map element&gt;</code>:</p>
-      <input value="{{ type::input }}">
-    	<gn-map id="map" type="{{ type }}" center="{{ location }}" rotation="{{ rotation }}">
-  	    <gn-marker lat="{{ xcoord.lat }}" lon="{{ xcoord.lon }}"></gn-marker>
-  	    <gn-marker visible="{{ selectedRouting(selected) }}" lat="{{ ycoord.lat }}" lon="{{ ycoord.lon }}"></gn-marker>
-  	    <gn-marker visible="{{ gpsactive }}" lat="{{ location.lat }}" lon="{{ location.lon }}"></gn-marker>
-  	    <gn-polyline visible="{{ selectedRouting(selected) }}" values="{{ energyroute }}" color="green"></gn-polyline>
-  	    <gn-polygon visible="{{ !selectedRouting(selected) }}" values="{{ range }}" color="red"></gn-polygon>
+      
+      <!-- <paper-dropdown-menu label="Map type" selected-item-label="{{ mapType }}">
+        <paper-menu class="dropdown-content" selected="1">
+          <paper-item>OpenStreetMap</paper-item>
+          <paper-item>GoogleMap</paper-item>
+        </paper-menu>
+      </paper-dropdown-menu> -->
+      <button on-tap="add">Add Polygon</button>
+      <gn-map id="map" class="content fit" 
+        latitude="53.834089" longitude="10.703718" zoom="17" map-type="GoogleMap">
+ 	  <!--  <gn-marker latitude="53.834089" longitude="10.703718"></gn-marker> -->
+        <gn-poly fill fill-color="rgba(0,10,150,0.4)">
+          <gn-point latitude="53.699089" longitude="10.603718"></gn-point>
+          <gn-point latitude="53.694089" longitude="10.608718"></gn-point>
+          <gn-point latitude="53.689089" longitude="10.603718"></gn-point>
+          <gn-point latitude="53.694089" longitude="10.598718"></gn-point>
+        </gn-poly>
+
+        <gn-poly fill fill-color="rgba(0,10,110,0.4)">
+          <template is="dom-repeat" items="{{ points }}">
+            <gn-point latitude$="{{item.latitude}}" longitude$="{{item.longitude}}"></gn-point>
+          </template>
+        </gn-poly>
   	  </gn-map>
+    <script>
+      var demo = document.querySelector('#demo');
+      
+      demo.add = function () {
+        demo.points = [
+          { latitude : "53.799089", longitude : "10.703718" },
+          { latitude : "53.794089", longitude : "10.708718" },
+          { latitude : "53.789089", longitude : "10.703718" },
+          { latitude : "53.794089", longitude : "10.698718" }
+        ];
+      }
+    </script>
     </template>
   </body>
 </html>
