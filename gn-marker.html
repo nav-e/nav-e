@@ -4,26 +4,37 @@
 
 <dom-module id="gn-marker">
   <template>
-
-    <template is="dom-if" if="{{ typeIsOpenStreetMap() }}">
-      <osm-marker></osm-marker>
-    </template>
-
-    <template is="dom-if" if="{{ typeIsGoogleMap() }}">
-      <google-marker></google-marker>
-    </template>
-
+  <content></content>
   </template>
   <script>
     Polymer({
       is: "gn-marker",
       
-      typeIsGoogleMap: function() {
-        return Polymer.dom(this).parentNode.typeIsGoogleMap();
+      properties: {
+        /**
+         * A latitude to center the map on.
+         */
+        latitude: {
+          type: Number,
+          notify: true,
+          value: 53.834089,
+        },
+
+        /**
+         * A longitude to center the map on.
+         */
+        longitude: {
+          type: Number,
+          notify: true,
+          value: 10.703718,
+        }
       },
 
-      typeIsOpenStreetMap: function() {
-        return Polymer.dom(this).parentNode.typeIsOpenStreetMap();
+      asObject: function() {
+        return {
+          longitude: this.longitude,
+          latitude: this.latitude
+        }
       }
     });
   </script>
