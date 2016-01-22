@@ -2,9 +2,11 @@
 <link rel="import" href="../google-map/google-map.html">
 <link rel="import" href="../google-map/google-map-poly.html">
 <link rel="import" href="../google-map/google-map-point.html">
+<link rel="import" href="../google-map/google-map-marker.html">
 <link rel="import" href="../osm-map/osm-map.html">
 <link rel="import" href="../osm-map/osm-poly.html">
 <link rel="import" href="../osm-map/osm-point.html">
+<link rel="import" href="../osm-map/osm-marker.html">
 <!--
     
 The `gn-map` element provides a wrapper for different map types.
@@ -25,26 +27,32 @@ children like polygons, points and markers.
       }
     </style>
 
-    <template id="osmMap" is="dom-if" if="{{ _typeIsOpenStreetMap(mapType) }}">
-      <osm-map longitude="{{ longitude }}" latitude="{{ latitude }}" zoom="{{ zoom }}">
-        <template is="dom-repeat" items="{{ polygons }}">
-          <osm-poly stroke-color$="{{ item.strokeColor }}" width$="{{ item.width}}" fill$="{{ item.fill }}" fill-color$="{{ item.fillColor }}">
-            <template is="dom-repeat" items="{{ item.points }}">
-              <osm-point longitude$="{{ item.longitude }}" latitude$="{{ item.latitude }}"></osm-point>
+    <template id="osmMap" is="dom-if" if="{{_typeIsOpenStreetMap(mapType)}}">
+      <osm-map longitude="{{longitude}}" latitude="{{latitude}}" zoom="{{zoom}}">
+        <template is="dom-repeat" items="{{polygons}}">
+          <osm-poly stroke-color$="{{item.strokeColor}}" width$="{{item.width}}" fill$="{{item.fill}}" fill-color$="{{item.fillColor}}">
+            <template is="dom-repeat" items="{{item.points}}">
+              <osm-point longitude$="{{item.longitude}}" latitude$="{{item.latitude}}"></osm-point>
             </template>
           </osm-poly>
+        </template>
+        <template is="dom-repeat" items="{{markers}}">
+          <osm-marker longitude$="{{item.longitude}}" latitude$="{{item.latitude}}"></osm-marker>
         </template>
       </osm-map>
     </template>
 
-    <template id="googleMap" is="dom-if" if="{{ _typeIsGoogleMap(mapType) }}">
-      <google-map longitude="{{ longitude }}" latitude="{{ latitude }}" zoom="{{ zoom }}">
-        <template is="dom-repeat" items="{{ polygons }}">
-          <google-map-poly stroke-color$="{{ item.strokeColor }}" width$="{{ item.width}}" fill$="{{ item.fill }}" fill-color$="{{ item.fillColor }}">
-            <template is="dom-repeat" items="{{ item.points }}">
-              <google-map-point longitude$="{{ item.longitude }}" latitude$="{{ item.latitude }}"></google-map-point>
+    <template id="googleMap" is="dom-if" if="{{_typeIsGoogleMap(mapType)}}">
+      <google-map longitude="{{longitude}}" latitude="{{latitude}}" zoom="{{zoom}}">
+        <template is="dom-repeat" items="{{polygons}}">
+          <google-map-poly stroke-color$="{{item.strokeColor}}" width$="{{item.width}}" fill$="{{item.fill}}" fill-color$="{{item.fillColor}}">
+            <template is="dom-repeat" items="{{item.points}}">
+              <google-map-point longitude$="{{item.longitude}}" latitude$="{{item.latitude}}"></google-map-point>
             </template>
           </google-map-poly>
+        </template>
+        <template is="dom-repeat" items="{{markers}}">
+          <google-map-marker longitude$="{{item.longitude}}" latitude$="{{item.latitude}}"></google-map-marker>
         </template>  
       </google-map>
     </template>
@@ -111,7 +119,23 @@ children like polygons, points and markers.
           }
       },
 
+      markers: {
+          type: Array,
+          notify: true,
+          value: function () {
+            return [];
+          }
+      },
+
       _userPolygons: {
+        type: Array,
+        notify: true,
+        value: function () {
+          return [];
+        }
+      },
+
+      _userMarkers: {
         type: Array,
         notify: true,
         value: function () {
@@ -120,15 +144,24 @@ children like polygons, points and markers.
       }
     },
 
-    attached: function() {
+    attached: function () {
       var self = this;
-      this.addEventListener('update-gn-map', function() {
+      this.addEventListener('update-gn-map', function () {
           self.splice('polygons', -1, 0);
+          self.splice('markers', -1, 0);
+
           self.queryAllEffectiveChildren('gn-poly').forEach(function (polygon) {
             self.push('polygons', polygon.asObject());
           });
           self._userPolygons.forEach(function (polygon) {
             self.push('polygons', polygon);
+          });
+
+          self.queryAllEffectiveChildren('gn-marker').forEach(function (marker) {
+            self.push('markers', marker.asObject());
+          });
+          self._userMarkers.forEach(function (marker) {
+            self.push('markers', marker);
           });
       });    
     },
@@ -147,16 +180,24 @@ children like polygons, points and markers.
         fillColor: fillColor,
         points : points
       }
-      
+
       this.push('_userPolygons', polygon);
       this.fire('update-gn-map');
     },
 
-    _typeIsOpenStreetMap: function(mapType) {
+    addMarker: function (latitude, longitude) {
+      this.push('_userMarkers', {
+        longitude: Number(longitude),
+        latitude: Number(latitude)
+      });
+      this.fire('update-gn-map');
+    },
+
+    _typeIsOpenStreetMap: function (mapType) {
         return mapType === 'OpenStreetMap';
     },
 
-    _typeIsGoogleMap: function(mapType) {      
+    _typeIsGoogleMap: function (mapType) {      
         return mapType === 'GoogleMap';
     }
   });
