@@ -109,6 +109,14 @@ children like polygons, points and markers.
           value: function () {
             return [];
           }
+      },
+
+      _userPolygons: {
+        type: Array,
+        notify: true,
+        value: function () {
+          return [];
+        }
       }
     },
 
@@ -116,10 +124,32 @@ children like polygons, points and markers.
       var self = this;
       this.addEventListener('update-gn-map', function() {
           self.splice('polygons', -1, 0);
-          self.queryAllEffectiveChildren('gn-poly').forEach(function(polygon) {
-           self.push('polygons', polygon.asObject());
+          self.queryAllEffectiveChildren('gn-poly').forEach(function (polygon) {
+            self.push('polygons', polygon.asObject());
+          });
+          self._userPolygons.forEach(function (polygon) {
+            self.push('polygons', polygon);
           });
       });    
+    },
+
+    addPolygon: function (points, strokeColor, width, fill, fillColor) {
+      points = (typeof points === 'undefined') ? [] : points;
+      strokeColor = (typeof strokeColor === 'undefined') ? '#0091ea' : strokeColor;
+      width = (typeof width === 'undefined') ? 4 : width;
+      fill = (typeof fill === 'undefined') ? false : fill;
+      fillColor = (typeof fillColor === 'undefined') ? 'rgba(0,150,10,0.4)' : fillColor;
+
+      polygon = {
+        strokeColor: strokeColor,
+        width: width,
+        fill: fill,
+        fillColor: fillColor,
+        points : points
+      }
+      
+      this.push('_userPolygons', polygon);
+      this.fire('update-gn-map');
     },
 
     _typeIsOpenStreetMap: function(mapType) {

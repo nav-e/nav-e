@@ -54,12 +54,19 @@
       var demo = document.querySelector('#demo');
       
       demo.add = function () {
-        demo.points = [
+        /*demo.points = [
           { latitude : "53.799089", longitude : "10.703718" },
           { latitude : "53.794089", longitude : "10.708718" },
           { latitude : "53.789089", longitude : "10.703718" },
           { latitude : "53.794089", longitude : "10.698718" }
-        ];
+        ];*/
+        document.querySelector('gn-map').addPolygon([
+          { latitude : "53.799089", longitude : "10.703718" },
+          { latitude : "53.794089", longitude : "10.708718" },
+          { latitude : "53.789089", longitude : "10.703718" },
+          { latitude : "53.794089", longitude : "10.698718" }
+        ]);
+
       }
     </script>
     </template>
