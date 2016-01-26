@@ -1,0 +1,26 @@
+{
+  "name": "gn-api",
+  "main": "gn-api.html",
+  "ignore": [
+    "/.*",
+    "/test/"
+  ],
+  "dependencies": {
+    "polymer": "Polymer/polymer#^1.2.0",
+    "iron-ajax": "PolymerElements/iron-ajax#~1.1.1"
+  },
+  "devDependencies": {
+    "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",
+    "google-map": "GoogleWebComponents/google-map#~1.1.7"
+  },
+  "homepage": "https://github.com/Greennav/gn-api",
+  "_release": "d06638cd62",
+  "_resolution": {
+    "type": "branch",
+    "branch": "master",
+    "commit": "d06638cd624165ea6a26c59e4927a5a381d1e313"
+  },
+  "_source": "git://github.com/Greennav/gn-api.git",
+  "_target": "*",
+  "_originalSource": "Greennav/gn-api"
+}
