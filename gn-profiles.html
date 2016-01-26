@@ -1,0 +1,159 @@
+<link rel="import" href="../polymer/polymer.html"></link>
+<link rel="import" href="../google-chart/google-chart.html"></link>
+<!-- 
+@demo
+-->
+<dom-module id="gn-profiles">
+
+  <style>
+    div.myprofiles{
+      position: absolute;
+      bottom: 0;
+      height: 30%;
+      width: 100%;
+
+    }
+    
+    #mychart{
+      overflow-x: scroll;
+      width: 100%;
+    }
+  </style>
+
+  <template>
+    <div class="myprofiles">
+      <div>
+	<google-chart id="mychart"
+	  type='area'
+	  options='{"title": "Höhenprofil", "height":"285", "width":"2000"}'
+	  cols='[]'
+	  rows= '[]'>
+	 </google-chart>
+      </div>
+    </div>
+  </template>
+
+  <script>
+    Polymer({
+      is: "gn-profiles",
+      properties: {
+      
+      /** 
+      * route object
+      * contains algorithm, vehicle, optimization, costs, vertexList and edgeList 
+      */
+	  route: {
+	  type: Object,
+	  observer: "update"
+        
+      }, 
+      
+     /** 
+      * sets whether street names should be displayed based on a checkbox
+      */
+	  showstreetnames: {
+           type: Boolean,
+           value: false,
+           observer: "update"
+         },
+         
+      /** 
+      * sets which profile should be displayed based on a checkbox
+      * false is speed profile, true is altitude profile
+      */    
+           toggleprofiles: {
+           type: Boolean,
+           value: false,
+           observer: "update"
+         },
+               /** 
+      * sets that profiles should be displayed 
+      */    
+           showprofiles: {
+           type: Boolean,
+           value: false,
+           observer: "update"
+         }
+        
+      },
+      
+ 
+      update: function() {
+          if (!this.route)
+	    return;
+	  if(!this.showprofiles){
+	  //this.$.mychart.clear();
+	  return;
+	  }
+	  
+	  
+	  /**
+	  *  initiating variables
+	  */
+	  var vertexNumber = this.route.vertexList.length;
+	  var vertexArray = [];
+	  var speedArray = [];
+	  var dis = 0;
+	  var street= "";
+	  var streetArray = [] ;
+	  var chartscale = 0;
+
+	  /**
+	  *  going through all vertexes/ edges to add up the distances to the whole distance covered		
+	  *  sorting streetnames to the respective street starting vertex so only the first vertex with the same streetname is shown if streetnames should be shown
+	  *  preparing the rows for both profiles as arrays with the needed data
+	  */
+	  for(var i = 0; i < vertexNumber; i++) {
+	    if (i > 0){
+	    dis = dis + this.route.edgeList[i-1].distance;
+	    var currentStreet = this.route.edgeList[i-1].name;
+	      if (this.showstreetnames) {
+		if(currentStreet){
+		  if(streetArray[streetArray.length - 1] == currentStreet)
+		  {
+		    street = null;
+		  }	
+		  else{
+		    street = currentStreet;
+		  }
+		streetArray.push([currentStreet]);   
+		}
+		else{
+		  street = null;
+		}
+	      }
+	    }
+	      if(i > 0){
+	      speedArray.push([dis, this.route.edgeList[i-1].maxSpeed, street]);
+	      }
+	  vertexArray.push([dis , this.route.vertexList[i].geo.alt, street]);
+	  }
+
+	  /**
+	  *  using the chosen chartdata and determining scale, annotationstyle, and finally drawing the chart
+	  */
+	 if(this.toggleprofiles){
+	 	 this.$.mychart.cols = [{"label":"Distanz in m", "type":"number"}, {"label":"Geschwindigkeit in ", "type":"number"}, {"role":"annotation","type":"string"}];
+	 	 this.$.mychart.options.title = "Geschwindigkeitsprofil";
+	 	 this.$.mychart.rows = speedArray; 
+	 }else{
+	 	 this.$.mychart.cols = [{"label":"Distanz in m", "type":"number"}, {"label":"Höhe in m", "type":"number"}, {"role":"annotation","type":"string"}];
+	 	 this.$.mychart.options.title = "Höhenprofil";
+	 	 this.$.mychart.rows = vertexArray; 
+	 }
+	 chartscale = (dis/50) + 200 ;
+	 this.$.mychart.options.annotations = {style:'line'};
+	 this.$.mychart.options.chartArea = {left:'60'};
+	 this.$.mychart.options.width = chartscale.toString();
+	 this.$.mychart.drawChart();
+	 
+	 },
+      
+      ready: function() {
+
+      }
+    });
+  </script>
+  
+</dom-module>
+
