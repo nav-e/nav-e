@@ -15,12 +15,27 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <title>gn-profiles Demo</title>
     <script src="../../webcomponentsjs/webcomponents-lite.min.js"></script>
     <link rel="import" href="../gn-profiles.html">
+    <link rel="import" href="../../gn-api/gn-api.html">
   </head>
   <body unresolved>
+    <template is="dom-bind">
 
-    <p>An example of <code>&lt;gn-profiles&gt;</code>:</p>
-    <gn-profiles> </gn-profiles>
-  
+
+      <p>An example of <code>&lt;gn-profiles&gt;</code>:</p>
+      <gn-api
+        vehicles="{{ vehicles }}"
+        range="{{ range }}"
+        route="{{ route }}"
+        start-osm-id="595404856"
+        target-osm-id="237627"
+        battery="100"
+        vehicle="Sam"></gn-api>
+
+<button onclick="document.querySelector('gn-api').getRoute()">route</button>
+        <p>{{route}}</p>
+
+      <gn-profiles route="{{ route }}" showprofiles showstreetnames toggleprofiles></gn-profiles>
+    </template>
 
   </body>
 </html>
