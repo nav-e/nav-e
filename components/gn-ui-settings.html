@@ -6,41 +6,38 @@
 <link rel="import" href="../libs/iron-flex-layout/classes/iron-flex-layout.html">
 <link rel="import" href="../libs/paper-behaviors/paper-checked-element-behavior.html">
 <link rel="import" href="../libs/paper-checkbox/paper-checkbox.html">
-
-<!-- Neon Elements -->
 <link rel="import" href="../libs/neon-animation/neon-animatable-behavior.html">
 <link rel="import" href="../libs/neon-animation/animations/slide-from-left-animation.html">
 <link rel="import" href="../libs/neon-animation/animations/fade-out-animation.html">
 
 <dom-module id="gn-ui-settings">
 <style is="custom-style">
-paper-toolbar {
-  --paper-toolbar-background: #228E22;
-}
-paper-checkbox {
---paper-checkbox-checked-color: #228E22;
-}
-#settings-content {
-  padding: 15px;
-  max-height: 630px;
-  background: #fff;
-}
+  paper-toolbar {
+    --paper-toolbar-background: #228E22;
+  }
+  
+  paper-checkbox {
+    --paper-checkbox-checked-color: #228E22;
+  }
 
-.ol-zoom .ol-unselectable .sol-control
-
+  #settings-content {
+    padding: 15px;
+    max-height: 630px;
+    background: #fff;
+  }
 </style>
   <template>
    <paper-header-panel style="top:15px;">
       <paper-toolbar>
-	<paper-icon-button name="remoteLocation" id="remote-chk" on-click="showMe" icon="[[icon]]"></paper-icon-button>
+        <paper-icon-button name="remoteLocation" id="remote-chk" on-click="showMe" icon="[[icon]]"></paper-icon-button>
         <div class="title flex">Route Settings</div>
         <paper-icon-button icon="arrow-back" on-tap="showList"></paper-icon-button>
       </paper-toolbar>
       <div id="settings-content" hidden$="{{hide}}"> 
-	<paper-checkbox>Ladestationen anzeigen</paper-checkbox>
-	<paper-checkbox checked>3-Wege Routing anzeigen</paper-checkbox>
-  <paper-checkbox checked="{{showprofiles}}">Wegeprofil anzeigen</paper-checkbox>
-	<paper-checkbox alt="Not Implemented" title="Not Implemented">GPS deaktivieren</paper-checkbox>
+        <paper-checkbox>Ladestationen anzeigen</paper-checkbox>
+        <paper-checkbox checked>3-Wege Routing anzeigen</paper-checkbox>
+        <paper-checkbox checked="{{showprofiles}}">Wegeprofil anzeigen</paper-checkbox>
+        <paper-checkbox alt="Not Implemented" title="Not Implemented">GPS deaktivieren</paper-checkbox>
       </div>
       </paper-header-panel>
   </template>
@@ -50,20 +47,30 @@ paper-checkbox {
       is: 'gn-ui-settings',
       behaviors: [Polymer.NeonAnimatableBehavior],
       properties: {
-      	// Propertie for Hideable
- 	      hide: {
+        /**
+         * Hides the sidebar
+         */
+        hide: {
           type: Boolean,
- 	        value: true // init the value to true so it will be hidden on page load 	
+          value: true   
         },
-      	icon: {
+
+        /**
+         * The clickable icon which toggles between "expand" and "less" 
+         */
+        icon: {
           type: String,
           value: "icons:expand-more"
         },
+
+        /**
+         * Handles the visibility of gn-profiles
+         */
         showprofiles: {
           type: Boolean,
           notify: true
         },
-	// Animation Config
+
         animationConfig: {
           value: function() {
             return {
@@ -79,14 +86,20 @@ paper-checkbox {
           }
         }
       },
-      // Function to show Search-Page
+
+      /**
+       * View search page
+       */
       showList: function() {
         this.fire('swap', {selected: 0}); // Search
       },
-      // Hideable Function
+
+      /**
+       * Toggles the ui-settings
+       */
       showMe: function() {
- 	this.hide = !this.hide;
-	this.icon = this.hide ? "icons:expand-more" : "icons:expand-less";
+        this.hide = !this.hide;
+        this.icon = this.hide ? "icons:expand-more" : "icons:expand-less";
       }
     });
   </script>
