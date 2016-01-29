@@ -9,3 +9,75 @@ html, body {
 html {
 	font-family: 'Open Sans', sans-serif;
 }
+/*************************** 
+ Custom CSS made by Theo Eisen 
+ Last update: 27.01.2016
+ ***************************/
+
+/*************************** Global Definitions **********************************/
+.clear {
+  clear: both;
+  height: 0;
+  width: 0;
+  margin: 0;
+  padding: 0;
+}
+
+/**************** GLOBAL -  Paper Input Container*/
+.paper-input-container {
+  margin: 0;
+  padding: 0;
+  width: 240px;
+}
+
+/**************** Googlemap Navigation Switch Landscape*/
+
+/**************** GMAP deaktiviert */
+.gm-style-mtc {
+  display: none;
+}
+/**************** SIDEBAR - GN-UI-SEARCH - SETTINGS ********************/
+/**************** Zwischenziele */
+#intermediate-objectives {
+  min-height: 1px;
+  max-height: 130px;
+  overflow: auto;
+}
+
+#intermediate-objectives .input-field .paper-input-container {
+  width: 190px;
+  float: left;
+}
+
+#intermediate-objectives .remove-button {
+  margin: 0 0 0 0;
+}
+
+/**************** ADD Zwischenziele Button  */
+.add-object-label {
+  display: inline-block;
+}
+
+/**************** User Preferences - Binden der Klassen direkt an den Container - Muss in extern CSS sein, da in Element Style nicht greift*/
+#user-preferences {
+  width: 100%;
+  margin: 20px 0;
+}
+
+#user-preferences .slider-label {
+  width: 65px;
+  float: left;
+  padding: 4px 0 0 0;
+}
+
+#user-preferences .paper-slider-0 {
+  width: 190px;
+  padding: 0;
+  margin: 0;
+}
+
+/**************** SETTINGS */
+#settings-content .paper-checkbox-0 {
+  margin: 0 0 15px 0;
+  display: block;
+}

@@ -1,0 +1,104 @@
+<link rel="import" href="../libs/polymer/polymer.html">
+<link rel="import" href="../libs/paper-header-panel/paper-header-panel.html">
+<link rel="import" href="../libs/paper-toolbar/paper-toolbar.html">
+<link rel="import" href="../libs/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../libs/iron-icons/iron-icons.html">
+<link rel="import" href="../libs/iron-flex-layout/classes/iron-flex-layout.html">
+<link rel="import" href="../libs/iron-icons/communication-icons.html">
+
+<!-- Neon Elements -->
+<link rel="import" href="../libs/neon-animation/neon-animatable-behavior.html">
+<link rel="import" href="../libs/neon-animation/animations/slide-from-left-animation.html">
+<link rel="import" href="../libs/neon-animation/animations/slide-from-right-animation.html">
+<link rel="import" href="../libs/neon-animation/animations/fade-out-animation.html">
+
+<dom-module id="gn-ui-headermenu">
+<style is="custom-style">
+iron-icon:hover {
+      fill: #228E22;
+}
+.container .paper-button-0 {
+  display: block;
+  text-align: left;
+}
+.container {
+  margin: 10px 0 0 0;
+}
+paper-button {
+  --paper-button-ink-color: #228E22;
+}
+</style>
+  <template class="headermenu">
+   <paper-header-panel>
+      <div class="container">
+	<paper-button on-tap="showContact"> 
+	  <iron-icon icon="communication:contacts"></iron-icon>
+	  Kontakt
+	</paper-button>
+	<paper-button on-tap="showInfo"> 
+	  <iron-icon icon="icons:announcement"></iron-icon>
+	  Information
+	</paper-button>
+	<paper-button on-tap="showLogin"> 
+	  <iron-icon icon="icons:account-box"></iron-icon>
+	  Login
+	</paper-button>
+	<paper-button on-tap="showProfile"> 
+	  <iron-icon icon="icons:face"></iron-icon>
+	  Profil
+	</paper-button>
+	<paper-button on-tap="showAppSettings"> 
+	  <iron-icon icon="settings"></iron-icon>
+	  App Einstellungen
+	</paper-button>
+	<paper-button on-tap="showProSettings"> 
+	  <iron-icon icon="settings"></iron-icon>
+	  Pro Einstellungen
+	</paper-button>
+      </div>
+   </paper-header-panel>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'gn-ui-headermenu',
+      behaviors: [Polymer.NeonAnimatableBehavior],
+      properties: {
+        animationConfig: {
+          value: function() {
+            return {
+              'entry': {
+                name: 'slide-from-left-animation',
+                node: this
+              },
+              'exit': {
+                name: 'slide-left-animation',
+                node: this
+              }
+            }
+          }
+        }
+      },
+      showContact: function() {
+        this.fire('headerswitch', {selected: 1}); // gn-ui-contact
+      },
+      showInfo: function() {
+        this.fire('headerswitch', {selected: 2}); // gn-ui-information
+      },
+      showLogin: function() {
+        this.fire('headerswitch', {selected: 3}); // gn-ui-login
+      },
+      showProfile: function() {
+        this.fire('headerswitch', {selected: 4}); // gn-ui-profile
+      },
+      showAppSettings: function() {
+        this.fire('headerswitch', {selected: 5}); // gn-ui-appsettings
+      },
+      showProSettings: function() {
+        this.fire('headerswitch', {selected: 6}); // gn-ui-prosettings
+      }
+    });
+  </script>
+
+</dom-module> 
+ 

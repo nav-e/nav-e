@@ -8,13 +8,13 @@
 
 	<script type="text/javascript" src="libs/webcomponentsjs/webcomponents.js"></script>
 
-	<link rel="import" href="components/gn-ui-contact.html">
-	<link rel="import" href="components/gn-ui-information.html">
 	<link rel="import" href="components/gn-ui-search.html">
+	<link rel="import" href="components/gn-ui-sidebar.html">
+	<link rel="import" href="components/gn-ui-header.html">
 	
 	<link rel="import" href="libs/gn-map/gn-map.html">
-	<link rel="import" href="libs/gn-map/gn-map-poly.html">
-	<link rel="import" href="libs/gn-map/gn-map-point.html">
+	<link rel="import" href="libs/gn-map/gn-poly.html">
+	<link rel="import" href="libs/gn-map/gn-point.html">
 	<link rel="import" href="libs/iron-flex-layout/classes/iron-flex-layout.html">
 	<link rel="import" href="libs/paper-button/paper-button.html">
 	<link rel="import" href="libs/paper-dialog/paper-dialog.html">
@@ -27,26 +27,56 @@
 	<link rel="import" href="libs/paper-scroll-header-panel/paper-scroll-header-panel.html">
 	<link rel="import" href="libs/paper-styles/paper-styles.html">
 	<link rel="import" href="libs/paper-toolbar/paper-toolbar.html">
-
+	
+<style is="custom-style">
+paper-toolbar {
+  --paper-toolbar-background: #228E22;
+}
+paper-header-panel {
+  box-shadow: 10px 10px 38px -15px rgba(0,0,0,0.75);
+}
+#mainContainer {
+  height: 100%;
+  min-height: 100%;
+}
+/* OSM Controll Elements */
+.ol-zoom {
+  top: 15px;
+  left: 315px;
+}
+</style>
+	
 </head>
 <body class="fullbleed layout vertical">
 	<template is="dom-bind">
-		
-		<paper-drawer-panel id="mainMenu">
+		<gn-map class="content fit" 
+			longitude="{{ currentAddress.lon }}" 
+			latitude="{{ currentAddress.lat }}" 
+			zoom="17"
+			map-type="OpenStreetMap">
+			  <gn-poly>
+			    <template is="dom-repeat" items="{{route.route}}">
+			      <gn-point longitude="{{item.longitude}}" latitude="{{item.latitude}}"></gn-point>
+			    </template>
+			  </gn-poly>
+		</gn-map>
+		<paper-drawer-panel id="mainMenu" force-narrow drawer-width="300px" style="width: 300px;">
 			<paper-header-panel drawer>
 				
 				<paper-toolbar>
-					<h3>Menu</h3>
+					<paper-icon-button icon="arrow-back" paper-drawer-toggle></paper-icon-button>
+					<h3>Men&uuml;</h3>
 				</paper-toolbar>
 				
 				<div main>
+					<gn-ui-header></gn-ui-header>
 					
-					<gn-ui-search
+					<!--<gn-ui-search
 						start-address="{{ startAddress }}"
 						target-address="{{ targetAddress }}"
 						route="{{ route }}"
 						range="{{ range }}"
-						current-address="{{ currentAddress }}"></gn-ui-search>
+						current-address="{{ currentAddress }}"></gn-ui-search>-->
 
 					<!--<paper-button onclick="document.querySelector('#info-modal').toggle()">Info</paper-button>-->
 					<!--<paper-button onclick="document.querySelector('#contact-modal').toggle()">Contact</paper-button>-->
@@ -54,15 +84,23 @@
 				
 			</paper-header-panel>
 				
-			<paper-header-panel main>
+			<paper-header-panel main style="left: 15px; top: 15px;">
 				
 				<paper-toolbar>
 					<paper-icon-button icon="menu" paper-drawer-toggle></paper-icon-button>
-					<span class="flex"></span>
-					<h3>GreenNavigation</h3>
+					<img src="images/banner600.png" width="180px">
+					<!--<span class="flex"></span>
+					<h3>GreenNavigation</h3>-->
 				</paper-toolbar>
-				
-				<gn-map class="content fit" 
+				<gn-ui-sidebar></gn-ui-sidebar>
+				<!--<gn-ui-search
+						start-address="{{ startAddress }}"
+						target-address="{{ targetAddress }}"
+						route="{{ route }}"
+						range="{{ range }}"
+						current-address="{{ currentAddress }}"></gn-ui-search>-->
+				<!--</gn-ui-sidebar> -->
+				<!--<gn-map class="content fit" 
 					longitude="{{ currentAddress.lon }}" 
 					latitude="{{ currentAddress.lat }}" 
 					zoom="17"
@@ -73,34 +111,10 @@
 			            <gn-point longitude="{{item.longitude}}" latitude="{{item.latitude}}"></gn-point>
 			          </template>
 			        </gn-poly>
-				</gn-map>
+				</gn-map>-->
 					
 			</paper-header-panel>
-		</paper-drawer-panel>
-			
-		<!-- Contact dialog -->
-		<!--<paper-dialog id="contact-modal" modal>
-			<div style="float:right;">
-				<paper-button dialog-confirm autofocus>Close</paper-button>
-			</div>
-			<h4>Green Navigation - Kontakt</h4>
-			<paper-dialog-scrollable>
-				<gn-ui-contact></gn-ui-contact>
-			</paper-dialog-scrollable>
-		</paper-dialog>-->
-		
-		
-		<!-- Info	dialog -->
-		<!--<paper-dialog id="info-modal" modal>
-			<div style="float:right;">
-				<paper-button dialog-confirm autofocus>Close</paper-button>
-			</div>
-			<h4>Green Navigation - Information</h4>
-			<paper-dialog-scrollable>
-				<gn-ui-information></gn-ui-information>
-			</paper-dialog-scrollable>
-		</paper-dialog>-->
-		
+		</paper-drawer-panel>		
 	</template>
 </body>
 </html>

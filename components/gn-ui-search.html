@@ -23,20 +23,25 @@
 
 <link rel="import" href="../css/theme.html">
 
+<!-- Neon Elements -->
+<link rel="import" href="../libs/neon-animation/neon-animatable-behavior.html">
+<link rel="import" href="../libs/neon-animation/animations/slide-from-left-animation.html">
+<link rel="import" href="../libs/neon-animation/animations/slide-left-animation.html">
+
+<!-- Paper Slider -->
+<link rel="import" href="../libs/paper-slider/paper-slider.html">
+
 
 <dom-module id="gn-ui-search">
 	<template>
 		<style>
 			.ui {
-				padding: 10px;
+				padding: 0 15px 15px 15px;
+				background: #fff;
 			}
 			
 			.block {
-				white-space: nowrap;
-			}
-			
-			.block * {
-				display: inline-block;
+				/*white-space: nowrap;*/
 			}
 			
 			.list-overlay {
@@ -50,13 +55,39 @@
 				display: none;
 			}
 			
-			paper-item {
+			.paper-item {
 				margin: 5px;
 				padding: 5px;
 			}
+			.calc-route,
+			.calc-reach {
+				width: 112px;
+				float: left;
+				margin: 0; 
+				padding: 5px;
+			 }
+			 .calc-reach {
+				margin-right: 15px;
+			 }
+		</style>
+		<style is="custom-style">
+			 paper-slider {
+				--paper-slider-pin-color: #228E22;
+				--paper-slider-active-color: #228E22;
+				--paper-slider-knob-color: #228E22;
+			}
+			paper-toolbar {
+				 --paper-toolbar-background: #228E22;
+			}
+			paper-input {
+				  --paper-input-underline-focus: #228E22;
+			}
+			paper-button {
+				  --paper-button-ink-color: #228E22;
+			}
 		</style>
 		
-		<address-decoder 
+		<address-decoder
 			id="start" 
 			input="{{ startQuery }}" 
 			addresses="{{ startAddresses }}"></address-decoder>
@@ -74,23 +105,25 @@
 			target-osm-id="{{ targetAddress.osm_id }}"
 			battery="{{ battery }}"
 			vehicle="{{ vehicle }}"></gn-api>
-					
-
+		
+		<paper-header-panel style="top:15px;">
+		
+		<!-- Toolbar -->
+		<paper-toolbar>
+		  <paper-icon-button name="remoteLocation" id="remote-chk" on-click="showMe" icon="{{icon}}"></paper-icon-button>
+		  <div class="title flex">Route</div>
+		  <paper-icon-button icon="settings" on-tap="showSettings"></paper-icon-button>
+		</paper-toolbar>
+		
 		<!-- Container for the ui -->
-		<div class="ui">
-			
+		<div class="ui" hidden$={{hide}}>	
 			<div>
-					<div class="block">
-						<h3>Route</h3>
-						<span class="flex"></span>
-						<paper-icon-button icon="settings"></paper-icon-button>	
-					</div>
 				
 				<!-- Addresses -->
 				<div class="block">
 					<paper-input label="Start" value="{{ startQuery }}" 
 						on-keyup="validateStart" id="start-input"></paper-input>
-					<iron-icon icon="maps:navigation"></iron-icon>
+					<!--<iron-icon icon="maps:navigation"></iron-icon>-->
 				</div>
 				
 				<paper-listbox class="list-overlay dropdown-content" selected="{{ startAddress }}" 
@@ -106,10 +139,21 @@
 					</template>
 				</paper-listbox>
 				
+				<!-- intermediate objectives -->
+				<paper-icon-button icon="icons:add" on-click="addObject"></paper-icon-button><span class="add-object-label">Zwischenziel Hinzufügen</span>
+				  <div id="intermediate-objectives">
+				  <template is="dom-repeat" items="[[intermediateobjectives]]">
+				    <paper-input class="input-field" label="{{item.name}}" value="{{item.object}}"></paper-input>
+				    <paper-icon-button class="remove-button" value="{{index}}" icon="icons:delete" on-click="removeObject"></paper-icon-button>
+				    <div class="clear"></div>
+				  </template>
+				</div>
+				
+				<!-- Destination -->
 				<div class="block">
 					<paper-input label="Destination" value="{{ targetQuery }}"
 						on-keyup="validateTarget" id="target-input"></paper-input>
-					<iron-icon icon="maps:navigation"></iron-icon>
+					<!--<iron-icon icon="maps:navigation"></iron-icon>-->
 				</div>
 				
 				<paper-listbox class="list-overlay dropdown-content" selected="{{ targetAddress }}" 
@@ -124,17 +168,6 @@
 						</paper-item>
 					</template>
 				</paper-listbox>
-				
-				<!--<div>
-					<div>Energy</div>
-					<paper-slider min="0" max="100" value="50" pin></paper-slider>
-					<div>Time</div>
-					<paper-slider min="0" max="100" value="50" pin></paper-slider>
-					<div>Distance</div>
-					<paper-slider min="0" max="100" value="50" pin></paper-slider>
-					<div>Cost</div>
-					<paper-slider min="0" max="100" value="50" pin></paper-slider>
-				</div>-->
 								
 				<!-- Vehicle -->
 				<paper-dropdown-menu label="Vehicle" selected-item-label="{{ vehicle }}">
@@ -152,22 +185,33 @@
 					pattern="100|[1-9][0-9]|[1-9]"
 					error-message="Must be a percentage"
 					value="{{ battery }}"></paper-input>
+					
+				<!-- User Preferences -->
+				<div id="user-preferences">
+				  <span class="slider-label">Energie:</span><paper-slider min="0" max="10" pin value="{{energy}}"></paper-slider>
+				  <span class="slider-label">Zeit:</span><paper-slider min="0" max="10" pin value="{{time}}"></paper-slider>
+				  <span class="slider-label">Distanz:</span><paper-slider min="0" max="10" pin value="{{distance}}"></paper-slider>
+				  <span class="slider-label">Kosten:</span><paper-slider min="0" max="10" pin value="{{cost}}"></paper-slider>
+				</div>
 				
-				<div class="block">
-					<paper-button raised
+				<!-- Buttons -->
+				<div class="button-panel">
+					<paper-button raised class="calc-reach" 
 						onclick="document.querySelector('gn-api').getRoute()">
 						<iron-icon icon="maps:map"></iron-icon>
-						Show<br>route
+						Show Range
 					</paper-button>
-					<paper-button raised
+					<paper-button raised class="calc-route"
 						onclick="document.querySelector('gn-api').getRange()">
 						<iron-icon icon="maps:navigation"></iron-icon>
-						Show<br>range
+						Show Route
 					</paper-button>
+					<div class="clear"></div>
 				</div>
 				
 			</div>
 		</div>
+		</paper-header-panel>
 			
 	</template>
 	<script>	
@@ -200,8 +244,55 @@
 				range: {
 					type: Object,
 					notify: true
-				}
-				
+				},
+				// Propertie for Animation
+				animationConfig: {
+				  value: function() {
+				    return {
+				      'entry': {
+					name: 'slide-from-left-animation',
+					node: this
+				      },
+				      'exit': {
+					name: 'slide-left-animation',
+					node: this
+				      }
+				    }
+				  }
+				},
+				// Propertie for intermediate objectives
+				intermediateobjectives: {
+				  type: Array,
+				  value: function() {
+				    return [];
+				  }
+				},
+				// Propertie for Hideable
+				hide: {
+				  type: Boolean,
+				  value: true // init the value to true so it will be hidden on page load
+				},
+				icon: {
+				  type: String,
+				  value: "icons:expand-more"
+				},
+				// Propertie for User Preferences
+				energy: {
+				  type: Number,
+				  value: 5
+				},
+				time: {
+				  type: Number,
+				  value: 5
+				},
+				distance: {
+				  type: Number,
+				  value: 5
+				},
+				cost: {
+				  type: Number,
+				  value: 5
+				}		
 			},
 			
 			validateStart: function (event) {
@@ -238,6 +329,38 @@
 				
 				// Hide list
 				list.classList.add('hidden');
+			},
+			// Animation Functions
+			behaviors: [Polymer.NeonAnimatableBehavior],
+			showSettings: function() {
+			  this.fire('swap', {selected: 1}); // Settings
+			},
+			// intermediate objectives Functions
+			observers: [
+   			 'usersAddedOrRemoved(intermediateobjectives.splices)'
+  			],
+  			usersAddedOrRemoved: function(changeRecord) {
+			    //console.log(changeRecord);
+			    if (changeRecord) {
+			    changeRecord.indexSplices.forEach(function(s) {
+			      s.removed.forEach(function(intermediateobjectives) {
+			        //console.log(intermediateobjectives.name + ' was removed');
+			      });
+			      //console.log(s.addedCount + ' intermediateobjectives were added');
+			    }, this);
+			    }
+			  },
+			addObject: function() {
+    			  this.push('intermediateobjectives', {name: "Zwischenstop"});
+			},
+			removeObject: function(event, index) {
+			  var index = this.intermediateobjectives.indexOf(event.model.item);
+			  this.splice('intermediateobjectives', index, 1)
+			},
+			// Hideable Function
+			showMe: function() {
+			  this.hide = !this.hide;
+			  this.icon = this.hide ? "icons:expand-more" : "icons:expand-less";
 			}
 		});
 	</script>
