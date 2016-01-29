@@ -53,10 +53,20 @@ paper-header-panel {
 		<gn-map class="content fit" 
 			longitude="{{ currentAddress.lon }}" 
 			latitude="{{ currentAddress.lat }}" 
-			zoom="6"
+			zoom="9"
 			map-type="GoogleMap">
 			  <gn-poly>
 			    <template is="dom-repeat" items="{{route.vertexList}}">
+			      <gn-point latitude="{{item.geo.lat}}" longitude="{{item.geo.lon}}"></gn-point>
+			    </template>
+			  </gn-poly>
+			  <gn-poly stroke-color="red" fill="true" fill-color="red">
+			    <template is="dom-repeat" items="{{range.polygons.0.range}}">
+			      <gn-point latitude="{{item.geo.lat}}" longitude="{{item.geo.lon}}"></gn-point>
+			    </template>
+			  </gn-poly>
+			  <gn-poly stroke-color="green" fill="true" fill-color="green">
+			    <template is="dom-repeat" items="{{range.polygons.1.range}}">
 			      <gn-point latitude="{{item.geo.lat}}" longitude="{{item.geo.lon}}"></gn-point>
 			    </template>
 			  </gn-poly>
@@ -82,16 +92,8 @@ paper-header-panel {
 				<paper-toolbar>
 					<paper-icon-button icon="menu" paper-drawer-toggle></paper-icon-button>
 					<img src="images/banner600.png" width="180px">
-					<!--<span class="flex"></span>
-					<h3>GreenNavigation</h3>-->
 				</paper-toolbar>
-				<gn-ui-sidebar route="{{route}}" showprofiles="{{showprofiles}}"></gn-ui-sidebar>
-				<!--<gn-ui-search
-						start-address="{{ startAddress }}"
-						target-address="{{ targetAddress }}"
-						route="{{ route }}"
-						range="{{ range }}"
-						current-address="{{ currentAddress }}"></gn-ui-search>-->
+				<gn-ui-sidebar route="{{route}}" range="{{range}}" showprofiles="{{showprofiles}}"></gn-ui-sidebar>
 					
 			</paper-header-panel>
 		</paper-drawer-panel>		
