@@ -22,7 +22,7 @@ neon-animated-pages {
    <template>
    <div id="sidebar">
      <neon-animated-pages selected="[[selected]]" class="fit">
-      <gn-ui-search route="{{route}}"></gn-ui-search>
+      <gn-ui-search route="{{route}}" range="{{range}}"></gn-ui-search>
       <gn-ui-settings showprofiles="{{showprofiles}}"></gn-ui-settings>
      </neon-animated-pages>
      </div>
@@ -40,13 +40,18 @@ neon-animated-pages {
           notify: true,
           observer: "debugthis"
         },
+        range: {
+          type: Object,
+          notify: true,
+          observer: "debugthis"
+        },
         showprofiles: {
           type: Boolean,
           notify: true
         }
       },
       debugthis: function() {
-        console.log(this.route);
+        console.log(this.route, this.range);
       },
       // Function for PageSwap
       ready: function () {
