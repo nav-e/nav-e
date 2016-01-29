@@ -39,7 +39,7 @@ paper-checkbox {
       <div id="settings-content" hidden$="{{hide}}"> 
 	<paper-checkbox>Ladestationen anzeigen</paper-checkbox>
 	<paper-checkbox checked>3-Wege Routing anzeigen</paper-checkbox>
-	<paper-checkbox checked="{{barbara}}">Barbara anzeigen</paper-checkbox>
+  <paper-checkbox checked="{{showprofiles}}">Wegeprofil anzeigen</paper-checkbox>
 	<paper-checkbox alt="Not Implemented" title="Not Implemented">GPS deaktivieren</paper-checkbox>
       </div>
       </paper-header-panel>
@@ -50,15 +50,19 @@ paper-checkbox {
       is: 'gn-ui-settings',
       behaviors: [Polymer.NeonAnimatableBehavior],
       properties: {
-	// Propertie for Hideable
- 	hide: {
-	  type: Boolean,
- 	  value: true // init the value to true so it will be hidden on page load 	
-	},
-	icon: {
-	  type: String,
-	  value: "icons:expand-more"
-	},
+      	// Propertie for Hideable
+ 	      hide: {
+          type: Boolean,
+ 	        value: true // init the value to true so it will be hidden on page load 	
+        },
+      	icon: {
+          type: String,
+          value: "icons:expand-more"
+        },
+        showprofiles: {
+          type: Boolean,
+          notify: true
+        },
 	// Animation Config
         animationConfig: {
           value: function() {

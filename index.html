@@ -15,6 +15,7 @@
 	<link rel="import" href="libs/gn-map/gn-map.html">
 	<link rel="import" href="libs/gn-map/gn-poly.html">
 	<link rel="import" href="libs/gn-map/gn-point.html">
+	<link rel="import" href="libs/gn-profiles/gn-profiles.html">
 	<link rel="import" href="libs/iron-flex-layout/classes/iron-flex-layout.html">
 	<link rel="import" href="libs/paper-button/paper-button.html">
 	<link rel="import" href="libs/paper-dialog/paper-dialog.html">
@@ -52,14 +53,15 @@ paper-header-panel {
 		<gn-map class="content fit" 
 			longitude="{{ currentAddress.lon }}" 
 			latitude="{{ currentAddress.lat }}" 
-			zoom="17"
-			map-type="OpenStreetMap">
+			zoom="6"
+			map-type="GoogleMap">
 			  <gn-poly>
-			    <template is="dom-repeat" items="{{route.route}}">
-			      <gn-point longitude="{{item.longitude}}" latitude="{{item.latitude}}"></gn-point>
+			    <template is="dom-repeat" items="{{route.vertexList}}">
+			      <gn-point latitude="{{item.geo.lat}}" longitude="{{item.geo.lon}}"></gn-point>
 			    </template>
 			  </gn-poly>
 		</gn-map>
+		<gn-profiles route="{{route}}" showstreetnames toggleprofiles showprofiles="{{showprofiles}}"></gn-profiles>
 		<paper-drawer-panel id="mainMenu" force-narrow drawer-width="300px" style="width: 300px;">
 			<paper-header-panel drawer>
 				
@@ -70,48 +72,26 @@ paper-header-panel {
 				
 				<div main>
 					<gn-ui-header></gn-ui-header>
-					
-					<!--<gn-ui-search
-						start-address="{{ startAddress }}"
-						target-address="{{ targetAddress }}"
-						route="{{ route }}"
-						range="{{ range }}"
-						current-address="{{ currentAddress }}"></gn-ui-search>-->
-
 					<!--<paper-button onclick="document.querySelector('#info-modal').toggle()">Info</paper-button>-->
 					<!--<paper-button onclick="document.querySelector('#contact-modal').toggle()">Contact</paper-button>-->
 				</div>
 				
 			</paper-header-panel>
-				
 			<paper-header-panel main style="left: 15px; top: 15px;">
-				
+
 				<paper-toolbar>
 					<paper-icon-button icon="menu" paper-drawer-toggle></paper-icon-button>
 					<img src="images/banner600.png" width="180px">
 					<!--<span class="flex"></span>
 					<h3>GreenNavigation</h3>-->
 				</paper-toolbar>
-				<gn-ui-sidebar></gn-ui-sidebar>
+				<gn-ui-sidebar route="{{route}}" showprofiles="{{showprofiles}}"></gn-ui-sidebar>
 				<!--<gn-ui-search
 						start-address="{{ startAddress }}"
 						target-address="{{ targetAddress }}"
 						route="{{ route }}"
 						range="{{ range }}"
 						current-address="{{ currentAddress }}"></gn-ui-search>-->
-				<!--</gn-ui-sidebar> -->
-				<!--<gn-map class="content fit" 
-					longitude="{{ currentAddress.lon }}" 
-					latitude="{{ currentAddress.lat }}" 
-					zoom="17"
-					map-type="OpenStreetMap">
-
-				   <gn-poly>
-			          <template is="dom-repeat" items="{{route.route}}">
-			            <gn-point longitude="{{item.longitude}}" latitude="{{item.latitude}}"></gn-point>
-			          </template>
-			        </gn-poly>
-				</gn-map>-->
 					
 			</paper-header-panel>
 		</paper-drawer-panel>		
