@@ -9,6 +9,8 @@
 
   <script src="libs/webcomponentsjs/webcomponents.js"></script>
 
+  <link rel="import" href="components/gn-ui-footer.html">
+
   <link rel="import" href="libs/gn-map/gn-map.html">
   <link rel="import" href="libs/gn-map/gn-poly.html">
   <link rel="import" href="libs/gn-map/gn-point.html">
@@ -33,19 +35,10 @@
   <link rel="import" href="libs/paper-styles/paper-styles.html">
   <link rel="import" href="libs/paper-toolbar/paper-toolbar.html">
 
-  <style>
-    #menu {
-      position: fixed;
-      top: 50px;
-      left: 50px;
-      z-index: 999;
-      background: rgba(255, 255, 255, 0.9);
-    }
-  </style>
-
 </head>
-<body class="fullbleed layout vertical">
+<body class="fullbleed">
   <template is="dom-bind" id="bind">
+  <div class="fit vertical layout">
 
   <paper-card id="menu">
   <div class="card-content">
@@ -59,13 +52,15 @@
     <paper-input label="to"></paper-input>
   </div>
   <div class="card-actions">
-    <paper-icon-button icon="chevron-left"></paper-icon-button>
-    <paper-icon-button icon="maps:directions"></paper-icon-button>
-    <paper-icon-button icon="explore"></paper-icon-button>
+      <paper-icon-button icon="chevron-left"></paper-icon-button>
+      <div class="right">
+        <paper-icon-button icon="explore"></paper-icon-button>
+        <paper-icon-button icon="maps:directions"</paper-icon-button>
+      </div>
   </div>
   </paper-card>
 
-    <gn-map class="content fit"
+    <gn-map class="flex"
       longitude="{{ currentAddress.lon }}"
       latitude="{{ currentAddress.lat }}"
       zoom="17"
@@ -86,6 +81,9 @@
           </template>
         </gn-poly>
     </gn-map>
+
+    <gn-ui-footer></gn-ui-footer>
+  </div>
 
   </template>
 </body>
