@@ -1,5 +1,7 @@
 <link rel="import" href="../polymer/polymer.html"></link>
 <link rel="import" href="../google-chart/google-chart.html"></link>
+<link rel="import" href="../libs/paper-behaviors/paper-checked-element-behavior.html"></link>
+<link rel="import" href="../libs/paper-checkbox/paper-checkbox.html"> </link>
 <!-- 
 @demo
 -->
@@ -21,9 +23,9 @@
   </style>
 
   <template>
-    <div class="myprofiles">
+    <div class="myprofiles" >
       <div>
-	<google-chart id="mychart"
+	<google-chart id="mychart" style = "display:none" 
 	  type='area'
 	  options='{"title": "Höhenprofil", "height":"285", "width":"2000"}'
 	  cols='[]'
@@ -82,7 +84,7 @@
           if (!this.route)
 	    return;
 	  if(!this.showprofiles){
-	  //this.$.mychart.clear();
+	  this.$.mychart.style.display = "none";
 	  return;
 	  }
 	  
@@ -145,6 +147,7 @@
 	 this.$.mychart.options.annotations = {style:'line'};
 	 this.$.mychart.options.chartArea = {left:'60'};
 	 this.$.mychart.options.width = chartscale.toString();
+	 this.$.mychart.style.display = "block";
 	 this.$.mychart.drawChart();
 	 
 	 },
