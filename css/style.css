@@ -9,6 +9,15 @@ html, body {
 html {
 	font-family: 'Open Sans', sans-serif;
 }
+
+
+#menu {
+  position: fixed;
+  top: 50px;
+  left: 50px;
+  z-index: 999;
+  background: rgba(255, 255, 255, 0.9);
+}
 /*************************** 
  Custom CSS made by Theo Eisen 
  Last update: 27.01.2016
