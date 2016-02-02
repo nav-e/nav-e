@@ -1,0 +1,80 @@
+<link rel="import" href="../libs/polymer/polymer.html">
+<link rel="import" href="../libs/iron-flex-layout/classes/iron-flex-layout.html">
+
+<dom-module id="gn-ui-footer">
+  <style is="custom-style">
+    :host {
+      display: block;
+    }
+
+    p {
+      font-size: 0.8em;
+      padding: 5px 5px 0 5px;
+    }
+
+    a {
+      text-decoration: none;
+      margin: 0;
+      color: #228E22;
+      font-size: 0.8em;
+    }
+
+    footer {
+      background: #fff;
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      transition: position height 1s;
+      -moz-transition: height 1s; /* Firefox 4 */
+      -webkit-transition: height 1s; /* Safari and Chrome */
+      -o-transition: height 1s; /* Opera */
+      -ms-transition: height 1s; /* IE9 (maybe) */
+    }
+
+    .normal {
+      position: static;
+      height: 50px;
+    }
+
+    .expanded {
+      position: absolute;
+      bottom: 0;
+      height: 200px;
+    }
+  </style>
+  <template>
+    <footer class$="{{isExpanded}}">
+      <p><a href="https://www.isp.uni-luebeck.de/research/projects/green-navigation" target="_blank">Institute for Software Engineering and Programming Languages</a></p>
+    </footer>
+  </template>
+  <script>
+    Polymer({
+      is: 'gn-ui-footer',
+      
+      properties: {
+       /**
+        * Toggles the size
+        */
+        expand: {
+          type: Boolean,
+          notify: true,
+          value: false
+        },
+
+        /**
+         * Returns the footer class to expand the height
+         */
+        isExpanded: {
+          type: String,
+          computed: 'computeExpandedClass(expand)'
+        }
+      },
+
+      computeExpandedClass: function (expand) {
+        return expand ? "expanded" : "normal"
+      }
+    });
+  </script>
+
+</dom-module> 
+ 

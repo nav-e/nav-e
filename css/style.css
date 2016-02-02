@@ -9,10 +9,15 @@ html, body {
 html {
 	font-family: 'Open Sans', sans-serif;
 }
-/*************************** 
- Custom CSS made by Theo Eisen 
- Last update: 27.01.2016
- ***************************/
+
+gn-map {
+  height: calc(100% - 50px);
+}
+
+/* TODO: fix gn-profiles hide if not used */
+gn-profiles {
+  display: none;
+}
 
 /*************************** Global Definitions **********************************/
 .clear {
