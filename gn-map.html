@@ -30,7 +30,7 @@ children like polygons, points and markers.
     <template id="osmMap" is="dom-if" if="{{_typeIsOpenStreetMap(mapType)}}">
       <osm-map longitude="{{longitude}}" latitude="{{latitude}}" zoom="{{zoom}}">
         <template is="dom-repeat" items="{{polygons}}">
-          <osm-poly stroke-color$="{{item.strokeColor}}" width$="{{item.width}}" fill$="{{item.fill}}" fill-color$="{{item.fillColor}}">
+          <osm-poly fill-opacity="{{item.fillOpacity}}" stroke-color$="{{item.strokeColor}}" width$="{{item.width}}" closed$="{{item.closed}}" fill-color$="{{item.fillColor}}">
             <template is="dom-repeat" items="{{item.points}}">
               <osm-point longitude$="{{item.longitude}}" latitude$="{{item.latitude}}"></osm-point>
             </template>
@@ -45,7 +45,7 @@ children like polygons, points and markers.
     <template id="googleMap" is="dom-if" if="{{_typeIsGoogleMap(mapType)}}">
       <google-map longitude="{{longitude}}" latitude="{{latitude}}" zoom="{{zoom}}">
         <template is="dom-repeat" items="{{polygons}}">
-          <google-map-poly stroke-color$="{{item.strokeColor}}" width$="{{item.width}}" fill$="{{item.fill}}" fill-color$="{{item.fillColor}}">
+          <google-map-poly fill-opacity="{{item.fillOpacity}}" stroke-color$="{{item.strokeColor}}" width$="{{item.width}}" closed$="{{item.closed}}" fill-color$="{{item.fillColor}}">
             <template is="dom-repeat" items="{{item.points}}">
               <google-map-point longitude$="{{item.longitude}}" latitude$="{{item.latitude}}"></google-map-point>
             </template>
@@ -166,19 +166,21 @@ children like polygons, points and markers.
       });    
     },
 
-    addPolygon: function (points, strokeColor, width, fill, fillColor) {
+    addPolygon: function (points, strokeColor, width, closed, fillColor, fillOpacity) {
       points = (typeof points === 'undefined') ? [] : points;
       strokeColor = (typeof strokeColor === 'undefined') ? '#0091ea' : strokeColor;
       width = (typeof width === 'undefined') ? 4 : width;
-      fill = (typeof fill === 'undefined') ? false : fill;
-      fillColor = (typeof fillColor === 'undefined') ? 'rgba(0,150,10,0.4)' : fillColor;
+      closed = (typeof closed === 'undefined') ? false : closed;
+      fillColor = (typeof fillColor === 'undefined') ? '#00960a' : fillColor;
+      fillOpacity = (typeof fillOpacity === 'undefined') ? '0.5' : fillOpacity;
 
       polygon = {
         strokeColor: strokeColor,
         width: width,
-        fill: fill,
+        closed: closed,
         fillColor: fillColor,
-        points : points
+        points : points,
+        fillOpacity : fillOpacity
       }
 
       this.push('_userPolygons', polygon);

@@ -21,7 +21,7 @@
           notify: true
         },
 
-        fill: {
+        closed: {
           type: Boolean,
           value: false,
           notify: true
@@ -29,7 +29,7 @@
 
         fillColor: {
           type: String,
-          value: 'rgba(0,150,10,0.4)',
+          value: '#0091ea',
           notify: true
         },
 
@@ -39,16 +39,23 @@
           value: function() {
             return [];
           }
+        },
+
+        fillOpacity: {
+          type: Number,
+          notify: true,
+          value: 0.5
         }
       },
 
       asObject: function() {
         return {
-          strokeColor: this.strokeColor,
-          width: this.width,
-          fill: this.fill,
-          fillColor: this.fillColor,
-          points : this.points
+          "strokeColor": this.strokeColor,
+          "width": this.width,
+          "closed": this.closed,
+          "fillColor": this.fillColor,
+          "fillOpacity": this.fillOpacity,
+          "points": this.points
         }
       },
 

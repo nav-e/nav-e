@@ -36,20 +36,15 @@
       <button on-tap="addPolygon">Add Polygon</button>
       <button on-tap="addMarker">Add Marker</button>
       <gn-map id="map" class="content fit" 
-        latitude="53.834089" longitude="10.703718" zoom="17" map-type="GoogleMap">
+        latitude="53.694089" longitude="10.608718" zoom="17" map-type="GoogleMap">
  	  <!--  <gn-marker latitude="53.834089" longitude="10.703718"></gn-marker> -->
-        <gn-poly fill fill-color="rgba(0,10,150,0.4)">
+        <gn-poly fill-color="red" stroke-color="red" closed>
           <gn-point latitude="53.699089" longitude="10.603718"></gn-point>
           <gn-point latitude="53.694089" longitude="10.608718"></gn-point>
           <gn-point latitude="53.689089" longitude="10.603718"></gn-point>
           <gn-point latitude="53.694089" longitude="10.598718"></gn-point>
         </gn-poly>
 
-        <gn-poly fill fill-color="rgba(0,10,110,0.4)">
-          <template is="dom-repeat" items="{{ points }}">
-            <gn-point latitude$="{{item.latitude}}" longitude$="{{item.longitude}}"></gn-point>
-          </template>
-        </gn-poly>
         <gn-marker></gn-marker>
   	  </gn-map>
     <script>
@@ -67,7 +62,7 @@
           { latitude : "53.794089", longitude : "10.708718" },
           { latitude : "53.789089", longitude : "10.703718" },
           { latitude : "53.794089", longitude : "10.698718" }
-        ]);
+        ], "#ff00ff", 1, true, "#ff00ff", 0.75);
       }
 
       demo.addMarker = function () {
