@@ -95,8 +95,8 @@
       var ajax = document.querySelector('#route');
       ajax.url = "https://greennav.isp.uni-luebeck.de/greennav/" +
         "vehicles/"   + this.vehicle +
-        "/routes/"    + this.startOsmId * 100 +
-        "-"           + this.targetOsmId * 100 +
+        "/routes/"    + this.startOsmId +
+        "-"           + this.targetOsmId +
         "/opt/energy" +
         "?battery="   + this.battery +
         "&algorithm=EnergyAStar";
@@ -109,7 +109,7 @@
       var ajax = document.querySelector('#range');
       ajax.url = "https://greennav.isp.uni-luebeck.de/greennav/" +
         "vehicles/"   + this.vehicle +
-        "/ranges/"    + this.startOsmId * 100 +
+        "/ranges/"    + this.startOsmId +
         "?battery="   + this.battery;
     }
   });
