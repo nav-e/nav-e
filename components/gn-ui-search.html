@@ -97,12 +97,15 @@
 			input="{{ targetQuery }}" 
 			addresses="{{ targetAddresses }}"></address-decoder>
 		
+		<iron-ajax auto url="http://localhost:8080/greennav/vertices/nearest" params="{{startAddress}}" handle-as="json" last-response="{{startAddressResponse}}"></iron-ajax>
+		<iron-ajax auto url="http://localhost:8080/greennav/vertices/nearest" params="{{targetAddress}}" handle-as="json" last-response="{{targetAddressResponse}}"></iron-ajax>
+
 		<gn-api
 			vehicles="{{ vehicles }}"
 			range="{{ range }}"
 			route="{{ route }}"
-			start-osm-id="{{ startAddress.osm_id }}"
-			target-osm-id="{{ targetAddress.osm_id }}"
+			start-osm-id="{{ startAddressResponse.id }}"
+			target-osm-id="{{ targetAddressResponse.id }}"
 			battery="{{ battery }}"
 			vehicle="{{ vehicle }}"></gn-api>
 		
