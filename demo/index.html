@@ -16,6 +16,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <script src="../../webcomponentsjs/webcomponents-lite.min.js"></script>
     <link rel="import" href="../gn-profiles.html">
     <link rel="import" href="../../gn-api/gn-api.html">
+    <link rel="import" href="../../paper-behaviors/paper-checked-element-behavior.html">
+    <link rel="import" href="../../paper-header-panel/paper-header-panel.html">
+<link rel="import" href="../../paper-checkbox/paper-checkbox.html">
   </head>
   <body unresolved>
     <template is="dom-bind">
@@ -30,11 +33,16 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         target-osm-id="310212251"
         battery="100"
         vehicle="Sam"></gn-api>
-
+      
 <button onclick="document.querySelector('gn-api').getRoute()">route</button>
-
-
-      <gn-profiles route="{{ route }}" showprofiles showstreetnames toggleprofiles></gn-profiles>
+ <div>
+  <!--paper-header-panel style="top:15px;">
+  <paper-checkbox checked="{{showprofiles}}">Wegeprofil anzeigen</paper-checkbox>
+   <paper-checkbox checked="{{showstreetnames}}">Strassennamen anzeigen</paper-checkbox>
+    <paper-checkbox checked="{{toggleprofiles}}">Wegeprofil togglen</paper-checkbox>
+     </div>
+</paper-header-panel-->
+      <gn-profiles route="{{ route }}" showprofiles showstreetnames toggleprofiles ></gn-profiles>
     </template>
 
   </body>
