@@ -2,17 +2,30 @@
 @import url(https://fonts.googleapis.com/css?family=Open+Sans);
 
 html, body {
-	width: 100%;
-	height: 100%;
+  width: 100%;
+  height: 100%;
 }
 
 html {
-	font-family: 'Open Sans', sans-serif;
+  font-family: 'Open Sans', sans-serif;
 }
-/*************************** 
- Custom CSS made by Theo Eisen 
- Last update: 27.01.2016
- ***************************/
+
+gn-map {
+  height: calc(100% - 50px);
+}
+
+#menu {
+  position: fixed;
+  top: 50px;
+  left: 50px;
+  z-index: 999;
+  background: rgba(255, 255, 255, 0.9);
+}
+
+/* TODO: fix gn-profiles hide if not used */
+gn-profiles {
+  display: none;
+}
 
 /*************************** Global Definitions **********************************/
 .clear {
@@ -21,6 +34,12 @@ html {
   width: 0;
   margin: 0;
   padding: 0;
+}
+
+.right {
+  position: absolute;
+  right: 0px;
+  display: inline;
 }
 
 /**************** GLOBAL -  Paper Input Container*/

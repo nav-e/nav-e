@@ -115,7 +115,7 @@
 		<!-- Toolbar -->
 		<paper-toolbar>
 		  <paper-icon-button name="remoteLocation" id="remote-chk" on-click="showMe" icon="{{icon}}"></paper-icon-button>
-		  <div class="title flex">Route</div>
+		  <div class="flex">GreenNavigation</div>
 		  <paper-icon-button icon="settings" on-tap="showSettings"></paper-icon-button>
 		</paper-toolbar>
 		
@@ -249,7 +249,7 @@
 					type: Object,
 					notify: true
 				},
-				// Propertie for Animation
+
 				animationConfig: {
 				  value: function() {
 				    return {
@@ -264,23 +264,26 @@
 				    }
 				  }
 				},
-				// Propertie for intermediate objectives
+
 				intermediateobjectives: {
 				  type: Array,
 				  value: function() {
 				    return [];
 				  }
 				},
-				// Propertie for Hideable
+
 				hide: {
 				  type: Boolean,
-				  value: true // init the value to true so it will be hidden on page load
+				  value: true
 				},
 				icon: {
 				  type: String,
 				  value: "icons:expand-more"
 				},
-				// Propertie for User Preferences
+
+				/*
+				 * User preferences
+				 */
 				energy: {
 				  type: Number,
 				  value: 5

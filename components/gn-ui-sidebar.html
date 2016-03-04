@@ -37,23 +37,21 @@ neon-animated-pages {
         },
         route: {
           type: Object,
-          notify: true,
-          observer: "debugthis"
+          notify: true
         },
         range: {
           type: Object,
-          notify: true,
-          observer: "debugthis"
+          notify: true
         },
         showprofiles: {
           type: Boolean,
           notify: true
         }
       },
-      debugthis: function() {
-        console.log(this.route, this.range);
-      },
-      // Function for PageSwap
+      
+      /**
+       * Function for PageSwap
+       */ 
       ready: function () {
         var swap = this;
 	      document.addEventListener('swap', function(arg) {

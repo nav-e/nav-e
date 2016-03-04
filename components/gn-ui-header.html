@@ -11,21 +11,16 @@
 <link rel="import" href="gn-ui-headermenu.html">
 <link rel="import" href="gn-ui-contact.html">
 <link rel="import" href="gn-ui-information.html">
-<link rel="import" href="gn-ui-login.html">
-<link rel="import" href="gn-ui-profile.html">
 <link rel="import" href="gn-ui-appsettings.html">
-<link rel="import" href="gn-ui-prosettings.html">
-
 <dom-module id="gn-ui-header">
+  <style is="custom-style">
+    neon-animated-pages {
+    overflow: hidden;
+  }
+  </style>
 
-<style is="custom-style">
-neon-animated-pages {
-  overflow: hidden;
-}
-</style>
-
-   <template>
-     <neon-animated-pages selected="[[selected]]" class="fit">
+  <template>
+    <neon-animated-pages selected="[[selected]]" class="fit">
       <gn-ui-headermenu></gn-ui-headermenu>
       <gn-ui-contact></gn-ui-contact>
       <gn-ui-information></gn-ui-information>
@@ -33,24 +28,26 @@ neon-animated-pages {
       <gn-ui-profile></gn-ui-profile>
       <gn-ui-appsettings></gn-ui-appsettings>
       <gn-ui-prosettings></gn-ui-prosettings>
-     </neon-animated-pages>
-   </template>
-   <script>
-   Polymer({
-    is: 'gn-ui-header',
-    properties: {
-      selected: {
-	type: Number,
-	value: 0
-      }
-    },
-    ready: function () {
+    </neon-animated-pages>
+  </template>
+  <script>
+    Polymer({
+      is: 'gn-ui-header',
+      
+      properties: {
+        selected: {
+          type: Number,
+          value: 0
+        }
+      },
+
+      ready: function () {
         var headerswitch = this;
-	document.addEventListener('headerswitch', function(arg) {
-	  headerswitch.selected = arg.detail.selected;
-	  });
-    }
-   });
-   </script>
+        document.addEventListener('headerswitch', function(arg) {
+          headerswitch.selected = arg.detail.selected;
+        });
+      } 
+    });
+  </script>
 </dom-module> 
  
