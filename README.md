@@ -1,6 +1,6 @@
 # GreenNav Web-App
 
-This project aims provides a reference implementation for the GreenNavigation front end. It makes use of the different polymer elements created for GreenNav.
+This project aims to provide a reference implementation for the GreenNavigation front end. It makes use of the different polymer elements created for GreenNav.
 
 ## Getting Started 
 
@@ -30,7 +30,6 @@ sudo npm install -g bower
 - Install the dependencies
  
 ```zsh
-cd webapp
 bower install
 ```
   
