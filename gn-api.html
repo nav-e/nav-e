@@ -11,7 +11,7 @@
     
     <iron-ajax
       auto
-      url="http://localhost:8080/greennav/vehicles"
+      url="http://localhost:6833/greennav/vehicles"
       handle-as="json"
       last-response="{{ vehicles }}"></iron-ajax>
       
@@ -93,7 +93,7 @@
      */
     getRoute : function() {
       var ajax = document.querySelector('#route');
-      ajax.url = "http://localhost:8080/greennav/" +
+      ajax.url = "http://localhost:6833/greennav/" +
         "vehicles/"   + this.vehicle +
         "/routes/"    + this.startOsmId +
         "-"           + this.targetOsmId +
@@ -107,7 +107,7 @@
      */
     getRange : function() {
       var ajax = document.querySelector('#range');
-      ajax.url = "http://localhost:8080/greennav/" +
+      ajax.url = "http://localhost:6833/greennav/" +
         "vehicles/"   + this.vehicle +
         "/ranges/"    + this.startOsmId +
         "?battery="   + this.battery;
