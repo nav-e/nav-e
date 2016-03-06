@@ -45,7 +45,7 @@ Once running, you can preview your element at
 
 ## Usage Example
 
-```
+```HTML
 <gn-map id="map" class="content fit" 
         latitude="53.694089" 
         longitude="10.608718" 
