@@ -30,10 +30,17 @@
   </template>
 
   <script>
+  
   Polymer({
     is: 'gn-api',
     
     properties: {
+
+      // Server URL
+      url: {
+        type: String,
+        value: "http://localhost:6833/greennav/"
+      },
       
       /**
        * List of available vehicles obtained from the backend
@@ -93,7 +100,7 @@
      */
     getRoute : function() {
       var ajax = document.querySelector('#route');
-      ajax.url = "http://localhost:6833/greennav/" +
+      ajax.url = this.url +
         "vehicles/"   + this.vehicle +
         "/routes/"    + this.startOsmId +
         "-"           + this.targetOsmId +
@@ -107,7 +114,7 @@
      */
     getRange : function() {
       var ajax = document.querySelector('#range');
-      ajax.url = "http://localhost:6833/greennav/" +
+      ajax.url = this.url +
         "vehicles/"   + this.vehicle +
         "/ranges/"    + this.startOsmId +
         "?battery="   + this.battery;
