@@ -1,0 +1,39 @@
+<link rel="import" href="../libs/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../libs/paper-listbox/paper-listbox.html">
+<link rel="import" href="../libs/neon-animation/neon-animation-runner-behavior.html">
+<link rel="import" href="../libs/paper-item/paper-item.html">
+<link rel="import" href="../libs/iron-icons/maps-icons.html">
+<link rel="import" href="../libs/iron-icons/device-icons.html">
+
+<dom-module id="gn-ui-submenu">
+  <template>
+    <paper-dropdown-menu label="Vehicle">
+      <paper-listbox class="dropdown-content">
+        <paper-item>Car-1</paper-item>
+        <paper-item>Car-2</paper-item>
+        <paper-item>Car-3</paper-item>
+        <paper-item>Car-4</paper-item>
+      </paper-listbox>
+    </paper-dropdown-menu>
+    
+    <!-- Battery Status -->
+    <paper-input
+          id="battery" label="Battery state"
+          auto-validate
+          pattern="100|[1-9][0-9]|[1-9]"
+          error-message="Must be a percentage"
+          value="{{ battery }}"></paper-input>
+    <paper-icon-button icon="arrow-drop-up" on-tap="hide"></paper-icon-button>
+  </template>
+  <script>
+    Polymer({
+      is: 'gn-ui-submenu',
+      properties: {
+        open: {
+          type: Boolean,
+          value: false
+        }
+      },
+    });
+  </script>
+</dom-module>

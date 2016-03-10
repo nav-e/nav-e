@@ -1,0 +1,55 @@
+<link rel="import" href="../libs/paper-button/paper-button.html">
+<link rel="import" href="../libs/paper-input/paper-input.html">
+<link rel="import" href="../libs/paper-card/paper-card.html">
+<link rel="import" href="../libs/paper-header-panel/paper-header-panel.html">
+<link rel="import" href="../libs/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="gn-ui-submenu.html">
+
+<dom-module id="gn-ui-menu">
+  <style is="custom-style">
+
+    #menu {
+      position: fixed;
+      top: 50px;
+      left: 50px;
+      z-index: 999;
+      background: rgba(255, 255, 255, 0.9);
+    }
+
+    .right {
+      position: absolute;
+      right: 0px;
+      display: inline;
+    }
+
+
+  </style>
+  <template>
+    <paper-card id="menu">
+      <div class="card-content">
+        <paper-input label="From"></paper-input>
+        <paper-input label="To"></paper-input>
+      </div>
+      <div class="card-actions">
+        <gn-ui-submenu></gn-ui-submenu>
+        <div class="right">
+          <paper-icon-button 
+              icon="maps:directions"
+              onclick="document.querySelector('gn-api').getRoute()">
+          </paper-icon-button>
+        </div>
+      </div>
+    </paper-card>
+  </template>
+  <script>
+    Polymer({
+      is: 'gn-ui-menu',
+
+      properties:{
+        opened:{
+          type: Boolean
+        },
+      }
+    });
+  </script>
+</dom-module>
