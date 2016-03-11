@@ -31,9 +31,10 @@
       <paper-icon-button icon="icons:add" on-click="addObject"></paper-icon-button><span class="add-object-label">Add Stopovers</span>
       <div id="intermediate-objectives">
         <template is="dom-repeat" items="[[intermediateobjectives]]">
-          <paper-input class="input-field" label="{{item.name}}" value="{{item.object}}"></paper-input>
-          <paper-icon-button class="remove-button" value="{{index}}" icon="icons:delete" on-click="removeObject"></paper-icon-button>
-          <div class="clear"></div>
+          <paper-input class="input-field" label="{{item.name}}" value="{{item.object}}">
+            <div suffix></div>
+            <paper-icon-button suffix class="remove-button" value="{{index}}" icon="icons:delete" on-click="removeObject"></paper-icon-button>
+          </paper-input>
         </template>
       </div>
       
