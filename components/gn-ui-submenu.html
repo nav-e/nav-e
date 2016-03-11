@@ -8,7 +8,7 @@
 <dom-module id="gn-ui-submenu">
   <template>
     <div id="dropdown-div" hidden$="{{hide}}">
-      
+
       <!-- Vehicle -->
       <paper-dropdown-menu label="Vehicle">
         <paper-listbox class="dropdown-content">
@@ -18,7 +18,7 @@
           <paper-item>Car-4</paper-item>
         </paper-listbox>
       </paper-dropdown-menu>
-      
+
       <!-- Battery Status -->
       <paper-input
             id="battery" label="Battery state"
@@ -29,13 +29,13 @@
 
       <!-- Add Stopovers -->
       <paper-icon-button icon="icons:add" on-click="addObject"></paper-icon-button><span class="add-object-label">Add Stopovers</span>
-                    <div id="intermediate-objectives">
-                    <template is="dom-repeat" items="[[intermediateobjectives]]">
-                      <paper-input class="input-field" label="{{item.name}}" value="{{item.object}}"></paper-input>
-                      <paper-icon-button class="remove-button" value="{{index}}" icon="icons:delete" on-click="removeObject"></paper-icon-button>
-                      <div class="clear"></div>
-                    </template>
-                  </div>
+      <div id="intermediate-objectives">
+        <template is="dom-repeat" items="[[intermediateobjectives]]">
+          <paper-input class="input-field" label="{{item.name}}" value="{{item.object}}"></paper-input>
+          <paper-icon-button class="remove-button" value="{{index}}" icon="icons:delete" on-click="removeObject"></paper-icon-button>
+          <div class="clear"></div>
+        </template>
+      </div>
       
     </div>
     
@@ -66,6 +66,7 @@
           }
         },
       },
+
       showMe: function() {
           this.hide = !this.hide
           if (this.icon == "arrow-drop-down") this.icon = "arrow-drop-up"
