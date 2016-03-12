@@ -1,0 +1,85 @@
+<link rel="import" href="../libs/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../libs/paper-listbox/paper-listbox.html">
+<link rel="import" href="../libs/neon-animation/neon-animation-runner-behavior.html">
+<link rel="import" href="../libs/paper-item/paper-item.html">
+<link rel="import" href="../libs/iron-icons/maps-icons.html">
+<link rel="import" href="../libs/iron-icons/device-icons.html">
+
+<dom-module id="gn-ui-submenu">
+  <template>
+    <div id="dropdown-div" hidden$="{{hide}}">
+
+      <!-- Vehicle -->
+      <paper-dropdown-menu label="Vehicle">
+        <paper-listbox class="dropdown-content">
+          <paper-item>Car-1</paper-item>
+          <paper-item>Car-2</paper-item>
+          <paper-item>Car-3</paper-item>
+          <paper-item>Car-4</paper-item>
+        </paper-listbox>
+      </paper-dropdown-menu>
+
+      <!-- Battery Status -->
+      <paper-input
+            id="battery" label="Battery state"
+            auto-validate
+            pattern="100|[1-9][0-9]|[1-9]"
+            error-message="Must be a percentage"
+            value="{{ battery }}"><div suffix>%</div></paper-input>
+
+      <!-- Add Stopovers -->
+      <paper-icon-button icon="icons:add" on-click="addObject"></paper-icon-button><span class="add-object-label">Add Stopovers</span>
+      <div id="intermediate-objectives">
+        <template is="dom-repeat" items="[[intermediateobjectives]]">
+          <paper-input class="input-field" label="{{item.name}}" value="{{item.object}}">
+            <div suffix></div>
+            <paper-icon-button suffix class="remove-button" value="{{index}}" icon="icons:delete" on-click="removeObject"></paper-icon-button>
+          </paper-input>
+        </template>
+      </div>
+      
+    </div>
+    
+    <paper-icon-button icon="{{icon}}" id="dropdown-button" on-click="showMe"></paper-icon-button>
+  
+  </template>
+
+  <script>
+    Polymer({
+      is: 'gn-ui-submenu',
+      properties: {
+        open: {
+          type: Boolean,
+          value: false
+        },
+        hide: {
+          type: Boolean,
+          value: true
+        },
+        icon: {
+          type: String,
+          value: "arrow-drop-down"
+        },
+        intermediateobjectives: {
+          type: Array,
+          value: function() {
+            return [];
+          }
+        },
+      },
+
+      showMe: function() {
+          this.hide = !this.hide
+          if (this.icon == "arrow-drop-down") this.icon = "arrow-drop-up"
+          else this.icon = "arrow-drop-down"
+      },
+      addObject: function() {
+          this.push('intermediateobjectives', {name: "Zwischenstop"});
+      },
+      removeObject: function(event, index) {
+        var index = this.intermediateobjectives.indexOf(event.model.item);
+        this.splice('intermediateobjectives', index, 1)
+      },
+    });
+  </script>
+</dom-module>
