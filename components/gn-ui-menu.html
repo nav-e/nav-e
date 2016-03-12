@@ -8,6 +8,9 @@
 <link rel="import" href="../libs/paper-item/paper-item.html">
 <link rel="import" href="../libs/iron-icons/maps-icons.html">
 <link rel="import" href="../libs/iron-icons/device-icons.html">
+<link rel="import" href="../libs/neon-animation/neon-animatable.html">
+<link rel="import" href="../libs/neon-animation/neon-animation-runner-behavior.html">
+<link rel="import" href="../libs/neon-animation/animations/scale-up-animation.html">
 
 <dom-module id="gn-ui-menu">
   <style is="custom-style">
@@ -25,12 +28,12 @@
       display: inline;
     }
   </style>
-  <template>
+  <template is="dom-bind">
     <paper-card id="menu">
       <div class="card-content">
         <paper-input label="From"></paper-input>
         <paper-input label="To"></paper-input>
-        <div hidden$="{{isSubmenuHidden}}">
+        <div id="submenu" hidden$="{{isSubmenuHidden}}">
           <!-- Vehicle -->
           <paper-dropdown-menu label="Vehicle">
             <paper-listbox class="dropdown-content">
@@ -76,6 +79,10 @@
     Polymer({
       is: 'gn-ui-menu',
 
+      behaviors: [
+        Polymer.NeonAnimationRunnerBehavior
+      ],
+
       properties:{
         isSubmenuHidden: {
           type: Boolean,
@@ -92,13 +99,28 @@
           value: function() {
             return [];
           }
+        },
+
+        animationConfig: {
+          type: Object,
+          value: function() {
+            return {
+              'entry': [{
+                name: 'scale-up-animation',
+                node: this.$.submenu,
+              }],
+            }
+          }
         }
+
       },
       /**
        * Toggles the visablitiy of submenu including
        * vehicle type selection, stopovers, battery state 
        */
       toggleSubmenu: function() {
+          if(this.isSubmenuHidden)
+            this.playAnimation('entry');
           this.isSubmenuHidden = !this.isSubmenuHidden
           if (this.icon == "arrow-drop-down") 
             this.icon = "arrow-drop-up";
