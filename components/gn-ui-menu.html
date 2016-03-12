@@ -3,11 +3,14 @@
 <link rel="import" href="../libs/paper-card/paper-card.html">
 <link rel="import" href="../libs/paper-header-panel/paper-header-panel.html">
 <link rel="import" href="../libs/paper-icon-button/paper-icon-button.html">
-<link rel="import" href="gn-ui-submenu.html">
+<link rel="import" href="../libs/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../libs/paper-listbox/paper-listbox.html">
+<link rel="import" href="../libs/paper-item/paper-item.html">
+<link rel="import" href="../libs/iron-icons/maps-icons.html">
+<link rel="import" href="../libs/iron-icons/device-icons.html">
 
 <dom-module id="gn-ui-menu">
   <style is="custom-style">
-
     #menu {
       position: fixed;
       top: 50px;
@@ -21,17 +24,45 @@
       right: 0px;
       display: inline;
     }
-
-
   </style>
   <template>
     <paper-card id="menu">
       <div class="card-content">
         <paper-input label="From"></paper-input>
         <paper-input label="To"></paper-input>
+        <div hidden$="{{isSubmenuHidden}}">
+          <!-- Vehicle -->
+          <paper-dropdown-menu label="Vehicle">
+            <paper-listbox class="dropdown-content">
+              <paper-item>Car-1</paper-item>
+              <paper-item>Car-2</paper-item>
+              <paper-item>Car-3</paper-item>
+              <paper-item>Car-4</paper-item>
+            </paper-listbox>
+          </paper-dropdown-menu>
+          <!-- Battery State -->
+          <paper-input
+                id="battery" label="Battery state"
+                auto-validate
+                pattern="100|[1-9][0-9]|[1-9]"
+                error-message="Must be a percentage"
+                value="{{ battery }}"><div suffix>%</div>
+          </paper-input>
+          <!-- Add Stopovers -->
+          <paper-icon-button icon="icons:add" on-click="addStopover"></paper-icon-button>
+          <span class="add-object-label">Add Stopovers</span>
+          </div>
+        <div>
+          <template is="dom-repeat" items="{{intermediateobjects}}">
+            <paper-input class="input-field" label="{{item.name}}" value="{{item.object}}">
+              <div suffix></div>
+              <paper-icon-button suffix class="remove-button" value="{{index}}" icon="icons:delete" on-click="removeObject"></paper-icon-button>
+            </paper-input>
+          </template>
+        </div>
       </div>
       <div class="card-actions">
-        <gn-ui-submenu></gn-ui-submenu>
+        <paper-icon-button icon="{{icon}}" id="dropdown-button" on-click="toggleSubmenu"></paper-icon-button>
         <div class="right">
           <paper-icon-button 
               icon="maps:directions"
@@ -46,9 +77,48 @@
       is: 'gn-ui-menu',
 
       properties:{
-        opened:{
-          type: Boolean
+        isSubmenuHidden: {
+          type: Boolean,
+          value: true
         },
+
+        icon: {
+          type: String,
+          value: "arrow-drop-down"
+        },
+
+        intermediateobjects: {
+          type: Array,
+          value: function() {
+            return [];
+          }
+        }
+      },
+      /**
+       * Toggles the visablitiy of submenu including
+       * vehicle type selection, stopovers, battery state 
+       */
+      toggleSubmenu: function() {
+          this.isSubmenuHidden = !this.isSubmenuHidden
+          if (this.icon == "arrow-drop-down") 
+            this.icon = "arrow-drop-up";
+          else 
+            this.icon = "arrow-drop-down";
+      },
+
+      /**
+       * Adds a stopover object to the intermediate objects list
+       */
+      addStopover: function() {
+          this.push('intermediateobjects', {name: "New Stopover"});
+      },
+
+      /**
+       * Removes a stopover object from the intermediate objects list
+       */
+      removeObject: function(event, index) {
+        var index = this.intermediateobjects.indexOf(event.model.item);
+        this.splice('intermediateobjects', index, 1)
       }
     });
   </script>
