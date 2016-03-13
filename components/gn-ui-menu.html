@@ -8,6 +8,9 @@
 <link rel="import" href="../libs/paper-item/paper-item.html">
 <link rel="import" href="../libs/iron-icons/maps-icons.html">
 <link rel="import" href="../libs/iron-icons/device-icons.html">
+<link rel="import" href="../libs/neon-animation/neon-animatable.html">
+<link rel="import" href="../libs/neon-animation/neon-animation-runner-behavior.html">
+<link rel="import" href="../libs/neon-animation/animations/scale-up-animation.html">
 
 <dom-module id="gn-ui-menu">
   <style is="custom-style">
@@ -29,7 +32,7 @@
       display: inline;
     }
   </style>
-  <template>
+  <template is="dom-bind">
     <paper-card id="menu">
       <div class="card-content">
         <paper-input label="From"></paper-input>
@@ -79,7 +82,8 @@
   <script>
     Polymer({
       is: 'gn-ui-menu',
-
+      behaviors: [Polymer.NeonAnimationRunnerBehavior],
+      
       properties:{
         /**
          * Controls submenu visibility 
@@ -99,6 +103,21 @@
           value: function() {
             return [];
           }
+        },
+
+        /**
+         * Manages neon animations
+         */
+        animationConfig: {
+          type: Object,
+          value: function() {
+            return {
+              'entry': [{
+                name: 'scale-up-animation',
+                node: this.$.submenu,
+              }],
+            }
+          }
         }
       },
 
@@ -115,6 +134,7 @@
        */
       _submenuHiddenChanged: function() {
         if (this.submenuHidden) {
+          this.playAnimation('entry');
           this.$.toggleButton.icon = "arrow-drop-down";
           this.$.submenu.style.display = 'none';
         }
