@@ -19,6 +19,10 @@
       background: rgba(255, 255, 255, 0.9);
     }
 
+    #submenu {
+      display: none;
+    }
+
     .right {
       position: absolute;
       right: 0px;
@@ -29,8 +33,7 @@
     <paper-card id="menu">
       <div class="card-content">
         <paper-input label="From"></paper-input>
-        <paper-input label="To"></paper-input>
-        <div hidden$="{{isSubmenuHidden}}">
+        <div id="submenu">
           <!-- Vehicle -->
           <paper-dropdown-menu label="Vehicle">
             <paper-listbox class="dropdown-content">
@@ -50,19 +53,20 @@
           </paper-input>
           <!-- Add Stopovers -->
           <paper-icon-button icon="icons:add" on-click="addStopover"></paper-icon-button>
-          <span class="add-object-label">Add Stopovers</span>
-          </div>
+          <span>Add Stopovers</span>
+        </div>
         <div>
           <template is="dom-repeat" items="{{intermediateobjects}}">
-            <paper-input class="input-field" label="{{item.name}}" value="{{item.object}}">
+            <paper-input label="{{item.name}}" value="{{item.object}}">
               <div suffix></div>
-              <paper-icon-button suffix class="remove-button" value="{{index}}" icon="icons:delete" on-click="removeObject"></paper-icon-button>
+              <paper-icon-button suffix value="{{index}}" icon="icons:delete" on-click="removeStopover"></paper-icon-button>
             </paper-input>
           </template>
         </div>
+        <paper-input label="To"></paper-input>
       </div>
       <div class="card-actions">
-        <paper-icon-button icon="{{icon}}" id="dropdown-button" on-click="toggleSubmenu"></paper-icon-button>
+        <paper-icon-button icon="arrow-drop-down" id="toggleButton" on-click="toggleSubmenu"></paper-icon-button>
         <div class="right">
           <paper-icon-button 
               icon="maps:directions"
@@ -77,16 +81,19 @@
       is: 'gn-ui-menu',
 
       properties:{
-        isSubmenuHidden: {
+        /**
+         * Controls submenu visibility 
+         */
+        submenuHidden: {
           type: Boolean,
-          value: true
+          value: true,
+          notify: true,
+          observer: '_submenuHiddenChanged'
         },
 
-        icon: {
-          type: String,
-          value: "arrow-drop-down"
-        },
-
+        /**
+         * Contains all stopovers
+         */
         intermediateobjects: {
           type: Array,
           value: function() {
@@ -94,16 +101,27 @@
           }
         }
       },
+
       /**
-       * Toggles the visablitiy of submenu including
-       * vehicle type selection, stopovers, battery state 
+       * Toggles the submenuHidden property 
        */
       toggleSubmenu: function() {
-          this.isSubmenuHidden = !this.isSubmenuHidden
-          if (this.icon == "arrow-drop-down") 
-            this.icon = "arrow-drop-up";
-          else 
-            this.icon = "arrow-drop-down";
+        this.submenuHidden = !this.submenuHidden;
+      },
+
+      /**
+       * Shows or hides the submenu including
+       * vehicle type selection, stopovers, battery state 
+       */
+      _submenuHiddenChanged: function() {
+        if (this.submenuHidden) {
+          this.$.toggleButton.icon = "arrow-drop-down";
+          this.$.submenu.style.display = 'none';
+        }
+        else {
+          this.$.toggleButton.icon = "arrow-drop-up";
+          this.$.submenu.style.display = 'inline-block';
+        }
       },
 
       /**
@@ -116,7 +134,7 @@
       /**
        * Removes a stopover object from the intermediate objects list
        */
-      removeObject: function(event, index) {
+      removeStopover: function(event, index) {
         var index = this.intermediateobjects.indexOf(event.model.item);
         this.splice('intermediateobjects', index, 1)
       }
