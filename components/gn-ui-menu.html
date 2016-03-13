@@ -1,16 +1,14 @@
 <link rel="import" href="../libs/paper-button/paper-button.html">
 <link rel="import" href="../libs/paper-input/paper-input.html">
 <link rel="import" href="../libs/paper-card/paper-card.html">
-<link rel="import" href="../libs/paper-header-panel/paper-header-panel.html">
 <link rel="import" href="../libs/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../libs/paper-dropdown-menu/paper-dropdown-menu.html">
 <link rel="import" href="../libs/paper-listbox/paper-listbox.html">
 <link rel="import" href="../libs/paper-item/paper-item.html">
 <link rel="import" href="../libs/iron-icons/maps-icons.html">
 <link rel="import" href="../libs/iron-icons/device-icons.html">
-<link rel="import" href="../libs/neon-animation/neon-animatable.html">
+<link rel="import" href="../libs/neon-animation/animations/fade-in-animation.html">
 <link rel="import" href="../libs/neon-animation/neon-animation-runner-behavior.html">
-<link rel="import" href="../libs/neon-animation/animations/scale-up-animation.html">
 
 <dom-module id="gn-ui-menu">
   <style is="custom-style">
@@ -113,7 +111,7 @@
           value: function() {
             return {
               'entry': [{
-                name: 'scale-up-animation',
+                name: 'fade-in-animation',
                 node: this.$.submenu,
               }],
             }
@@ -134,11 +132,11 @@
        */
       _submenuHiddenChanged: function() {
         if (this.submenuHidden) {
-          this.playAnimation('entry');
           this.$.toggleButton.icon = "arrow-drop-down";
           this.$.submenu.style.display = 'none';
         }
         else {
+          this.playAnimation('entry');
           this.$.toggleButton.icon = "arrow-drop-up";
           this.$.submenu.style.display = 'inline-block';
         }
