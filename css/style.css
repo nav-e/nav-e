@@ -11,7 +11,7 @@ html {
 }
 
 gn-map {
-  height: calc(100% - 50px);
+  height: calc(100%);
 }
 
 /* TODO: fix gn-profiles hide if not used */
