@@ -1,106 +1,91 @@
 <!doctype html>
 <html>
 <head>
-	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"></meta>
-	<title>Green Navigation</title>
-	<link rel="import" href="css/theme.html">
-	<link rel="stylesheet" type="text/css" href="css/style.css">
+  <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"></meta>
+  <title>Green Navigation</title>
 
-	<script type="text/javascript" src="libs/webcomponentsjs/webcomponents.js"></script>
+  <link rel="import" href="css/theme.html">
+  <link rel="stylesheet" type="text/css" href="css/style.css">
 
-	<link rel="import" href="components/gn-ui-contact.html">
-	<link rel="import" href="components/gn-ui-information.html">
-	<link rel="import" href="components/gn-ui-search.html">
-	
-	<link rel="import" href="libs/gn-map/gn-map.html">
-	<link rel="import" href="libs/gn-map/gn-map-poly.html">
-	<link rel="import" href="libs/gn-map/gn-map-point.html">
-	<link rel="import" href="libs/iron-flex-layout/classes/iron-flex-layout.html">
-	<link rel="import" href="libs/paper-button/paper-button.html">
-	<link rel="import" href="libs/paper-dialog/paper-dialog.html">
-	<link rel="import" href="libs/paper-dialog-scrollable/paper-dialog-scrollable.html">
-	<link rel="import" href="libs/paper-drawer-panel/paper-drawer-panel.html">
-	<link rel="import" href="libs/paper-header-panel/paper-header-panel.html">
-	<link rel="import" href="libs/paper-icon-button/paper-icon-button.html">
-	<link rel="import" href="libs/paper-menu-button/paper-menu-button.html">
-	<link rel="import" href="libs/paper-menu/paper-menu.html">
-	<link rel="import" href="libs/paper-scroll-header-panel/paper-scroll-header-panel.html">
-	<link rel="import" href="libs/paper-styles/paper-styles.html">
-	<link rel="import" href="libs/paper-toolbar/paper-toolbar.html">
+  <script src="libs/webcomponentsjs/webcomponents.js"></script>
 
+  <link rel="import" href="components/gn-ui-menu.html">
+
+  <link rel="import" href="libs/gn-map/gn-map.html">
+  <link rel="import" href="libs/gn-map/gn-poly.html">
+  <link rel="import" href="libs/gn-map/gn-point.html">
+  <link rel="import" href="libs/gn-api/gn-api.html">
+
+  <link rel="import" href="libs/iron-flex-layout/classes/iron-flex-layout.html">
+  <link rel="import" href="libs/paper-drawer-panel/paper-drawer-panel.html">
+  <link rel="import" href="libs/paper-header-panel/paper-header-panel.html">
+  <link rel="import" href="libs/paper-icon-button/paper-icon-button.html">
+  <link rel="import" href="libs/paper-toolbar/paper-toolbar.html">
+  <link rel="import" href="libs/iron-pages/iron-pages.html">
+  <link rel="import" href="libs/iron-icons/iron-icons.html">
+  
 </head>
-<body class="fullbleed layout vertical">
-	<template is="dom-bind">
-		
-		<paper-drawer-panel id="mainMenu">
-			<paper-header-panel drawer>
-				
-				<paper-toolbar>
-					<h3>Menu</h3>
-				</paper-toolbar>
-				
-				<div main>
-					
-					<gn-ui-search
-						start-address="{{ startAddress }}"
-						target-address="{{ targetAddress }}"
-						route="{{ route }}"
-						range="{{ range }}"
-						current-address="{{ currentAddress }}"></gn-ui-search>
+<body class="fullbleed">
+  <style is="custom-style">
+  paper-drawer-panel
+  {
+    z-index: 1;
+  }
+  .paper-toolbar-0
+  {
+    color: white;
+  }
 
-					<!--<paper-button onclick="document.querySelector('#info-modal').toggle()">Info</paper-button>-->
-					<!--<paper-button onclick="document.querySelector('#contact-modal').toggle()">Contact</paper-button>-->
-				</div>
-				
-			</paper-header-panel>
-				
-			<paper-header-panel main>
-				
-				<paper-toolbar>
-					<paper-icon-button icon="menu" paper-drawer-toggle></paper-icon-button>
-					<span class="flex"></span>
-					<h3>GreenNavigation</h3>
-				</paper-toolbar>
-				
-				<gn-map class="content fit" 
-					longitude="{{ currentAddress.lon }}" 
-					latitude="{{ currentAddress.lat }}" 
-					zoom="17"
-					map-type="OpenStreetMap">
+  .paper-item-link {
+    color: inherit;
+    text-decoration: none;
+  }
+  </style>
+  <template is="dom-bind" id="bind">
+    
+    <paper-drawer-panel force-narrow="true">
+      <paper-header-panel drawer>
+        <paper-toolbar>
+          <h2 class="title">MENU</h2>
+        </paper-toolbar>
+        <div role="listbox">
+  			<a class="paper-item-link" href="http://greennav.github.io/" target="_blank" tabindex="-1">
+    			<paper-item>Green Navigation</paper-item>
+  			</a>
+  			<a class="paper-item-link" href="https://www.isp.uni-luebeck.de/research/projects/green-navigation" target="_blank" tabindex="-1">
+    			<paper-item>ISP</paper-item>
+  			</a>
+  		</div>
+      </paper-header-panel>
+      <paper-header-panel main>
+        <paper-toolbar>
+          <paper-icon-button icon="menu" paper-drawer-toggle></paper-icon-button>
+          <h2 class="title">Green Navigation</h2>
+        </paper-toolbar>
+      </paper-header-panel>
+    </paper-drawer-panel>
 
-				   <gn-poly>
-			          <template is="dom-repeat" items="{{route.route}}">
-			            <gn-point longitude="{{item.longitude}}" latitude="{{item.latitude}}"></gn-point>
-			          </template>
-			        </gn-poly>
-				</gn-map>
-					
-			</paper-header-panel>
-		</paper-drawer-panel>
-			
-		<!-- Contact dialog -->
-		<!--<paper-dialog id="contact-modal" modal>
-			<div style="float:right;">
-				<paper-button dialog-confirm autofocus>Close</paper-button>
-			</div>
-			<h4>Green Navigation - Kontakt</h4>
-			<paper-dialog-scrollable>
-				<gn-ui-contact></gn-ui-contact>
-			</paper-dialog-scrollable>
-		</paper-dialog>-->
-		
-		
-		<!-- Info	dialog -->
-		<!--<paper-dialog id="info-modal" modal>
-			<div style="float:right;">
-				<paper-button dialog-confirm autofocus>Close</paper-button>
-			</div>
-			<h4>Green Navigation - Information</h4>
-			<paper-dialog-scrollable>
-				<gn-ui-information></gn-ui-information>
-			</paper-dialog-scrollable>
-		</paper-dialog>-->
-		
-	</template>
+    <gn-api route="{{ route }}" range="{{ range }}"></gn-api>
+    
+    <div class="fit vertical layout">
+      <gn-ui-menu></gn-ui-menu>
+      <gn-map class="flex"
+        longitude="11.15"
+        latitude="48.12"
+        zoom="15"
+        map-type="OpenStreetMap">
+        
+          <gn-poly>
+            <template is="dom-repeat" items="{{ route.route }}">
+              <gn-point 
+                  latitude="{{ item.latitude }}" 
+                  longitude="{{ item.longitude }}">
+              </gn-point>
+            </template>
+          </gn-poly>
+      </gn-map>
+    </div>
+
+  </template>
 </body>
 </html>

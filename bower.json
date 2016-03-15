@@ -18,6 +18,7 @@
 		"gn-map": "Greennav/gn-map",
 		"gn-api": "Greennav/gn-api",
 		"gn-search": "Greennav/gn-search",
+		"gn-profiles": "Greennav/gn-profiles",
 		"address-decoder": "MaxLorenz/address-decoder",
 		"jquery": "~2.1.4"
 	}
