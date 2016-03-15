@@ -8,3 +8,7 @@ html, body {
 html {
   font-family: 'Open Sans', sans-serif;
 }
+
+gn-map {
+	height: 100vh;
+}
