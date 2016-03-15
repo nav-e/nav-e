@@ -22,9 +22,10 @@
   <link rel="import" href="libs/paper-icon-button/paper-icon-button.html">
   <link rel="import" href="libs/paper-toolbar/paper-toolbar.html">
   <link rel="import" href="libs/iron-icons/iron-icons.html">
-  
+ 
 </head>
 <body class="fullbleed vertical layout">
+  <style is="custom-style" include="iron-flex iron-flex-alignment"></style>
   <style is="custom-style">
     paper-drawer-panel {
       z-index: 1;
@@ -65,7 +66,7 @@
             longitude="11.15"
             latitude="48.12"
             zoom="15"
-            map-type="OpenStreetMap">
+            map-type="GoogleMap">
             
               <gn-poly>
                 <template is="dom-repeat" items="{{ route.route }}">
