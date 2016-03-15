@@ -14,10 +14,9 @@
   <style is="custom-style">
     #menu {
       position: fixed;
-      top: 100px;
-      right: 50px;
       z-index: 999;
       background: rgba(255, 255, 255, 0.9);
+      transition: left 300ms ease-in-out;
     }
 
     #submenu {
@@ -30,7 +29,7 @@
       display: inline;
     }
   </style>
-  <template is="dom-bind">
+  <template>
     <paper-card id="menu">
       <div class="card-content">
         <paper-input label="From"></paper-input>
@@ -116,6 +115,24 @@
               }],
             }
           }
+        },
+
+        /**
+         * Menu position in y-axis
+         */
+        top: {
+          type: Number,
+          value: 150,
+          observer: '_positionChanged' 
+        },
+
+        /**
+         * Menu position in x-axis
+         */
+        left: {
+          type: Number,
+          value: 100,
+          observer: '_positionChanged'
         }
       },
 
@@ -140,6 +157,14 @@
           this.$.toggleButton.icon = "arrow-drop-up";
           this.$.submenu.style.display = 'inline-block';
         }
+      },
+
+      /**
+       * Updates the menu position
+       */
+      _positionChanged: function() {
+        this.$.menu.style.top = this.top+'px';
+        this.$.menu.style.left = this.left+'px';
       },
 
       /**

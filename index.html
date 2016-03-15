@@ -16,37 +16,34 @@
   <link rel="import" href="libs/gn-map/gn-point.html">
   <link rel="import" href="libs/gn-api/gn-api.html">
 
-  <link rel="import" href="libs/iron-flex-layout/classes/iron-flex-layout.html">
+  <link rel="import" href="libs/iron-flex-layout/iron-flex-layout-classes.html">
   <link rel="import" href="libs/paper-drawer-panel/paper-drawer-panel.html">
   <link rel="import" href="libs/paper-header-panel/paper-header-panel.html">
   <link rel="import" href="libs/paper-icon-button/paper-icon-button.html">
   <link rel="import" href="libs/paper-toolbar/paper-toolbar.html">
-  <link rel="import" href="libs/iron-pages/iron-pages.html">
   <link rel="import" href="libs/iron-icons/iron-icons.html">
   
 </head>
-<body class="fullbleed">
+<body class="fullbleed vertical layout">
   <style is="custom-style">
-  paper-drawer-panel
-  {
-    z-index: 1;
-  }
-  .paper-toolbar-0
-  {
-    color: white;
-  }
+    paper-drawer-panel {
+      z-index: 1;
+    }
+    .paper-toolbar-0 {
+      color: white;
+    }
 
-  .paper-item-link {
-    color: inherit;
-    text-decoration: none;
-  }
+    .paper-item-link {
+      color: inherit;
+      text-decoration: none;
+    }
   </style>
-  <template is="dom-bind" id="bind">
-    
-    <paper-drawer-panel force-narrow="true">
+  <template id="app" is="dom-bind">
+    <gn-api route="{{ route }}" range="{{ range }}"></gn-api>
+    <paper-drawer-panel id="drawer" force-narrow="true">
       <paper-header-panel drawer>
         <paper-toolbar>
-          <h2 class="title">MENU</h2>
+          <h2 class="title">Menu</h2>
         </paper-toolbar>
         <div role="listbox">
   			<a class="paper-item-link" href="http://greennav.github.io/" target="_blank" tabindex="-1">
@@ -62,30 +59,37 @@
           <paper-icon-button icon="menu" paper-drawer-toggle></paper-icon-button>
           <h2 class="title">Green Navigation</h2>
         </paper-toolbar>
+        <div class="vertical layout">
+          <gn-ui-menu left="{{menuPositionLeft}}"></gn-ui-menu>
+          <gn-map class="flex"
+            longitude="11.15"
+            latitude="48.12"
+            zoom="15"
+            map-type="OpenStreetMap">
+            
+              <gn-poly>
+                <template is="dom-repeat" items="{{ route.route }}">
+                  <gn-point 
+                      latitude="{{ item.latitude }}" 
+                      longitude="{{ item.longitude }}">
+                  </gn-point>
+                </template>
+              </gn-poly>
+          </gn-map>
+        </div>
       </paper-header-panel>
     </paper-drawer-panel>
+    <script>
+      var app = document.querySelector('#app');
+      app.menuPositionLeft = 100;
 
-    <gn-api route="{{ route }}" range="{{ range }}"></gn-api>
-    
-    <div class="fit vertical layout">
-      <gn-ui-menu></gn-ui-menu>
-      <gn-map class="flex"
-        longitude="11.15"
-        latitude="48.12"
-        zoom="15"
-        map-type="OpenStreetMap">
-        
-          <gn-poly>
-            <template is="dom-repeat" items="{{ route.route }}">
-              <gn-point 
-                  latitude="{{ item.latitude }}" 
-                  longitude="{{ item.longitude }}">
-              </gn-point>
-            </template>
-          </gn-poly>
-      </gn-map>
-    </div>
-
+      document.querySelector('#drawer').addEventListener('iron-select', function (event) {
+        if(event.detail.item.id == 'main')
+          app.menuPositionLeft = 100;
+        else
+          app.menuPositionLeft = 100 + event.detail.item.offsetWidth;
+      })
+    </script>
   </template>
 </body>
 </html>

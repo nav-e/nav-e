@@ -1,4 +1,3 @@
-/***** General definitions *****/
 @import url(https://fonts.googleapis.com/css?family=Open+Sans);
 
 html, body {
@@ -8,27 +7,4 @@ html, body {
 
 html {
   font-family: 'Open Sans', sans-serif;
-}
-
-gn-map {
-  height: calc(100%);
-}
-
-/* TODO: fix gn-profiles hide if not used */
-gn-profiles {
-  display: none;
-}
-
-/**************** GLOBAL -  Paper Input Container*/
-.paper-input-container {
-  margin: 0;
-  padding: 0;
-  width: 240px;
-}
-
-/**************** Googlemap Navigation Switch Landscape*/
-
-/**************** GMAP deaktiviert */
-.gm-style-mtc {
-  display: none;
 }
