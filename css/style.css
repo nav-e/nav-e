@@ -10,5 +10,6 @@ html {
 }
 
 gn-map {
-	height: 100vh;
+	/** 100vh - paper-toolbar height **/
+	height: calc(100vh - 64px);
 }
