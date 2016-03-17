@@ -34,7 +34,7 @@
       <div class="card-content">
         <div>
           <paper-input label="From"></paper-input>
-          <!-- Stopovers are added here -->
+          <!-- Add Stopovers -->
           <template is="dom-repeat" items="{{intermediateobjects}}">
             <paper-input label="{{item.name}}" value="{{item.object}}">
               <div suffix></div>
@@ -44,7 +44,6 @@
           <paper-input label="To"></paper-input>
         </div>
         <div id="submenu">
-          <!-- Add Stopovers -->
           <div>
             <paper-icon-button icon="icons:add" on-click="addStopover"></paper-icon-button>
             <span>Add Stopovers</span>
