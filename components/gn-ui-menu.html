@@ -32,8 +32,23 @@
   <template>
     <paper-card id="menu">
       <div class="card-content">
-        <paper-input label="From"></paper-input>
+        <div>
+          <paper-input label="From"></paper-input>
+          <!-- Stopovers are added here -->
+          <template is="dom-repeat" items="{{intermediateobjects}}">
+            <paper-input label="{{item.name}}" value="{{item.object}}">
+              <div suffix></div>
+              <paper-icon-button suffix value="{{index}}" icon="icons:delete" on-click="removeStopover"></paper-icon-button>
+            </paper-input>
+          </template>
+          <paper-input label="To"></paper-input>
+        </div>
         <div id="submenu">
+          <!-- Add Stopovers -->
+          <div>
+            <paper-icon-button icon="icons:add" on-click="addStopover"></paper-icon-button>
+            <span>Add Stopovers</span>
+          </div>
           <!-- Vehicle -->
           <paper-dropdown-menu label="Vehicle">
             <paper-listbox class="dropdown-content">
@@ -51,19 +66,7 @@
                 error-message="Must be a percentage"
                 value="{{ battery }}"><div suffix>%</div>
           </paper-input>
-          <!-- Add Stopovers -->
-          <paper-icon-button icon="icons:add" on-click="addStopover"></paper-icon-button>
-          <span>Add Stopovers</span>
         </div>
-        <div>
-          <template is="dom-repeat" items="{{intermediateobjects}}">
-            <paper-input label="{{item.name}}" value="{{item.object}}">
-              <div suffix></div>
-              <paper-icon-button suffix value="{{index}}" icon="icons:delete" on-click="removeStopover"></paper-icon-button>
-            </paper-input>
-          </template>
-        </div>
-        <paper-input label="To"></paper-input>
       </div>
       <div class="card-actions">
         <paper-icon-button icon="arrow-drop-down" id="toggleButton" on-click="toggleSubmenu"></paper-icon-button>
