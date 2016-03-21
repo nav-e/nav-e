@@ -129,6 +129,9 @@ By default `map-type="GoogleMap"`
         type: Object
       },
 
+      /**
+       * Array of polygon objects
+       */
       polygons: {
           type: Array,
           notify: true,
@@ -137,6 +140,9 @@ By default `map-type="GoogleMap"`
           }
       },
 
+      /**
+       * Array of Marker objects
+       */
       markers: {
           type: Array,
           notify: true,
@@ -145,6 +151,9 @@ By default `map-type="GoogleMap"`
           }
       },
 
+      /**
+       * Array of user created Polygons
+       */
       _userPolygons: {
         type: Array,
         notify: true,
@@ -153,6 +162,9 @@ By default `map-type="GoogleMap"`
         }
       },
 
+      /**
+       * Array of user created Markers
+       */
       _userMarkers: {
         type: Array,
         notify: true,
