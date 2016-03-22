@@ -14,6 +14,24 @@ If attribute map-type change, the changes will apply to all child elements.
 At this time `gn-map` supports `google-map` and `osm-map` and all
 children like polygons, points and markers.
 
+Examples:
+
+    <gn-map
+      longitude="9.45"
+      latitude="38.24"
+      zoom="13"
+      map-type="GoogleMap">
+    </gn-map>
+
+    <gn-map
+      longitude="9.45"
+      latitude="38.24"
+      zoom="13"
+      map-type="OpenStreetMap">
+    </gn-map>
+
+By default `map-type="GoogleMap"`
+
 @demo
 -->
 
@@ -111,6 +129,9 @@ children like polygons, points and markers.
         type: Object
       },
 
+      /**
+       * Array of polygon objects
+       */
       polygons: {
           type: Array,
           notify: true,
@@ -119,6 +140,9 @@ children like polygons, points and markers.
           }
       },
 
+      /**
+       * Array of Marker objects
+       */
       markers: {
           type: Array,
           notify: true,
@@ -127,6 +151,9 @@ children like polygons, points and markers.
           }
       },
 
+      /**
+       * Array of user created Polygons
+       */
       _userPolygons: {
         type: Array,
         notify: true,
@@ -135,6 +162,9 @@ children like polygons, points and markers.
         }
       },
 
+      /**
+       * Array of user created Markers
+       */
       _userMarkers: {
         type: Array,
         notify: true,
