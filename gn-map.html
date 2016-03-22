@@ -177,8 +177,8 @@ By default `map-type="GoogleMap"`
     attached: function () {
       var self = this;
       this.addEventListener('update-gn-map', function () {
-          self.splice('polygons', -1, 0);
-          self.splice('markers', -1, 0);
+          self.splice('polygons', -1);
+          self.splice('markers', -1);
 
           self.queryAllEffectiveChildren('gn-poly').forEach(function (polygon) {
             self.push('polygons', polygon.asObject());
