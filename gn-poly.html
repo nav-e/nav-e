@@ -82,7 +82,7 @@ Examples:
         var self = this;
         this._observer = Polymer.dom(this).observeNodes( function(info) {
           nodesToAdd = info.addedNodes.filter(function(node){
-            return node.nodeName == 'GN-POINT';
+            return node.nodeName == 'GN-POINT'; // get rid of #text nodes
           })
           nodesToAdd.forEach(function(point) {
             self.push('points', point.asObject());
