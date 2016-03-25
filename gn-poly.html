@@ -81,7 +81,10 @@ Examples:
       attached: function () {
         var self = this;
         this._observer = Polymer.dom(this).observeNodes( function(info) {
-          self.queryAllEffectiveChildren('gn-point').forEach(function(point) {
+          nodesToAdd = info.addedNodes.filter(function(node){
+            return node.nodeName == 'GN-POINT'; // get rid of #text nodes
+          })
+          nodesToAdd.forEach(function(point) {
             self.push('points', point.asObject());
           });
           self.fire('update-gn-map');
