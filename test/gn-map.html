@@ -1,0 +1,76 @@
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+
+    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+    <script src="../../web-component-tester/browser.js"></script>
+
+    <link rel="import" href="../gn-map.html">
+    <link rel="import" href="../gn-marker.html">
+    <link rel="import" href="../gn-poly.html">
+    <link rel="import" href="../gn-point.html">
+  </head>
+  <body>
+
+    <test-fixture id="gn-map-fixture">
+      <template>
+        <gn-map id="map" class="content fit" 
+        latitude="53.694089" longitude="10.608718" zoom="13" map-type="GoogleMap">
+        </gn-map>
+      </template>
+    </test-fixture>
+
+    <test-fixture id="gn-map-fixture-with-content">
+      <template>
+        <gn-map id="map" class="content fit" 
+        latitude="53.694089" longitude="10.608718" zoom="13" map-type="GoogleMap">
+          <gn-poly fill-color="red" stroke-color="red" closed>
+            <gn-point latitude="53.699089" longitude="10.603718"></gn-point>
+            <gn-point latitude="53.694089" longitude="10.608718"></gn-point>
+            <gn-point latitude="53.689089" longitude="10.603718"></gn-point>
+            <gn-point latitude="53.694089" longitude="10.598718"></gn-point>
+          </gn-poly>
+          <gn-marker></gn-marker>
+      </gn-map>
+      </template>
+    </test-fixture>
+
+
+    <script>
+      suite('<gn-map>', function() {
+
+        var map;
+
+        setup(function() {
+          map = fixture('gn-map-fixture-with-content');
+        });
+
+        test('initial values of latitude, longitude, zoom, mapType', function() {
+          assert.equal(map.latitude, 53.694089);
+          assert.equal(map.longitude, 10.608718);
+          assert.equal(map.zoom, 13);
+          assert.equal(map.mapType, "GoogleMap");
+        });
+
+        test('initial values of markers and polygons', function() {
+          // verify initial values
+          assert.equal(map.polygons.length, 0);
+          assert.equal(map._userPolygons.length, 0);
+          assert.equal(map.markers.length, 0);
+          assert.equal(map._userMarkers.length, 0);
+        });
+
+        test('check properties after firing update-gn-map', function() {
+          map.fire('update-gn-map');
+          assert.equal(map.polygons.length, 1);
+          assert.equal(map._userPolygons.length, 0);
+          assert.equal(map.markers.length, 1);
+          assert.equal(map._userMarkers.length, 0);
+        });
+
+      });
+    </script>
+
+  </body>
+</html>
