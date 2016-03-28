@@ -1,3 +1,2 @@
 libs/
-*.war
-*~
+.DS_STORE
