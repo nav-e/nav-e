@@ -8,13 +8,7 @@
 -->
 <dom-module id="gn-api">
   <template>
-    
-    <iron-ajax
-      auto
-      url="http://localhost:6833/greennav/vehicles"
-      handle-as="json"
-      last-response="{{ vehicles }}"></iron-ajax>
-      
+
     <iron-ajax
       auto
       id="route"
@@ -47,6 +41,19 @@
        */
       vehicles: { 
         type: Array, 
+        value: [
+          "Fiat Fiorino", 
+          "Smart Roadster", 
+          "Sam", 
+          "Citysax", 
+          "MUTE", 
+          "Spyder-S", 
+          "Think", 
+          "Luis", 
+          "STROMOS", 
+          "Karabag Fiat 500E", 
+          "Lupower Fiat 500E"
+        ],
         notify: true 
       },
       
@@ -97,20 +104,22 @@
     
     /**
      * Get the vehicles list
+     * TODO: vehicles are static for now
+     *       later we need some back end communication
      */
-    getVehicleList : function() {
-      vehicleList = ["Fiat Fiorino", 
-                     "Smart Roadster", 
-                     "Sam", 
-                     "Citysax", 
-                     "MUTE", 
-                     "Spyder-S", 
-                     "Think", 
-                     "Luis", 
-                     "STROMOS", 
-                     "Karabag Fiat 500E", 
-                     "Lupower Fiat 500E"];
-      return vehicleList;
+    getVehicles : function() {
+      this.vehicles = ["Fiat Fiorino", 
+        "Smart Roadster", 
+        "Sam", 
+        "Citysax", 
+        "MUTE", 
+        "Spyder-S", 
+        "Think", 
+        "Luis", 
+        "STROMOS", 
+        "Karabag Fiat 500E", 
+        "Lupower Fiat 500E"
+      ];
     },
 
     /**
