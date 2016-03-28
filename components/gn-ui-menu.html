@@ -37,10 +37,9 @@
           <!-- Vehicle -->
           <paper-dropdown-menu label="Vehicle">
             <paper-listbox class="dropdown-content">
-              <paper-item>Car-1</paper-item>
-              <paper-item>Car-2</paper-item>
-              <paper-item>Car-3</paper-item>
-              <paper-item>Car-4</paper-item>
+              <template is="dom-repeat" items="{{vehicles}}">
+                <paper-item>{{item}}</paper-item>
+              </template>
             </paper-listbox>
           </paper-dropdown-menu>
           <!-- Battery State -->
@@ -100,6 +99,14 @@
           value: function() {
             return [];
           }
+        },
+
+        /**
+         * Holds supported vehicles 
+         */
+        vehicles: {
+          type: Array,
+          notify: true
         },
 
         /**

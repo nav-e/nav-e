@@ -48,8 +48,7 @@
     }
   </style>
   <template id="app" is="dom-bind">
-    <p>Seledcted is {{JSON.stringify(mapType)}}</p>
-    <gn-api route="{{ route }}" range="{{ range }}"></gn-api>
+    <gn-api route="{{ route }}" range="{{ range }}" vehicles={{vehicles}}></gn-api>
     <paper-drawer-panel id="drawer" force-narrow="true">
       <paper-header-panel drawer>
         <paper-toolbar>
@@ -74,7 +73,7 @@
           </paper-radio-group>
         </paper-toolbar>
         <div class="vertical layout">
-          <gn-ui-menu left="{{menuPositionLeft}}"></gn-ui-menu>
+          <gn-ui-menu vehicles={{vehicles}} left="{{menuPositionLeft}}"></gn-ui-menu>
           <gn-map class="flex"
             longitude="11.15"
             latitude="48.12"
