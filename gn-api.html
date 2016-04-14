@@ -40,20 +40,7 @@
        * List of available vehicles obtained from the backend
        */
       vehicles: { 
-        type: Array, 
-        value: [
-          "Fiat Fiorino", 
-          "Smart Roadster", 
-          "Sam", 
-          "Citysax", 
-          "MUTE", 
-          "Spyder-S", 
-          "Think", 
-          "Luis", 
-          "STROMOS", 
-          "Karabag Fiat 500E", 
-          "Lupower Fiat 500E"
-        ],
+        type: Array,
         notify: true 
       },
       
@@ -108,7 +95,7 @@
      *       later we need some back end communication
      */
     getVehicles : function() {
-      this.vehicles = ["Fiat Fiorino", 
+      vehicles = ["Fiat Fiorino",
         "Smart Roadster", 
         "Sam", 
         "Citysax", 
@@ -120,6 +107,7 @@
         "Karabag Fiat 500E", 
         "Lupower Fiat 500E"
       ];
+      return vehicles;
     },
 
     /**
