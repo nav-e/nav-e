@@ -15,19 +15,19 @@ An element providing a solution to no problem in particular.
 
 Example:
 
-    <gn-notification></gn-notification>
+    <seed-element></seed-element>
 
 Example:
 
-    <gn-notification>
-      <h2>Hello gn-notification</h2>
-    </gn-notification>
+    <seed-element>
+      <h2>Hello seed-element</h2>
+    </seed-element>
 
 @demo demo/index.html
 @hero hero.svg
 -->
 
-<dom-module id="gn-notification">
+<dom-module id="seed-element">
   <template>
     <style>
       :host {
@@ -44,7 +44,7 @@ Example:
       }
     </style>
 
-    <h1>&lt;gn-notification&gt;</h1>
+    <h1>&lt;seed-element&gt;</h1>
     <content></content>
     <p class="author">
       <img src$="{{author.image}}">
@@ -55,7 +55,7 @@ Example:
 
   <script>
     Polymer({
-      is: 'gn-notification',
+      is: 'seed-element',
 
       properties: {
         /**
@@ -127,13 +127,13 @@ Example:
        */
       sayHello: function(greeting) {
         var response = greeting || 'Hello World!';
-        return 'gn-notification says, ' + response;
+        return 'seed-element says, ' + response;
       },
 
       /**
-       * The `gn-notification-lasers` event is fired whenever `fireLasers` is called.
+       * The `seed-element-lasers` event is fired whenever `fireLasers` is called.
        *
-       * @event gn-notification-lasers
+       * @event seed-element-lasers
        * @detail {{sound: String}}
        */
 
@@ -144,7 +144,7 @@ Example:
        * do the zapping.
        */
       fireLasers: function() {
-        this.fire('gn-notification-lasers', {sound: 'Pew pew!'});
+        this.fire('seed-element-lasers', {sound: 'Pew pew!'});
       }
     });
   </script>
