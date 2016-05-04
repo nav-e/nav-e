@@ -1,8 +1,8 @@
 {
-  "name": "seed-element",
+  "name": "gn-notification",
   "version": "1.0.7",
   "authors": [
-    "Anonymous <anonymous@example.com>"
+    "Thomas Ort <thomas83ort@gmail.com>"
   ],
   "description": "An element providing a solution to no problem in particular.",
   "keywords": [
@@ -10,9 +10,9 @@
     "polymer",
     "seed"
   ],
-  "main": "seed-element.html",
+  "main": "gn-notification.html",
   "license": "http://polymer.github.io/LICENSE.txt",
-  "homepage": "https://github.com/<USERNAME>/seed-element/",
+  "homepage": "https://github.com/tom3012/gn-notification/",
   "ignore": [
     "/.*",
     "/test/"
