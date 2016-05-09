@@ -8,8 +8,6 @@ The idea is to create a smart notification system showing directions of the calc
 
 ## TODO
 
-Current state is just basic structure from [Polymer seed-element](https://github.com/PolymerElements/seed-element).
-
 ### In Progress
 
 - Possibility to set position of messages
