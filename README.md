@@ -16,9 +16,7 @@ The idea is to create a smart notification system showing directions of the calc
 ### Soon
 
 - [ ] Show debug messages from other modules
-
 - [ ] Show directions (Webapp)
-
 - [ ] Show useful information about traffic (Webapp)
 - [ ] Show useful information about current position (Webapp)
 
