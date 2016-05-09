@@ -15,34 +15,27 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <title>gn-notification Demo</title>
     <script src="../../webcomponentsjs/webcomponents-lite.min.js"></script>
     <link rel="import" href="../gn-notification.html">
+    <link rel="import" href="../../paper-button/paper-button.html">
   </head>
   <body unresolved>
 
     <p>An example of <code>&lt;gn-notification&gt;</code>:</p>
 
-    <p>Make words! <button id="saybtn">Say Something</button></p>
-    <p>Make lasers! <button id="laserbtn">Fire lasers</button></p>
+    <paper-button raised onclick="hint.open()">hint notification</paper-button>
+    <paper-button raised onclick="warning.open()">warning notification</paper-button>
+    <paper-button raised onclick="error.open()">error notification</paper-button>
 
-    <gn-notification author='{"name": "Lord Meowser", "image": "http://lorempixel.com/g/300/200/cats/"}' fancy>
-      <h2>Hello gn-notification</h2>
-    </gn-notification>
-
-    <script>
-      var gnNotification = document.querySelector('gn-notification');
-
-      document.querySelector('#saybtn').addEventListener('click', function() {
-        alert(gnNotification.sayHello('Hallo!'));
-      });
-
-      document.querySelector('#laserbtn').addEventListener('click', function() {
-        gnNotification.fireLasers();
-      });
-      
-      document.addEventListener("gn-notification-lasers", function(e) {
-        console.log(e.detail.sound);
-      });
-
-    </script>
+    <gn-notification  id="hint"
+                      title="Hint"
+                      text="This is a hint message."></gn-notification>
+    <gn-notification  id="warning"
+                      state="warningMsg"
+                      title="Warning"
+                      text="Oh, oh... there is a warning message."></gn-notification>
+    <gn-notification  id="error"
+                      state="errorMsg"
+                      title="Error"
+                      text="An error has occurred"></gn-notification>
 
   </body>
 </html>

@@ -9,19 +9,27 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 -->
 
 <link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../paper-dialog/paper-dialog.html">
+<link rel="import" href="../paper-styles/color.html">
 
 <!--
-An element providing a solution to no problem in particular.
+An element providing notifications for the GreenNavigation WebApp.
 
 Example:
 
-    <gn-notification></gn-notification>
+    <gn-notification title="Hint" text="This is a hint message."></gn-notification>
 
 Example:
 
-    <gn-notification>
-      <h2>Hello gn-notification</h2>
-    </gn-notification>
+    <gn-notification  id="warning"
+                      state="warningMsg"
+                      title="Warning"
+                      text="Oh, oh... there is a warning message."></gn-notification>
+
+    <gn-notification  id="error"
+                      state="errorMsg"
+                      title="Error"
+                      text="An error has occurred"></gn-notification>
 
 @demo demo/index.html
 @hero hero.svg
@@ -32,25 +40,34 @@ Example:
     <style>
       :host {
         display: block;
-        box-sizing: border-box;
       }
-
-      .author img {
-        display: block;
-        float: left;
-        margin-right: 5px;
-        max-height: 100px;
-        max-width: 100px;
+      .hint {
+        border: 2px solid;
+        border-color: var(--google-grey-500);
+        background-color: var(--google-light-grey-50);
+        color: var(--google-grey-500);
+      }
+      .errorMsg {
+        border: 2px solid;
+        border-color: var(--paper-red-500);
+        background-color: var(--paper-red-50);
+        color: var(--paper-red-500);
+      }
+      .warningMsg {
+        border: 2px solid;
+        border-color: var(--paper-orange-500);
+        background-color: var(--paper-orange-50);
+        color: var(--paper-orange-500);
       }
     </style>
 
-    <h1>&lt;gn-notification&gt;</h1>
-    <content></content>
-    <p class="author">
-      <img src$="{{author.image}}">
-      Cheers,<br/>
-      <span class="name">{{author.name}}</span>
-    </p>
+    <paper-dialog class$={{state}} id="dialog">
+      <h2>{{title}}</h2>
+      <div>
+        {{text}}
+      </div>
+    </paper-dialog>
+
   </template>
 
   <script>
@@ -59,34 +76,45 @@ Example:
 
       properties: {
         /**
-         * `fancy` indicates that the element should don a monocle and tophat,
-         * while checking its pocket watch.
-         */
-        fancy: Boolean,
+        * The text to display as a header.
+        */
+        title: {
+          type: String,
+          value: ''
+        },
 
         /**
-         * Describes the author of the element, but is really just an excuse to
-         * show off JSDoc annotations.
-         *
-         * @type {{name: string, image: string}}
-         */
-        author: {
-          type: Object,
-          // Use `value` to provide a default value for a property, by setting it
-          // on your element's prototype.
-          //
-          // If you provide a function, as we do here, Polymer will call that
-          // _per element instance_.
-          //
-          // We do that to ensure that each element gets its own copy of the
-          // value, rather than having it shared across all instances (via the
-          // prototype).
-          value: function() {
-            return {
-              name:  'Dimitri Glazkov',
-              image: 'http://addyosmani.com/blog/wp-content/uploads/2013/04/unicorn.jpg',
-            };
-          }
+        * The text to display as content of the message box. If there is content
+        * between tags yet, this will be overwritten!
+        */
+        text: {
+          type: String,
+          value: ''
+        },
+
+        /**
+        * `state` switches the different states of messages
+        *  _hint_, _warning_ and _error_.
+        */
+        state: {
+          type: String,
+          value: 'hint'
+        },
+
+        /**
+        * Set `duration` to close the message automatically after duration time.
+        */
+        duration: {
+          type: Number,
+          value: 3000
+        },
+
+        /**
+        * Use `persist` to show a persistent message.
+        */
+        persist: {
+          type: Boolean,
+          value: false
         },
       },
 
@@ -118,33 +146,12 @@ Example:
       },
 
       // Element Behavior
-
-      /**
-       * Sometimes it's just nice to say hi.
-       *
-       * @param {string} greeting A positive greeting.
-       * @return {string} The full greeting.
-       */
-      sayHello: function(greeting) {
-        var response = greeting || 'Hello World!';
-        return 'gn-notification says, ' + response;
+      open: function() {
+        this.$.dialog.open();
       },
 
-      /**
-       * The `gn-notification-lasers` event is fired whenever `fireLasers` is called.
-       *
-       * @event gn-notification-lasers
-       * @detail {{sound: String}}
-       */
-
-      /**
-       * Attempt to destroy this element's enemies with a beam of light!
-       *
-       * Or, at least, dispatch an event in the vain hope that someone else will
-       * do the zapping.
-       */
-      fireLasers: function() {
-        this.fire('gn-notification-lasers', {sound: 'Pew pew!'});
+      close: function() {
+        this.$.dialog.close();
       }
     });
   </script>

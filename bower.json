@@ -18,7 +18,9 @@
     "/test/"
   ],
   "dependencies": {
-    "polymer": "Polymer/polymer#^1.2.0"
+    "polymer": "Polymer/polymer#^1.2.0",
+    "paper-dialog": "PolymerElements/paper-dialog#^1.0.4",
+    "paper-styles": "PolymerElements/paper-styles#^1.1.4"
   },
   "devDependencies": {
     "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",
