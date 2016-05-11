@@ -8,8 +8,6 @@ The idea is to create a smart notification system showing directions of the calc
 
 ## TODO
 
-Current state is just basic structure from [Polymer seed-element](https://github.com/PolymerElements/seed-element).
-
 ### In Progress
 
 - Possibility to set position of messages
@@ -18,9 +16,7 @@ Current state is just basic structure from [Polymer seed-element](https://github
 ### Soon
 
 - [ ] Show debug messages from other modules
-
 - [ ] Show directions (Webapp)
-
 - [ ] Show useful information about traffic (Webapp)
 - [ ] Show useful information about current position (Webapp)
 
