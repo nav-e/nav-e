@@ -41,30 +41,37 @@ Example:
       :host {
         display: block;
       }
-      .hint {
+
+      :host #dialog {
         border: 2px solid;
-        border-color: var(--google-grey-500);
+        border-color: var(--gn-notification-border-color, --google-grey-500);
         background-color: var(--google-light-grey-50);
         color: var(--google-grey-500);
       }
-      .errorMsg {
-        border: 2px solid;
-        border-color: var(--paper-red-500);
-        background-color: var(--paper-red-50);
-        color: var(--paper-red-500);
-      }
-      .warningMsg {
+
+      :host([warning]) #dialog {
         border: 2px solid;
         border-color: var(--paper-orange-500);
         background-color: var(--paper-orange-50);
         color: var(--paper-orange-500);
+
+        @apply(--gn-notification-warning);
+      }
+
+      :host([error]) #dialog {
+        border: 2px solid;
+        border-color: var(--paper-red-500);
+        background-color: var(--paper-red-50);
+        color: var(--paper-red-500);
+
+        @apply(--gn-notification-error);
       }
     </style>
 
-    <paper-dialog class$={{state}} id="dialog">
+    <paper-dialog id="dialog">
       <h2>{{title}}</h2>
       <div>
-        {{text}}
+        <content></content>
       </div>
     </paper-dialog>
 
@@ -84,21 +91,21 @@ Example:
         },
 
         /**
-        * The text to display as content of the message box. If there is content
-        * between tags yet, this will be overwritten!
+        * Set overall color theme to warning color.
         */
-        text: {
-          type: String,
-          value: ''
+        warning: {
+          type: Boolean,
+          value: false,
+          reflectToAttribute: true
         },
 
         /**
-        * `state` switches the different states of messages
-        *  _hint_, _warning_ and _error_.
+        * Set overall color theme to warning color.
         */
-        state: {
-          type: String,
-          value: 'hint'
+        error: {
+          type: Boolean,
+          value: false,
+          reflectToAttribute: true
         },
 
         /**

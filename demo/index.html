@@ -26,16 +26,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <paper-button raised onclick="error.open()">error notification</paper-button>
 
     <gn-notification  id="hint"
-                      title="Hint"
-                      text="This is a hint message."></gn-notification>
+                      title="Hint">This is a hint message.</gn-notification>
     <gn-notification  id="warning"
-                      state="warningMsg"
-                      title="Warning"
-                      text="Oh, oh... there is a warning message."></gn-notification>
+                      warning
+                      title="Warning">Oh, oh... there is a warning message.</gn-notification>
     <gn-notification  id="error"
-                      state="errorMsg"
-                      title="Error"
-                      text="An error has occurred"></gn-notification>
+                      error
+                      title="Error">An error has occurred</gn-notification>
 
   </body>
 </html>
