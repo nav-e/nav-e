@@ -25,6 +25,7 @@ build/Release
 
 # Dependency directory
 node_modules
+bower_components
 
 # Optional npm cache directory
 .npm
@@ -35,3 +36,6 @@ node_modules
 .bower_components
 
 .DS_STORE
+
+# Atom Editor specific files and directories
+.imdone
