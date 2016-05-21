@@ -48,7 +48,7 @@ Once running, you can preview your element at `http://localhost:8080/components/
 
 ### Short example
 
-```
+```html
 <paper-button raised onclick="hint.open()">hint notification</paper-button>
 
 <gn-notification  id="hint" title="Hint">This is a hint message.</gn-notification>
@@ -56,7 +56,7 @@ Once running, you can preview your element at `http://localhost:8080/components/
 
 Example with different color settings for _warning_ and _error_ messages:
 
-```
+```html
 <paper-button raised onclick="warning.open()">warning notification</paper-button>
 <paper-button raised onclick="error.open()">error notification</paper-button>
 
