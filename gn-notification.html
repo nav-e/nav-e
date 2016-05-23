@@ -9,6 +9,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 -->
 
 <link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../iron-icon/iron-icon.html">
+<link rel="import" href="../iron-icons/iron-icons.html">
+<link rel="import" href="../paper-dialog-scrollable/paper-dialog-scrollable.html">
 <link rel="import" href="../paper-dialog/paper-dialog.html">
 <link rel="import" href="../paper-styles/color.html">
 
@@ -42,40 +45,73 @@ Example:
   <template>
     <style>
       :host {
-        display: block;
+        display: inline-block;
+      }
+
+      :host #header {
+        background-color: var(--gn-notification-header-background, --google-grey-500);
+        color: var(--gn-notification-header-color, #fff);
+        margin: 0px;
+        padding: 10px;
+      }
+
+      :host #header-title {
+        font-size: 1.5em;
+        font-weight: bold;
+      }
+
+      :host #header-icon {
+        --iron-icon-height: 32px;
+        --icon-icon-height: 32px;
       }
 
       :host #dialog {
-        border: 2px solid;
-        border-color: var(--gn-notification-border-color, --google-grey-500);
-        background-color: var(--google-light-grey-50);
-        color: var(--google-grey-500);
+        background-color: var(--gn-notification-background, --google-light-grey-50);
+        color: var(--gn-notification-color, --google-grey-500);
+        /* TODO: Should be responsive */
+        max-width: 250px;
+        max-height: 200px;
+        min-width: 250px;
+        min-height: 200px;
       }
 
       :host([warning]) #dialog {
-        border: 2px solid;
-        border-color: var(--paper-orange-500);
-        background-color: var(--paper-orange-50);
-        color: var(--paper-orange-500);
+        background-color: var(--gn-notification-warning-background, --paper-orange-50);
+        color: var(--gn-notification-warning-color, --paper-orange-500);
+
+        @apply(--gn-notification-warning);
+      }
+
+      :host([warning]) #header {
+        background-color: var(--gn-notification-header-warning-background, --paper-orange-500);
+        color: var(--gn-notification-header-warning-color, #fff);
 
         @apply(--gn-notification-warning);
       }
 
       :host([error]) #dialog {
-        border: 2px solid;
-        border-color: var(--paper-red-500);
-        background-color: var(--paper-red-50);
-        color: var(--paper-red-500);
+        background-color: var(--gn-notification-error-background, --paper-red-50);
+        color: var(--gn-notification-error-color, --paper-red-500);
+
+        @apply(--gn-notification-error);
+      }
+
+      :host([error]) #header {
+        background-color: var(--gn-notification-header-error-background, --paper-red-500);
+        color: var(--gn-notification-header-error-color, #fff);
 
         @apply(--gn-notification-error);
       }
     </style>
 
     <paper-dialog id="dialog">
-      <h2>{{title}}</h2>
-      <div>
-        <content></content>
+      <div id="header">
+        <iron-icon id="header-icon" icon="{{icon}}"></iron-icon>
+        <span id="header-title">{{title}}</span>
       </div>
+      <paper-dialog-scrollable>
+        <content></content>
+      </paper-dialog-scrollable>
     </paper-dialog>
 
   </template>
@@ -91,6 +127,11 @@ Example:
         title: {
           type: String,
           value: ''
+        },
+
+        icon: {
+          type: String,
+          value: 'lightbulb-outline'
         },
 
         /**
@@ -128,9 +169,9 @@ Example:
         // },
       },
 
-      listeners: {
-        'dialog.opened': 'autoClose'
-      },
+      // listeners: {
+      //   'dialog.opened': 'autoClose'
+      // },
 
       // Element Lifecycle
 
