@@ -111,9 +111,9 @@ Example:
                   entry-animation="scale-up-animation"
                   exit-animation="fade-out-animation">
       <div id="header">
-        <iron-icon id="header-icon" icon="{{icon}}"></iron-icon>
-        <span id="header-title">{{title}}</span>
-        <paper-icon-button hidden$="{{!persist}}" icon="cancel" on-tap="close"></paper-icon-button>
+        <iron-icon id="header-icon" icon="[[icon]]"></iron-icon>
+        <span id="header-title">[[title]]</span>
+        <paper-icon-button hidden$="[[!persist]]" icon="cancel" on-tap="close"></paper-icon-button>
       </div>
       <paper-dialog-scrollable>
         <content></content>
