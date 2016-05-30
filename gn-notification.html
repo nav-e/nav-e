@@ -129,6 +129,9 @@ Example:
           value: ''
         },
 
+        /*
+        * Set a different icon to the header.
+        */
         icon: {
           type: String,
           value: 'lightbulb-outline'
@@ -213,6 +216,10 @@ Example:
         this.$.dialog.close();
       },
 
+      /**
+      * Closes notification automatically after `duration` if `persist` is
+      * not true.
+      */
       autoClose: function() {
         if (!this.persist) {
           this.async(this.close, this.duration);
