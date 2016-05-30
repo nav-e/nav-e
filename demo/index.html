@@ -22,11 +22,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <p>An example of <code>&lt;gn-notification&gt;</code>:</p>
 
     <paper-button raised onclick="hint.open()">hint notification</paper-button>
+    <paper-button raised onclick="persist.open()">persist notification</paper-button>
     <paper-button raised onclick="warning.open()">warning notification</paper-button>
     <paper-button raised onclick="error.open()">error notification</paper-button>
 
     <gn-notification  id="hint"
                       title="Hint">This is a hint message.</gn-notification>
+    <gn-notification  id="persist"
+                      persist
+                      title="Hint">This message is persistent.</gn-notification>
     <gn-notification  id="warning"
                       warning
                       title="Warning">Oh, oh... there is a warning message.</gn-notification>
