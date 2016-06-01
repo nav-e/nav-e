@@ -15,24 +15,39 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <title>gn-gps-simulator Demo</title>
     <script src="../../webcomponentsjs/webcomponents-lite.min.js"></script>
     <link rel="import" href="../gn-gps-simulator.html">
+    <link rel="import" href="../../iron-ajax/iron-ajax.html">
+    <link rel="import" href="../../paper-button/paper-button.html">
   </head>
   <body unresolved>
 
     <p>An example of <code>&lt;gn-gps-simulator&gt;</code>:</p>
 
-    <p>Make words! <button id="saybtn">Say Something</button></p>
+    <paper-button id="startSim" raised>start</paper-button>
+    <paper-button id="resetSim" raised>reset</paper-button>
 
-    <gn-gps-simulator>
-      <h2>Hello gn-gps-simulator</h2>
-    </gn-gps-simulator>
+    <template is="dom-bind">
+      <iron-ajax  id="ajax"
+                  url="example.json"
+                  last-response="{{positions}}" auto></iron-ajax>
+
+      <gn-gps-simulator id="sim"
+                        positions="[[positions]]"
+                        longitude="{{lon}}"
+                        latitude="{{lat}}"></gn-gps-simulator>
+
+      <h2><pre>&lt;gn-gps-simulator latitude="<span>[[lat]]</span>"
+                  longitude="<span>[[lon]]</span>">&lt;/gn-gps-simulator></pre></h2>
+    </template>
 
     <script>
-      var seedElement = document.querySelector('gn-gps-simulator');
-
-      document.querySelector('#saybtn').addEventListener('click', function() {
-        alert(seedElement.sayHello('Hallo!'));
+      document.getElementById("startSim").addEventListener("click", function() {
+        var startSim = document.getElementById("sim");
+        startSim.startSimulation();
       });
-
+      document.getElementById("resetSim").addEventListener("click", function() {
+        var resetSim = document.getElementById("sim");
+        resetSim.resetSimulation();
+      });
     </script>
 
   </body>

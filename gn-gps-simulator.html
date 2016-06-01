@@ -27,83 +27,124 @@ Example:
 @hero hero.svg
 -->
 
-<dom-module id="gn-gps-simulator">
-  <template>
-    <style>
-      :host {
-        display: block;
-        box-sizing: border-box;
-      }
+<script>
+  Polymer({
+    is: 'gn-gps-simulator',
 
-      .author img {
-        display: block;
-        float: left;
-        margin-right: 5px;
-        max-height: 100px;
-        max-width: 100px;
-      }
-    </style>
-
-    <h1>&lt;gn-gps-simulator&gt;</h1>
-    <content></content>
-    <p class="author">
-      <span class="name">{{author}}</span>
-    </p>
-  </template>
-
-  <script>
-    Polymer({
-      is: 'gn-gps-simulator',
-
-      properties: {
-        /**
-         * Describes the author of the element.
-         */
-        author: {
-          type: String,
-          value: 'Thomas Ort'
-        }
+    properties: {
+      /**
+       *
+       */
+      positions: {
+        type: Array,
+        value: function () { return []; }
       },
 
-      // Element Lifecycle
-
-      ready: function() {
-        // `ready` is called after all elements have been configured, but
-        // propagates bottom-up. This element's children are ready, but parents
-        // are not.
-        //
-        // This is the point where you should make modifications to the DOM (when
-        // necessary), or kick off any processes the element wants to perform.
+      index: {
+        type: Number,
+        value: 0
       },
 
-      attached: function() {
-        // `attached` fires once the element and its parents have been inserted
-        // into a document.
-        //
-        // This is a good place to perform any work related to your element's
-        // visual state or active behavior (measuring sizes, beginning animations,
-        // loading resources, etc).
+      isDriving: {
+        type: Boolean,
+        value: false
       },
-
-      detached: function() {
-        // The analog to `attached`, `detached` fires when the element has been
-        // removed from a document.
-        //
-        // Use this to clean up anything you did in `attached`.
-      },
-
-      // Element Behavior
 
       /**
-       * Sometimes it's just nice to say hi.
        *
-       * @param {string} greeting A positive greeting.
-       * @return {string} The full greeting.
        */
-      sayHello: function(greeting) {
-        var response = greeting || 'Hello World!';
-        return 'gn-gps-simulator says, ' + response;
+      longitude: {
+        type: Number,
+        value: 10.680888891220093,
+        notify: true
+      },
+
+      /**
+       *
+       */
+      latitude: {
+        type: Number,
+        value: 53.8662953069172,
+        notify: true
+      },
+
+      /**
+       *
+       */
+      speed: {
+        type: Number,
+        value: 1000
       }
-    });
-  </script>
-</dom-module>
+    },
+
+    // Element Lifecycle
+
+    ready: function() {
+      // `ready` is called after all elements have been configured, but
+      // propagates bottom-up. This element's children are ready, but parents
+      // are not.
+      //
+      // This is the point where you should make modifications to the DOM (when
+      // necessary), or kick off any processes the element wants to perform.
+    },
+
+    attached: function() {
+      // `attached` fires once the element and its parents have been inserted
+      // into a document.
+      //
+      // This is a good place to perform any work related to your element's
+      // visual state or active behavior (measuring sizes, beginning animations,
+      // loading resources, etc).
+    },
+
+    detached: function() {
+      // The analog to `attached`, `detached` fires when the element has been
+      // removed from a document.
+      //
+      // Use this to clean up anything you did in `attached`.
+    },
+
+    // Element Behavior
+
+    startSimulation: function() {
+      this.isDriving = true;
+      this.drive();
+    },
+
+    drive: function() {
+      if (this.isDriving) {
+        this._setNextPosition();
+        setTimeout(function() {
+          this.drive();
+        }.bind(this), this.speed);
+      }
+    },
+
+    // stopSimulation: function() {
+    //
+    // },
+
+    resetSimulation: function() {
+      // this.stopSimulation();
+      this.longitude = this.positions[0].lon;
+      this.latitude = this.positions[0].lat;
+      this.index = 0;
+    },
+
+    // _getNextPosition: function() {
+    //
+    // },
+
+    _setNextPosition: function() {
+      if (this.isDriving) {
+        if (this.index < this.positions.length) {
+          this.longitude = this.positions[this.index].lon;
+          this.latitude = this.positions[this.index].lat;
+          this.index += 1;
+        } else {
+          this.isDriving = false;
+        }
+      }
+    }
+  });
+</script>
