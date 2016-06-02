@@ -1,0 +1,174 @@
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../polymer/polymer.html">
+
+<!--
+Emulates a moving gps signal.
+
+Example:
+
+    <paper-button id="sim.startSimulation()">start</paper-button>
+
+    <iron-ajax url="example.json" last-response="{{positions}}" auto></iron-ajax>
+
+    <gn-gps-simulator id="sim"
+                      positions="[[positions]]"
+                      longitude="{{lon}}"
+                      latitude="{{lat}}"></gn-gps-simulator>
+
+    <h2>longitude="<span>[[lon]]</span>"</h2>
+    <h2>latitude="<span>[[lat]]</span>"</h2>
+
+@demo demo/index.html
+@hero hero.svg
+-->
+
+<script>
+  Polymer({
+    is: 'gn-gps-simulator',
+
+    properties: {
+      /**
+       * Array with coordinates, e.g [ {"lon":foo, "lat":bar}, {...} ]
+       */
+      positions: {
+        type: Array,
+        value: function () { return []; }
+      },
+
+
+      /**
+       * Current position in `positions` array.
+       */
+      positionsIndex: {
+        type: Number,
+        value: 0
+      },
+
+
+      /**
+       * `True` if Simulation is active. If last index in `positions` is reached
+       * this will switch to `false` again.
+       */
+      isDriving: {
+        type: Boolean,
+        value: false
+      },
+
+      /**
+       * Sets the starting longitude.
+       */
+      longitude: {
+        type: Number,
+        notify: true
+      },
+
+      /**
+       * Sets the starting latitude.
+       */
+      latitude: {
+        type: Number,
+        notify: true
+      },
+
+      /**
+       * Sets the speed in ms. Smaller is faster!
+       */
+      speed: {
+        type: Number,
+        value: 1000
+      }
+    },
+
+    // Element Lifecycle
+
+    ready: function() {
+      // `ready` is called after all elements have been configured, but
+      // propagates bottom-up. This element's children are ready, but parents
+      // are not.
+      //
+      // This is the point where you should make modifications to the DOM (when
+      // necessary), or kick off any processes the element wants to perform.
+    },
+
+    attached: function() {
+      // `attached` fires once the element and its parents have been inserted
+      // into a document.
+      //
+      // This is a good place to perform any work related to your element's
+      // visual state or active behavior (measuring sizes, beginning animations,
+      // loading resources, etc).
+    },
+
+    detached: function() {
+      // The analog to `attached`, `detached` fires when the element has been
+      // removed from a document.
+      //
+      // Use this to clean up anything you did in `attached`.
+    },
+
+    // Element Behavior
+
+
+    /**
+     * Calling `_drive()` and starts the simulation.
+     */
+    startSimulation: function() {
+      this.isDriving = true;
+      this._drive();
+    },
+
+
+    /**
+     * Sets the next position in `positions` according to `speed`
+     */
+    _drive: function() {
+      if (this.isDriving) {
+        this._setNextPosition();
+        setTimeout(function() {
+          this._drive();
+        }.bind(this), this.speed);
+      }
+    },
+
+    // stopSimulation: function() {
+    //
+    // },
+
+
+    /**
+     * Resets `longitude` and `latitude` to starting points.
+     */
+    resetSimulation: function() {
+      // this.stopSimulation();
+      this.longitude = this.positions[0].lon;
+      this.latitude = this.positions[0].lat;
+      this.positionsIndex = 0;
+    },
+
+
+    /**
+     * Sets `longitude` and `latitude` according to `positions` if `isDriving`
+     * is `true` and `positionsIndex` hasn't reached last position.
+     */
+    _setNextPosition: function() {
+      if (this.isDriving) {
+        if (this.positionsIndex < this.positions.length) {
+          this.longitude = this.positions[this.positionsIndex].lon;
+          this.latitude = this.positions[this.positionsIndex].lat;
+          this.positionsIndex += 1;
+        } else {
+          this.isDriving = false;
+        }
+      }
+    }
+  });
+</script>
