@@ -1,13 +1,23 @@
 <link rel="import" href="../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../bower_components/paper-input/paper-input.html">
-<link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
 <link rel="import" href="../bower_components/paper-listbox/paper-listbox.html">
 <link rel="import" href="../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../bower_components/paper-slider/paper-slider.html">
+
+<link rel="import" href="../bower_components/iron-iconset/iron-iconset.html">
 <link rel="import" href="../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../bower_components/iron-icons/av-icons.html">
 <link rel="import" href="../bower_components/iron-icons/maps-icons.html">
+<link rel="import" href="../bower_components/iron-icons/image-icons.html">
+<link rel="import" href="../bower_components/iron-icons/hardware-icons.html">
+<link rel="import" href="../bower_components/iron-icon/iron-icon.html">
+<link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
+
 <link rel="import" href="../bower_components/neon-animation/animations/fade-in-animation.html">
 <link rel="import" href="../bower_components/neon-animation/neon-animation-runner-behavior.html">
+<link rel="import" href="gn-test.html">
+
 
 <dom-module id="gn-directions-menu">
   <template>
@@ -26,8 +36,23 @@
         padding: 0 20px;
       }
 
+      #addStopovers {
+        margin-top: 10px;
+        margin-bottom: -10px;
+      }
+
+      #batteryState {
+        margin-top: 15px;
+      }
+
       paper-input {
         --paper-input-container-focus-color: var(--app-primary-color);
+      }
+
+      paper-slider {
+        --paper-slider-knob-color: var(--app-primary-color);
+        --paper-slider-active-color: var(--app-primary-color);
+        --paper-slider-pin-color: var(--app-primary-color);
       }
     </style>
 
@@ -45,37 +70,34 @@
           <template is="dom-repeat" items="{{intermediateobjects}}">
             <paper-input label="{{item.name}}" value="{{item.object}}">
               <div suffix></div>
-              <paper-icon-button suffix value="{{index}}" icon="icons:delete" on-click="removeStopover"></paper-icon-button>
+              <!-- Should be icon="icons:delete" -->
+              <paper-icon-button suffix value="{{index}}" icon="av:not-interested" on-click="removeStopover"></paper-icon-button>
             </paper-input>
           </template>
           <paper-input label="To"></paper-input>
         </div>
 
-        <div id="submenu">
-          <div>
-            <paper-icon-button icon="maps:add-location" on-click="addStopover"></paper-icon-button>
-            <span>Add Stopovers</span>
-          </div>
-          <!-- Vehicle -->
-          <paper-dropdown-menu label="Vehicle">
-            <paper-listbox class="dropdown-content">
-              <template is="dom-repeat" items="{{vehicles}}">
-                <paper-item>{{item}}</paper-item>
-              </template>
-            </paper-listbox>
-          </paper-dropdown-menu>
-          <!-- Battery State -->
-          <paper-input
-                id="battery" label="Battery state"
-                auto-validate
-                pattern="100|[1-9][0-9]|[1-9]"
-                error-message="Must be a percentage"
-                value="{{ battery }}"><div suffix>%</div>
-          </paper-input>
+        <div id="addStopovers">
+          <paper-icon-button icon="av:library-add" on-click="addStopover"></paper-icon-button>
+          <span>Add Stopovers</span>
+        </div>
+
+        <!-- Vehicle -->
+        <paper-dropdown-menu label="Vehicle">
+          <paper-listbox class="dropdown-content">
+            <template is="dom-repeat" items="{{vehicles}}">
+              <paper-item>{{item}}</paper-item>
+            </template>
+          </paper-listbox>
+        </paper-dropdown-menu>
+
+        <!-- Battery State -->
+        <div id="batteryState">
+          <div>Battery State</div>
+          <paper-slider pin value="{{battery}}" pressed></paper-slider>
         </div>
 
         <div class="card-actions">
-          <paper-icon-button icon="arrow-drop-down" id="toggleButton" on-click="toggleSubmenu"></paper-icon-button>
           <div class="right">
             <paper-icon-button 
                 icon="maps:directions"
@@ -84,7 +106,10 @@
           </div>
         </div>
       </div>
-      <div>Page 2</div>
+      <div>
+        <div>Page 2</div>
+        <gn-test></gn-test>
+      </div>
     </iron-pages>
 
   </template>
@@ -95,16 +120,6 @@
       behaviors: [Polymer.NeonAnimationRunnerBehavior],
       
       properties:{
-        /**
-         * Controls submenu visibility 
-         */
-        submenuHidden: {
-          type: Boolean,
-          value: true,
-          notify: true,
-          observer: '_submenuHiddenChanged'
-        },
-
         /**
          * Contains all stopovers
          */
@@ -144,37 +159,7 @@
        */
       ready: function() {
         this.selected = 0;
-      },
-
-      /**
-       * Toggles the submenuHidden property 
-       */
-      toggleSubmenu: function() {
-        this.submenuHidden = !this.submenuHidden;
-      },
-
-      /**
-       * Shows or hides the submenu including
-       * vehicle type selection, stopovers, battery state 
-       */
-      _submenuHiddenChanged: function() {
-        if (this.submenuHidden) {
-          this.$.toggleButton.icon = "arrow-drop-down";
-          this.$.submenu.style.display = 'none';
-        }
-        else {
-          this.playAnimation('entry');
-          this.$.toggleButton.icon = "arrow-drop-up";
-          this.$.submenu.style.display = 'inline-block';
-        }
-      },
-
-      /**
-       * Updates the menu position
-       */
-      _positionChanged: function() {
-        this.$.menu.style.top = this.top+'px';
-        this.$.menu.style.left = this.left+'px';
+        this.battery = 100;
       },
 
       /**

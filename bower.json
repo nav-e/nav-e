@@ -23,7 +23,8 @@
     "paper-dropdown-menu": "PolymerElements/paper-dropdown-menu#^1.2.1",
     "paper-listbox": "polymerelements/paper-listbox#^1.1.2",
     "paper-item": "PolymerElements/paper-item#^1.2.1",
-    "neon-animation": "PolymerElements/neon-animation#^1.2.3"
+    "neon-animation": "PolymerElements/neon-animation#^1.2.3",
+    "iron-iconset": "PolymerElements/iron-iconset#^1.0.4"
   },
   "devDependencies": {
     "web-component-tester": "^4.0.0"
