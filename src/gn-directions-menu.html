@@ -4,20 +4,10 @@
 <link rel="import" href="../bower_components/paper-listbox/paper-listbox.html">
 <link rel="import" href="../bower_components/paper-item/paper-item.html">
 <link rel="import" href="../bower_components/paper-slider/paper-slider.html">
-
-<link rel="import" href="../bower_components/iron-iconset/iron-iconset.html">
-<link rel="import" href="../bower_components/iron-icons/iron-icons.html">
-<link rel="import" href="../bower_components/iron-icons/av-icons.html">
-<link rel="import" href="../bower_components/iron-icons/maps-icons.html">
-<link rel="import" href="../bower_components/iron-icons/image-icons.html">
-<link rel="import" href="../bower_components/iron-icons/hardware-icons.html">
-<link rel="import" href="../bower_components/iron-icon/iron-icon.html">
 <link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
-
 <link rel="import" href="../bower_components/neon-animation/animations/fade-in-animation.html">
 <link rel="import" href="../bower_components/neon-animation/neon-animation-runner-behavior.html">
-<link rel="import" href="gn-test.html">
-
+<link rel="import" href="gn-icons.html">
 
 <dom-module id="gn-directions-menu">
   <template>
@@ -32,7 +22,7 @@
         --paper-tabs-selection-bar-color: var(--app-primary-color);
       }
 
-      #route {
+      #Route, #Erreichbarkeit {
         padding: 0 20px;
       }
 
@@ -45,7 +35,7 @@
         margin-top: 15px;
       }
 
-      paper-input {
+      paper-dropdown-menu, paper-input {
         --paper-input-container-focus-color: var(--app-primary-color);
       }
 
@@ -56,30 +46,32 @@
       }
     </style>
 
+    <gn-api id="gnApi" route="{{route}}" range="{{range}}" vehicles="{{vehicles}}"></gn-api>
+
     <paper-tabs noink selected="{{selected}}">
       <paper-tab>ROUTE</paper-tab>
       <paper-tab>ERREICHBARKEIT</paper-tab>          
     </paper-tabs>
 
     <iron-pages selected="{{selected}}">
-      <div id="route">
+      <div id="Route">
         <div>
           <paper-input label="From"></paper-input>
 
           <!-- Add Stopovers -->
-          <template is="dom-repeat" items="{{intermediateobjects}}">
+          <template is="dom-repeat" items="{{via}}">
             <paper-input label="{{item.name}}" value="{{item.object}}">
               <div suffix></div>
-              <!-- Should be icon="icons:delete" -->
-              <paper-icon-button suffix value="{{index}}" icon="av:not-interested" on-click="removeStopover"></paper-icon-button>
+              <paper-icon-button suffix value="{{index}}" icon="gn-icons:clear" on-click="removeStopover"></paper-icon-button>
             </paper-input>
           </template>
+
           <paper-input label="To"></paper-input>
         </div>
 
         <div id="addStopovers">
-          <paper-icon-button icon="av:library-add" on-click="addStopover"></paper-icon-button>
-          <span>Add Stopovers</span>
+          <paper-icon-button icon="gn-icons:add-circle" on-click="addStopover"></paper-icon-button>
+          <span>Add a stopover</span>
         </div>
 
         <!-- Vehicle -->
@@ -99,16 +91,30 @@
 
         <div class="card-actions">
           <div class="right">
-            <paper-icon-button 
-                icon="maps:directions"
-                onclick="document.querySelector('gn-api').getRoute()">
+            <paper-icon-button icon="gn-icons:directions" on-tap="getDirections">
             </paper-icon-button>
           </div>
         </div>
       </div>
-      <div>
-        <div>Page 2</div>
-        <gn-test></gn-test>
+
+
+      <div id="Erreichbarkeit">
+        <paper-input label="From"></paper-input>
+
+        <!-- Vehicle -->
+        <paper-dropdown-menu label="Vehicle">
+          <paper-listbox class="dropdown-content">
+            <template is="dom-repeat" items="{{vehicles}}">
+              <paper-item>{{item}}</paper-item>
+            </template>
+          </paper-listbox>
+        </paper-dropdown-menu>
+
+        <!-- Battery State -->
+        <div id="batteryState">
+          <div>Battery State</div>
+          <paper-slider pin value="{{battery}}" pressed></paper-slider>
+        </div>
       </div>
     </iron-pages>
 
@@ -123,7 +129,7 @@
         /**
          * Contains all stopovers
          */
-        intermediateobjects: {
+        via: {
           type: Array,
           value: function() {
             return [];
@@ -135,46 +141,54 @@
          */
         vehicles: {
           type: Array,
-          notify: true
-        },
-
-        /**
-         * Manages neon animations
-         */
-        animationConfig: {
-          type: Object,
           value: function() {
-            return {
-              'entry': [{
-                name: 'fade-in-animation',
-                node: this.$.submenu,
-              }],
-            }
+            return [];
           }
-        }
+        },
       },
 
       /**
-       * Selects the 'Route' tab in the sidebar.
+       * Initializes a couple of menu variables
        */
       ready: function() {
         this.selected = 0;
         this.battery = 100;
       },
 
+      getDirections: function() {
+        this.$.gnApi.getRoute();
+      },
+
+      /**
+       * Calls the gn-api for the list of vehicles
+       */
+      attached: function() {
+        this.async(function() {
+          this.vehicles = this.$.gnApi.getVehicles();
+        });
+      },
+
       /**
        * Adds a stopover object to the intermediate objects list
        */
       addStopover: function() {
-          this.push('intermediateobjects', {name: "New Stopover"});
+        switch (this.via.length) {
+          case 0:
+            this.push('via', {name: "via"});
+            break;
+          default:
+            if (this.via[this.via.length - 1].object) {
+              this.push('via', {name: "via"});
+            }
+        }
       },
 
       /**
        * Removes a stopover object from the intermediate objects list
        */
       removeStopover: function(event, index) {
-        var index = this.intermediateobjects.indexOf(event.model.item);
-        this.splice('intermediateobjects', index, 1)
+        var index = this.via.indexOf(event.model.item);
+        this.splice('via', index, 1)
       }
     });
   </script>

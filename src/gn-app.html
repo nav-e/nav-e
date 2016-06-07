@@ -17,10 +17,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../bower_components/app-layout/app-header-layout/app-header-layout.html">
 <link rel="import" href="../bower_components/app-layout/app-toolbar/app-toolbar.html">
 
+<link rel="import" href="../bower_components/paper-dialog/paper-dialog.html">
 <link rel="import" href="../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../bower_components/paper-tabs/paper-tabs.html">
 <link rel="import" href="../bower_components/iron-pages/iron-pages.html">
 <link rel="import" href="../bower_components/iron-selector/iron-selector.html">
+<link rel="import" href="../bower_components/gn-map/gn-map.html">
+<link rel="import" href="../bower_components/gn-map/gn-poly.html">
+<link rel="import" href="../bower_components/gn-map/gn-point.html">
+<link rel="import" href="../bower_components/gn-api/gn-api.html">
 <link rel="import" href="gn-directions-menu.html">
 <link rel="import" href="gn-test.html">
 <link rel="import" href="my-icons.html">
@@ -30,7 +35,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   <template>
 
     <style>
-
       :host {
         display: block;
         --app-primary-color: #1B5E20;
@@ -55,29 +59,20 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         padding-left: 25px;
       }
 
-      .drawer-list {
-        margin: 0 20px;
-      }
-      .drawer-list a {
-        display: block;
-        padding: 0 16px;
-        line-height: 40px;
-        text-decoration: none;
-        color: var(--app-secondary-color);
-      }
-      .drawer-list a.iron-selected {
-        color: black;
-        font-weight: bold;
-      }
-      .drawer-list a.subroute {
-        padding-left: 32px;
-      }
-
       paper-button > * {
         text-transform: none;
         vertical-align: middle;
       }
 
+      paper-dialog {
+        position: fixed;
+        top: 100px;
+        width: 750px;
+      }
+
+      paper-dialog a {
+        color: var(--app-primary-color);
+      }
     </style>
 
     <app-location route="{{route}}"></app-location>
@@ -92,14 +87,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       <!-- Drawer content -->
       <app-drawer>
         <app-toolbar>Green Navigation</app-toolbar>
-        <gn-directions-menu></gn-directions-menu>
-
-        <!-- <iron-selector selected="[[page]]" attr-for-selected="name" class="drawer-list" role="navigation">
-          <a name="view1" href="/view1">View One</a>
-          <a name="view2" href="/view2">View Two</a>
-          <a name="view3" href="/view3">View Three</a>
-          <a name="new-view" href="/new-view">New View</a>
-        </iron-selector> -->
+        <gn-directions-menu vehicles="{{vehicles}}"></gn-directions-menu>
       </app-drawer>
 
       <!-- Main content -->
@@ -109,21 +97,86 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           <app-toolbar>
             <paper-icon-button icon="menu" drawer-toggle></paper-icon-button>
             <div title></div>
-            <paper-button>
-              <span>Info</span>
-            </paper-button>
-            <paper-button>
-              <span>Kontakt</span>
-            </paper-button>           
+            <paper-button data-dialog="info" on-tap="_toggleInfoDialog">Info</paper-button>
+            <paper-button data-dialog="kontakt" on-tap="_toggleKontaktDialog">Kontakt</paper-button>
           </app-toolbar>
         </app-header>
 
-        <iron-pages role="main" selected="[[page]]" attr-for-selected="name">
-          <my-view1 name="view1"></my-view1>
-          <my-view2 name="view2"></my-view2>
-          <my-view3 name="view3"></my-view3>
-          <my-new-view name="new-view"></my-new-view>
-        </iron-pages>
+        <gn-map class="flex"
+                longitude="11.15"
+                latitude="50"
+                zoom="6"
+                map-type="GoogleMap">
+          <gn-poly>
+            <template is="dom-repeat" items="{{ route.route }}">
+              <gn-point 
+                  latitude="{{ item.latitude }}" 
+                  longitude="{{ item.longitude }}">
+              </gn-point>
+            </template>
+          </gn-poly>
+        </gn-map>
+
+        <paper-dialog id="info">
+          <h2>Green Navigation</h2>
+          <p>Diese Webanwendung entsteht im Rahmen der Forschung zur grünen Navigation am Institut für Softwaretechik und Programmiersprachen (ISP) an der Universität zu Lübeck. Im Vergleich zu anderen Routenplanern ist das Ziel von Green Navigation einen möglichst energieeffizienten Weg zu berechnen. Desweiteren ist es möglich, die Reichweite von Elektrofahrzeugen abhängig von ihrem Ladezustand zu berechnen.
+          Im Rahmen dieser Forschung waren verschiedene studentische Projektarbeiten beteiligt. Weitere Informationen finden Sie auf unserer Homepage.</p>
+
+          <h2>Häufig gestellte Fragen</h2>
+          <p>
+            Warum funktioniert die Strecke von A nach B nicht?
+          </p>
+          <p>
+            Hierfür kann es verschiedene Gründe geben. Da Green Navigation derzeit nur das Gebiet Schleswig-Holstein umfasst, können Start- und Zielpunkt auch nur aus Schleswig Holstein gewählt werden. Wir arbeiten bereits an der Integration deutschlandweiter Daten. Eine weitere Möglichkeit wäre, dass der Routing-Server derzeit nicht verfügbar ist (beispielsweise aufgrund von Wartungsarbeiten).
+          </p>
+          <p>
+            Wo finde ich weitere Informationen zur Funktionsweise von GreenNav?
+          </p>
+          <p>
+            Wir verweise dabei auf die unten angegebenen Links. Hier finden Sie eine etwas detailliertere Beschreibung von GreenNav.
+          </p>
+
+          <h2>Links</h2>
+          <p><a href="https://www.isp.uni-luebeck.de/research/projects/green-navigation" target="_blank">Homepage des ISP</a></p>
+          <p><a href="http://redmine.isp.uni-luebeck.de/" target="_blank">Redmine für Entwickler</a></p>
+        </paper-dialog>
+
+        <paper-dialog id="kontakt">
+          <h2>Kontakt</h2>
+          <img src="https://www.isp.uni-luebeck.de/sites/default/files/pictures/18416%20H.%20Sch%C3%B6nfelder%20Set%203%20%281%29Cd.Jpg" style="height: 210px; float: left; margin: 5px 5px 5px 5px;">
+          <table>
+            <tr>
+              <td>Name</td>
+              <td>Ren&eacute; Sch&ouml;nfelder</td>
+            </tr>
+            <tr>
+              <td>Website:&nbsp;</td>
+              <td><a href="https://www.isp.uni-luebeck.de/staff/schoenfr">https://www.isp.uni-luebeck.de/staff/schoenfr</a></td>
+            </tr>
+            <tr>
+              <td style="vertical-align: top;">Adresse:&nbsp;</td>
+              <td>Institut f&uuml;r Softwaretechnik und Programmiersprachen
+                  Universit&auml;t zu L&uuml;beck <br /> Ratzeburger Allee 160 <br /> 23562
+                  L&uuml;beck <br /> Deutschland
+              </td>
+            </tr>
+            <tr>
+              <td>Telefon:&nbsp;</td>
+              <td>+49 451 500 5688</td>
+            </tr>
+            <tr>
+              <td>B&uuml;ro:&nbsp;</td>
+              <td>Haus 64, Raum 83 (Erdgeschoss)</td>
+            </tr>
+          </table>
+
+          <br clear="left" />
+          <h2>Haftung</h2>
+          <p>Diese Seite ist ein Teil der Internetpr&auml;senz des Instituts f&uuml;r Softwaretechnik und Programmiersprachen an der Universit&auml;t zu L&uuml;beck. Weitere Informationen finden Sie hier:
+          <a href="https://www.isp.uni-luebeck.de/impressum.html">https://www.isp.uni-luebeck.de/impressum.html</a>.</p>
+          <p>Trotz sorgf&auml;ltiger inhaltlicher Kontrolle &uuml;bernehmen wir keine Haftung f&uuml;r Inhalte externer Links.
+          F&uuml;r den Inhalt der verlinkten Seiten sind ausschlie&szlig;lich die jeweiligen Betreiber verantwortlich.</p>
+        </paper-dialog>
 
       </app-header-layout>
 
@@ -159,7 +212,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         // load page import on demand.
         this.importHref(
           this.resolveUrl('my-' + page + '.html'), null, null, true);
-      }
+      },
+
+      _toggleInfoDialog: function(e) {
+        this.$.info.toggle();
+      },
+
+      _toggleKontaktDialog: function(e) {
+        this.$.kontakt.toggle();
+      },
 
     });
 

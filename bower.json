@@ -24,7 +24,12 @@
     "paper-listbox": "polymerelements/paper-listbox#^1.1.2",
     "paper-item": "PolymerElements/paper-item#^1.2.1",
     "neon-animation": "PolymerElements/neon-animation#^1.2.3",
-    "iron-iconset": "PolymerElements/iron-iconset#^1.0.4"
+    "iron-iconset": "PolymerElements/iron-iconset#^1.0.4",
+    "paper-dialog": "PolymerElements/paper-dialog#^1.0.4",
+    "gn-map": "Greennav/gn-map",
+    "gn-api": "Greennav/gn-api",
+    "gn-search": "Greennav/gn-search",
+    "gn-profiles": "Greennav/gn-profiles"
   },
   "devDependencies": {
     "web-component-tester": "^4.0.0"
