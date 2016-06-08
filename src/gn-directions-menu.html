@@ -28,10 +28,9 @@
 
       #addStopovers {
         margin-top: 10px;
-        margin-bottom: -10px;
       }
 
-      #batteryState {
+      #battery {
         margin-top: 15px;
       }
 
@@ -46,7 +45,9 @@
       }
     </style>
 
-    <gn-api id="gnApi" route="{{route}}" range="{{range}}" vehicles="{{vehicles}}"></gn-api>
+    <!-- Passing the parameters to the API element. Note the attribute vs. property naming, as per
+    https://www.polymer-project.org/1.0/docs/devguide/properties#property-name-mapping -->
+    <gn-api id="gnApi" origin="{{origin}}" destination="{{destination}}" vehicle-index="{{vehicleIndex}}" battery="{{battery}}"></gn-api>
 
     <paper-tabs noink selected="{{selected}}">
       <paper-tab>ROUTE</paper-tab>
@@ -56,7 +57,7 @@
     <iron-pages selected="{{selected}}">
       <div id="Route">
         <div>
-          <paper-input label="From"></paper-input>
+          <paper-input label="From" value="{{origin}}"></paper-input>
 
           <!-- Add Stopovers -->
           <template is="dom-repeat" items="{{via}}">
@@ -66,7 +67,7 @@
             </paper-input>
           </template>
 
-          <paper-input label="To"></paper-input>
+          <paper-input label="To" value="{{destination}}"></paper-input>
         </div>
 
         <div id="addStopovers">
@@ -76,44 +77,44 @@
 
         <!-- Vehicle -->
         <paper-dropdown-menu label="Vehicle">
-          <paper-listbox class="dropdown-content">
+          <paper-listbox class="dropdown-content" selected="{{vehicleIndex}}">
             <template is="dom-repeat" items="{{vehicles}}">
               <paper-item>{{item}}</paper-item>
             </template>
           </paper-listbox>
         </paper-dropdown-menu>
 
-        <!-- Battery State -->
-        <div id="batteryState">
-          <div>Battery State</div>
-          <paper-slider pin value="{{battery}}" pressed></paper-slider>
+        <!-- Battery Level -->
+        <div id="battery">
+          <div>Battery Level</div>
+          <paper-slider pin value="{{battery}}"></paper-slider>
         </div>
 
         <div class="card-actions">
           <div class="right">
-            <paper-icon-button icon="gn-icons:directions" on-tap="getDirections">
-            </paper-icon-button>
+            <paper-button raised on-tap="getDirections">Get directions<iron-icon icon="gn-icons:directions"></iron-icon></paper-button>
           </div>
         </div>
       </div>
 
 
+
       <div id="Erreichbarkeit">
-        <paper-input label="From"></paper-input>
+        <paper-input label="From" value="{{origin}}"></paper-input>
 
         <!-- Vehicle -->
         <paper-dropdown-menu label="Vehicle">
-          <paper-listbox class="dropdown-content">
+          <paper-listbox class="dropdown-content" selected="{{vehicleIndex}}">
             <template is="dom-repeat" items="{{vehicles}}">
               <paper-item>{{item}}</paper-item>
             </template>
           </paper-listbox>
         </paper-dropdown-menu>
 
-        <!-- Battery State -->
-        <div id="batteryState">
-          <div>Battery State</div>
-          <paper-slider pin value="{{battery}}" pressed></paper-slider>
+        <!-- Battery Level -->
+        <div id="battery">
+          <div>Battery Level</div>
+          <paper-slider pin value="{{battery}}"></paper-slider>
         </div>
       </div>
     </iron-pages>
@@ -145,6 +146,34 @@
             return [];
           }
         },
+
+        vehicleIndex: {
+          type: Number,
+          value: function() {
+            return 0;
+          }
+        },
+
+        battery: {
+          type: Number,
+          value: function() {
+            return 100;
+          }
+        },
+
+        origin: {
+          type: String,
+          value: function() {
+            return '';
+          }
+        },
+
+        destination: {
+          type: String,
+          value: function() {
+            return '';
+          }
+        }
       },
 
       /**
@@ -152,7 +181,6 @@
        */
       ready: function() {
         this.selected = 0;
-        this.battery = 100;
       },
 
       getDirections: function() {
