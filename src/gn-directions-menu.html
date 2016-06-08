@@ -57,7 +57,7 @@
     <iron-pages selected="{{selected}}">
       <div id="Route">
         <div>
-          <paper-input label="From" value="{{origin}}"></paper-input>
+          <paper-input label="From" value="{{origin}}" on-input="validateForm"></paper-input>
 
           <!-- Add Stopovers -->
           <template is="dom-repeat" items="{{via}}">
@@ -67,7 +67,7 @@
             </paper-input>
           </template>
 
-          <paper-input label="To" value="{{destination}}"></paper-input>
+          <paper-input label="To" value="{{destination}}" on-input="validateForm"></paper-input>
         </div>
 
         <div id="addStopovers">
@@ -92,7 +92,7 @@
 
         <div class="card-actions">
           <div class="right">
-            <paper-button raised on-tap="getDirections">Get directions<iron-icon icon="gn-icons:directions"></iron-icon></paper-button>
+            <paper-button raised on-tap="getDirections" disabled="[[!isFormValid]]">Get directions<iron-icon icon="gn-icons:directions"></iron-icon></paper-button>
           </div>
         </div>
       </div>
@@ -181,6 +181,7 @@
        */
       ready: function() {
         this.selected = 0;
+        this.isFormValid = false;
       },
 
       getDirections: function() {
@@ -217,6 +218,10 @@
       removeStopover: function(event, index) {
         var index = this.via.indexOf(event.model.item);
         this.splice('via', index, 1)
+      },
+
+      validateForm: function() {
+        this.isFormValid = !!this.origin && !!this.destination;
       }
     });
   </script>
