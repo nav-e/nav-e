@@ -15,24 +15,33 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <title>gn-path-follower Demo</title>
     <script src="../../webcomponentsjs/webcomponents-lite.min.js"></script>
     <link rel="import" href="../gn-path-follower.html">
+    <link rel="import" href="../../gn-gps-simulator/gn-gps-simulator.html">
+    <link rel="import" href="../../paper-button/paper-button.html">
   </head>
   <body unresolved>
 
     <p>An example of <code>&lt;gn-path-follower&gt;</code>:</p>
 
-    <p>Make words! <button id="saybtn">Say Something</button></p>
+    <paper-button id="startSim" raised>Start</paper-button>
 
-    <gn-path-follower>
-      <h2>Hello gn-path-follower</h2>
-    </gn-path-follower>
+    <template is="dom-bind">
+      <gn-gps-simulator id="sim"
+                        latitude="{{lat}}"
+                        longitude="{{lon}}"></gn-gps-simulator>
+
+      <h1>longitude: [[lon]]</h1>
+      <h1>latitude: [[lat]]</h1>
+
+      <gn-path-follower latitude="[[lat]]"
+                        longitude="[[lon]]"></gn-path-follower>
+    </template>
+
 
     <script>
-      var seedElement = document.querySelector('gn-path-follower');
-
-      document.querySelector('#saybtn').addEventListener('click', function() {
-        alert(seedElement.sayHello('Hallo!'));
+      document.getElementById("startSim").addEventListener("click", function() {
+        var startSim = document.getElementById("sim");
+        startSim.startSimulation();
       });
-
     </script>
 
   </body>

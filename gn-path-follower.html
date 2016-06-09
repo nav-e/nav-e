@@ -9,22 +9,20 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 -->
 
 <link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../gn-map/gn-map.html">
+<link rel="import" href="../gn-map/gn-marker.html">
 
 <!--
-An element providing a solution to no problem in particular.
+Navigation path follower for mobile phones, cars or gn-gps-simulator
 
 Example:
 
-    <gn-path-follower></gn-path-follower>
+    <gn-gps-simulator id="sim"
+                      latitude="{{lat}}"
+                      longitude="{{lon}}"></gn-gps-simulator>
 
-Example:
-
-    <gn-path-follower>
-      <h2>Hello gn-path-follower</h2>
-    </gn-path-follower>
-
-@demo demo/index.html
-@hero hero.svg
+    <gn-path-follower latitude="[[lat]]"
+                      longitude="[[lon]]"></gn-path-follower>
 -->
 
 <dom-module id="gn-path-follower">
@@ -32,23 +30,16 @@ Example:
     <style>
       :host {
         display: block;
-        box-sizing: border-box;
-      }
-
-      .author img {
-        display: block;
-        float: left;
-        margin-right: 5px;
-        max-height: 100px;
-        max-width: 100px;
       }
     </style>
 
-    <h1>&lt;gn-path-follower&gt;</h1>
-    <content></content>
-    <p class="author">
-      <span class="name">{{author.name}}</span>
-    </p>
+    <gn-map latitude="{{latitude}}"
+            longitude="{{longitude}}"
+            map-type="OpenStreetMap"
+            zoom="20">
+      <gn-marker latitude="{{latitude}}" longitude="{{longitude}}"></gn-marker>
+    </gn-map>
+
   </template>
 
   <script>
@@ -57,11 +48,21 @@ Example:
 
       properties: {
         /**
-         * Describes the author of the element.
+         * Sets the starting longitude.
          */
-        author: {
-          type: String,
-          value: 'Thomas Ort'
+        longitude: {
+          type: Number,
+          value: 10.703718,
+          notify: true
+        },
+
+        /**
+         * Sets the starting latitude.
+         */
+        latitude: {
+          type: Number,
+          value: 53.834089,
+          notify: true
         }
       },
 
@@ -90,19 +91,6 @@ Example:
         // removed from a document.
         //
         // Use this to clean up anything you did in `attached`.
-      },
-
-      // Element Behavior
-
-      /**
-       * Sometimes it's just nice to say hi.
-       *
-       * @param {string} greeting A positive greeting.
-       * @return {string} The full greeting.
-       */
-      sayHello: function(greeting) {
-        var response = greeting || 'Hello World!';
-        return 'gn-path-follower says, ' + response;
       }
     });
   </script>
