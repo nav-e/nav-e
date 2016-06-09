@@ -17,12 +17,24 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <link rel="import" href="../gn-gps-simulator.html">
     <link rel="import" href="../../iron-ajax/iron-ajax.html">
     <link rel="import" href="../../paper-button/paper-button.html">
+    <link rel="import" href="../../paper-styles/color.html">
   </head>
   <body unresolved>
+    <style is="custom-style">
+      paper-button.green {
+        background-color: var(--paper-green-500);
+        color: white;
+      }
+      paper-button.red {
+        background-color: var(--paper-red-500);
+        color: white;
+      }
+    </style>
 
     <p>An example of <code>&lt;gn-gps-simulator&gt;</code>:</p>
 
-    <paper-button id="startSim" raised>start</paper-button>
+    <paper-button id="startSim" class="green" raised>start</paper-button>
+    <paper-button id="stopSim" class="red" raised>stop</paper-button>
     <paper-button id="resetSim" raised>reset</paper-button>
 
     <template is="dom-bind">
@@ -43,6 +55,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       document.getElementById("startSim").addEventListener("click", function() {
         var startSim = document.getElementById("sim");
         startSim.startSimulation();
+      });
+      document.getElementById("stopSim").addEventListener("click", function() {
+        var resetSim = document.getElementById("sim");
+        resetSim.stopSimulation();
       });
       document.getElementById("resetSim").addEventListener("click", function() {
         var resetSim = document.getElementById("sim");

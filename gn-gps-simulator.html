@@ -16,6 +16,8 @@ Emulates a moving gps signal.
 Example:
 
     <paper-button id="sim.startSimulation()">start</paper-button>
+    <paper-button id="sim.stopSimulation()">stop</paper-button>
+    <paper-button id="sim.restartSimulation()">reset</paper-button>
 
     <iron-ajax url="example.json" last-response="{{positions}}" auto></iron-ajax>
 
@@ -32,6 +34,9 @@ Example:
 -->
 
 <script>
+  // timeout variable to stop setTimeout()
+  var _timeout;
+
   Polymer({
     is: 'gn-gps-simulator',
 
@@ -133,22 +138,27 @@ Example:
     _drive: function() {
       if (this.isDriving) {
         this._setNextPosition();
-        setTimeout(function() {
+        _timeout = setTimeout(function() {
           this._drive();
         }.bind(this), this.speed);
       }
     },
 
-    // stopSimulation: function() {
-    //
-    // },
+
+    /**
+     * Stops the simulation at current position.
+     */
+    stopSimulation: function() {
+      clearTimeout(_timeout);
+      this.isDriving = false;
+    },
 
 
     /**
-     * Resets `longitude` and `latitude` to starting points.
+     * Stops the simulation and resets `longitude` and `latitude` to starting points.
      */
     resetSimulation: function() {
-      // this.stopSimulation();
+      this.stopSimulation();
       this.longitude = this.positions[0].lon;
       this.latitude = this.positions[0].lat;
       this.positionsIndex = 0;
