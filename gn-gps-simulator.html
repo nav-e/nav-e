@@ -9,6 +9,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 -->
 
 <link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../gn-api/gn-api.html">
 
 <!--
 Emulates a moving gps signal.
@@ -19,10 +20,7 @@ Example:
     <paper-button id="sim.stopSimulation()">stop</paper-button>
     <paper-button id="sim.restartSimulation()">reset</paper-button>
 
-    <iron-ajax url="example.json" last-response="{{positions}}" auto></iron-ajax>
-
     <gn-gps-simulator id="sim"
-                      positions="[[positions]]"
                       longitude="{{lon}}"
                       latitude="{{lat}}"></gn-gps-simulator>
 
@@ -32,6 +30,11 @@ Example:
 @demo demo/index.html
 @hero hero.svg
 -->
+<dom-module id="gn-gps-simulator">
+  <template>
+    <gn-api id="gnapi"></gn-api>
+  </template>
+</dom-module>
 
 <script>
   // timeout variable to stop setTimeout()
@@ -44,23 +47,23 @@ Example:
       /**
        * Array with coordinates, e.g [ {"lon":foo, "lat":bar}, {...} ]
        */
-      positions: {
-        type: Array,
+      waypoints: {
+        type: Object,
         value: function () { return []; }
       },
 
 
       /**
-       * Current position in `positions` array.
+       * Current waypoint in `waypoints` array.
        */
-      positionsIndex: {
+      waypointsIndex: {
         type: Number,
         value: 0
       },
 
 
       /**
-       * `True` if Simulation is active. If last index in `positions` is reached
+       * `True` if Simulation is active. If last index in `waypoints` is reached
        * this will switch to `false` again.
        */
       isDriving: {
@@ -85,7 +88,7 @@ Example:
       },
 
       /**
-       * Sets the speed in position per s.
+       * Sets the speed in waypoint per s.
        */
       speed: {
         type: Number,
@@ -105,6 +108,7 @@ Example:
     },
 
     attached: function() {
+      this.$.gnapi.getRoute();
       // `attached` fires once the element and its parents have been inserted
       // into a document.
       //
@@ -127,17 +131,18 @@ Example:
      * Calling `_drive()` and starts the simulation.
      */
     startSimulation: function() {
+      this.waypoints = this.$.gnapi.route.route;
       this.isDriving = true;
       this._drive();
     },
 
 
     /**
-     * Sets the next position in `positions` according to `speed`
+     * Sets the next waypoint in `waypoints` according to `speed`
      */
     _drive: function() {
       if (this.isDriving) {
-        this._setNextPosition();
+        this._setNextwaypoint();
         _timeout = setTimeout(function() {
           this._drive();
         }.bind(this), (1 / this.speed * 1000));
@@ -146,7 +151,7 @@ Example:
 
 
     /**
-     * Stops the simulation at current position.
+     * Stops the simulation at current waypoint.
      */
     stopSimulation: function() {
       clearTimeout(_timeout);
@@ -158,23 +163,24 @@ Example:
      * Stops the simulation and resets `longitude` and `latitude` to starting points.
      */
     resetSimulation: function() {
+      this.waypoints = this.$.gnapi.route.route;
       this.stopSimulation();
-      this.longitude = this.positions[0].lon;
-      this.latitude = this.positions[0].lat;
-      this.positionsIndex = 0;
+      this.longitude = this.waypoints[0].longitude;
+      this.latitude = this.waypoints[0].latitude;
+      this.waypointsIndex = 0;
     },
 
 
     /**
-     * Sets `longitude` and `latitude` according to `positions` if `isDriving`
-     * is `true` and `positionsIndex` hasn't reached last position.
+     * Sets `longitude` and `latitude` according to `waypoints` if `isDriving`
+     * is `true` and `waypointsIndex` hasn't reached last waypoint.
      */
-    _setNextPosition: function() {
+    _setNextwaypoint: function() {
       if (this.isDriving) {
-        if (this.positionsIndex < this.positions.length) {
-          this.longitude = this.positions[this.positionsIndex].lon;
-          this.latitude = this.positions[this.positionsIndex].lat;
-          this.positionsIndex += 1;
+        if (this.waypointsIndex < this.waypoints.length) {
+          this.longitude = this.waypoints[this.waypointsIndex].longitude;
+          this.latitude = this.waypoints[this.waypointsIndex].latitude;
+          this.waypointsIndex += 1;
         } else {
           this.isDriving = false;
         }
