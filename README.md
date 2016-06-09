@@ -24,6 +24,8 @@ Move in the project folder and download the element's dependencies:
 bower install
 ```
 
+Note: This element uses [`gn-api`](https://github.com/Greennav/gn-api) to get its routing informations and will installed automatically via bower. In addition `gn-api` needs data via its `url` attribute. To get a mockup response you can install [`routing service`](https://github.com/Greennav/service-routing).
+
 ### Documentation and Demo
 
 Use [Polyserve](https://github.com/PolymerLabs/polyserve) to play with gn-gps-simulator, read the documentation and watch the demo. You can install it via:
@@ -42,31 +44,14 @@ Once running, you can preview your element at `http://localhost:8080/components/
 
 ### Short example
 
-You can get coordinates from an array and push this one to `positions` in `gn-gps-simulator`. Then call the `startSimulation()` method and the position will move according to the next coordinates in the array.
-
-```javascript
-//example.json
-
-[
-  {
-    "lon":10.680888891220093,
-    "lat":53.8662953069172
-  },
-  {
-    "lon":10.680717229843138,
-    "lat":53.86692795108485
-  },
-  // and more and more and...
-]
-```
+Call the `startSimulation()` method and the position will move according to the next coordinates obtaining from server data (see [`gn-api`](https://github.com/Greennav/gn-api) and [`routing service`](https://github.com/Greennav/service-routing)). Also you can stop and reset the simulation with the appropriate methods.
 
 ```html
 <paper-button id="sim.startSimulation()">start</paper-button>
-
-<iron-ajax url="example.json" last-response="{{positions}}" auto></iron-ajax>
+<paper-button id="sim.stopSimulation()">stop</paper-button>
+<paper-button id="sim.restartSimulation()">reset</paper-button>
 
 <gn-gps-simulator id="sim"
-                  positions="[[positions]]"
                   longitude="{{lon}}"
                   latitude="{{lat}}"></gn-gps-simulator>
 
