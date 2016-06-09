@@ -15,7 +15,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <title>gn-gps-simulator Demo</title>
     <script src="../../webcomponentsjs/webcomponents-lite.min.js"></script>
     <link rel="import" href="../gn-gps-simulator.html">
-    <link rel="import" href="../../iron-ajax/iron-ajax.html">
     <link rel="import" href="../../paper-button/paper-button.html">
     <link rel="import" href="../../paper-slider/paper-slider.html">
     <link rel="import" href="../../paper-styles/color.html">
@@ -47,12 +46,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <paper-button id="resetSim" raised>reset</paper-button>
 
     <template is="dom-bind">
-      <iron-ajax  id="ajax"
-                  url="example.json"
-                  last-response="{{positions}}" auto></iron-ajax>
 
       <gn-gps-simulator id="sim"
-                        positions="[[positions]]"
                         longitude="{{lon}}"
                         latitude="{{lat}}"></gn-gps-simulator>
 
