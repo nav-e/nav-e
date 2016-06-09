@@ -85,11 +85,11 @@ Example:
       },
 
       /**
-       * Sets the speed in ms. Smaller is faster!
+       * Sets the speed in position per s.
        */
       speed: {
         type: Number,
-        value: 1000
+        value: 1
       }
     },
 
@@ -140,7 +140,7 @@ Example:
         this._setNextPosition();
         _timeout = setTimeout(function() {
           this._drive();
-        }.bind(this), this.speed);
+        }.bind(this), (1 / this.speed * 1000));
       }
     },
 
