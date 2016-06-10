@@ -14,6 +14,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
     <title>gn-gps-simulator Demo</title>
     <script src="../../webcomponentsjs/webcomponents-lite.min.js"></script>
+    <link rel="import" href="../../gn-api/gn-api.html">
     <link rel="import" href="../gn-gps-simulator.html">
     <link rel="import" href="../../paper-button/paper-button.html">
     <link rel="import" href="../../paper-slider/paper-slider.html">
@@ -38,9 +39,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     <p>An example of <code>&lt;gn-gps-simulator&gt;</code>:</p>
 
+    <gn-api id="gnapi"></gn-api>
+
     <h3>Speed: <span id="speedLabel"></span> points per second</h3>
     <paper-slider id="speed" pin snaps max="5" min="0.5" step="0.5" value="1"></paper-slider><br>
 
+    <paper-button id="getRoute" raised>get route</paper-button>
     <paper-button id="startSim" class="green" raised>start</paper-button>
     <paper-button id="stopSim" class="red" raised>stop</paper-button>
     <paper-button id="resetSim" raised>reset</paper-button>
@@ -56,20 +60,36 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     </template>
 
     <script>
+      var gnapi = document.getElementById("gnapi");
+      document.getElementById("getRoute").addEventListener("click", function() {
+          // It is important to get route from gn-api, before starting the simulation.
+        gnapi.getRoute();
+      });
       document.getElementById("startSim").addEventListener("click", function() {
-        var startSim = document.getElementById("sim");
-        startSim.startSimulation();
+        if (gnapi.route) {
+          Polymer.dom(this).innerHTML = "continue";
+          var sim = document.getElementById("sim");
+          sim.waypoints = gnapi.route.route;
+          sim.startSimulation();
+        } else {
+          alert("Press 'get route' first!");
+        }
       });
       document.getElementById("stopSim").addEventListener("click", function() {
-        var resetSim = document.getElementById("sim");
-        resetSim.stopSimulation();
+        var stopSim = document.getElementById("sim");
+        stopSim.stopSimulation();
       });
       document.getElementById("resetSim").addEventListener("click", function() {
-        var resetSim = document.getElementById("sim");
-        resetSim.resetSimulation();
+        if (gnapi.route) {
+          startButton = document.getElementById("startSim")
+          Polymer.dom(startButton).innerHTML = "start";
+          var resetSim = document.getElementById("sim");
+          resetSim.resetSimulation();
+        } else {
+          alert("Press 'get route' first!");
+        }
       });
       document.addEventListener("WebComponentsReady", function() {
-        var sim = document.querySelector("#sim");
         var speed = document.querySelector("#speed");
         var speedLabel = document.querySelector("#speedLabel");
         speedLabel.textContent = speed.value;
@@ -79,6 +99,5 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         });
       });
     </script>
-
   </body>
 </html>
