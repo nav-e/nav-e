@@ -1,6 +1,6 @@
 # gn-gps-simulator
 
-Emulates a moving gps signal.
+Emulates a moving gps signal according to waypoints and variable speed (and accuracy in future).
 
 ## Setup Instructions
 
@@ -24,8 +24,6 @@ Move in the project folder and download the element's dependencies:
 bower install
 ```
 
-Note: This element uses [`gn-api`](https://github.com/Greennav/gn-api) to get its routing informations and will installed automatically via bower. In addition `gn-api` needs data via its `url` attribute. To get a mockup response you can install [`routing service`](https://github.com/Greennav/service-routing).
-
 ### Documentation and Demo
 
 Use [Polyserve](https://github.com/PolymerLabs/polyserve) to play with gn-gps-simulator, read the documentation and watch the demo. You can install it via:
@@ -42,16 +40,29 @@ polyserve
 
 Once running, you can preview your element at `http://localhost:8080/components/gn-gps-simulator/`, where `gn-gps-simulator` is the name of the directory containing it.
 
+**Note:** This element can be combined with [`gn-api`](https://github.com/Greennav/gn-api) to get its routing informations. `gn-api` will be installed automatically as dev-dependency via bower, so you can see it in action at the demo. In addition `gn-api` needs data via its `url` property. To get a mockup response you can install and start [`routing service`](https://github.com/Greennav/service-routing).
+
 ### Short example
 
 Call the `startSimulation()` method and the position will move according to the next coordinates obtaining from server data (see [`gn-api`](https://github.com/Greennav/gn-api) and [`routing service`](https://github.com/Greennav/service-routing)). Also you can stop and reset the simulation with the appropriate methods.
 
 ```html
-<paper-button id="sim.startSimulation()">start</paper-button>
-<paper-button id="sim.stopSimulation()">stop</paper-button>
-<paper-button id="sim.restartSimulation()">reset</paper-button>
+<!-- To get mockup data use gn-api and service-routing. -->
+<gn-api id="gnapi" route="{{route}}"></gn-api>
+
+<!-- Don't forget to get the route. -->
+<paper-button on-tap="gnapi.getRoute()">get route</paper-button>
+
+<!-- Change speed in waypoint per second easily, even live. -->
+<paper-slider id="speed" pin snaps
+              max="5" min="0.5" step="0.5" value="1"></paper-slider>
+
+<paper-button on-tap="sim.startSimulation()">start</paper-button>
+<paper-button on-tap="sim.stopSimulation()">stop</paper-button>
+<paper-button on-tap="sim.restartSimulation()">reset</paper-button>
 
 <gn-gps-simulator id="sim"
+                  route="{{route}}"
                   longitude="{{lon}}"
                   latitude="{{lat}}"></gn-gps-simulator>
 
