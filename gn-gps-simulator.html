@@ -9,7 +9,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 -->
 
 <link rel="import" href="../polymer/polymer.html">
-<link rel="import" href="../gn-api/gn-api.html">
 
 <!--
 Emulates a moving gps signal.
@@ -28,13 +27,7 @@ Example:
     <h2>latitude="<span>[[lat]]</span>"</h2>
 
 @demo demo/index.html
-@hero hero.svg
 -->
-<dom-module id="gn-gps-simulator">
-  <template>
-    <gn-api id="gnapi"></gn-api>
-  </template>
-</dom-module>
 
 <script>
   // timeout variable to stop setTimeout()
@@ -45,7 +38,7 @@ Example:
 
     properties: {
       /**
-       * Array with coordinates, e.g [ {"lon":foo, "lat":bar}, {...} ]
+       * Array with coordinates, e.g [ {"longitude":foo, "latitude":bar}, {...} ]
        */
       waypoints: {
         type: Object,
@@ -72,7 +65,7 @@ Example:
       },
 
       /**
-       * Sets the starting longitude.
+       * Sets the longitude.
        */
       longitude: {
         type: Number,
@@ -80,7 +73,7 @@ Example:
       },
 
       /**
-       * Sets the starting latitude.
+       * Sets the latitude.
        */
       latitude: {
         type: Number,
@@ -108,7 +101,6 @@ Example:
     },
 
     attached: function() {
-      this.$.gnapi.getRoute();
       // `attached` fires once the element and its parents have been inserted
       // into a document.
       //
@@ -131,9 +123,12 @@ Example:
      * Calling `_drive()` and starts the simulation.
      */
     startSimulation: function() {
-      this.waypoints = this.$.gnapi.route.route;
-      this.isDriving = true;
-      this._drive();
+      if (!route) {
+        alert("No routing informations.");
+      } else {
+        this.isDriving = true;
+        this._drive();
+      }
     },
 
 
@@ -163,7 +158,6 @@ Example:
      * Stops the simulation and resets `longitude` and `latitude` to starting points.
      */
     resetSimulation: function() {
-      this.waypoints = this.$.gnapi.route.route;
       this.stopSimulation();
       this.longitude = this.waypoints[0].longitude;
       this.latitude = this.waypoints[0].latitude;
