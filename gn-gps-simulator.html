@@ -15,11 +15,16 @@ Emulates a moving gps signal.
 
 Example:
 
+    <gn-api id="gnapi" route="{{waypoints}}"></gn-api>
+
+    <paper-button id="gnapi.getRoute()">get route</paper-button>
+
     <paper-button id="sim.startSimulation()">start</paper-button>
     <paper-button id="sim.stopSimulation()">stop</paper-button>
     <paper-button id="sim.restartSimulation()">reset</paper-button>
 
     <gn-gps-simulator id="sim"
+                      waypoints="{{waypoints}}"
                       longitude="{{lon}}"
                       latitude="{{lat}}"></gn-gps-simulator>
 
@@ -38,7 +43,7 @@ Example:
 
     properties: {
       /**
-       * Array with coordinates, e.g [ {"longitude":foo, "latitude":bar}, {...} ]
+       * Object with coordinates, e.g { {"longitude":foo, "latitude":bar}, {...} }
        */
       waypoints: {
         type: Object,
