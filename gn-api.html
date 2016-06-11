@@ -20,6 +20,18 @@
       id="range"
       handle-as="json"
       last-response="{{ range }}"></iron-ajax>
+
+    <iron-ajax
+      id="getOriginOsmId"
+      url="https://api.pickpoint.io/v1/forward?key=7szZGLLUxmE-Kk3ERCK3"
+      handle-as="json"
+      on-response="handleOriginResponse"></iron-ajax>
+
+    <iron-ajax
+      id="getDestinationOsmId"
+      url="https://api.pickpoint.io/v1/forward?key=7szZGLLUxmE-Kk3ERCK3"
+      handle-as="json"
+      on-response="handleDestinationResponse"></iron-ajax>
       
   </template>
 
@@ -50,23 +62,29 @@
        * 
        * Possible values are listed in the vehicles variable
        */
-      vehicle: String,
+      vehicleIndex: {
+        type: Number,
+        notify: true
+      },
       
       /**
-       * Route/range start as OSM-ID
+       * Route/range start as OSM-ID -- currently not used
        */
-      startOsmId: Number,
+      originOsmId: Number,
       
       /**
-       * Route target as OSM-ID
+       * Route target as OSM-ID -- currently not used
        */
-      targetOsmId: Number,
+      destinationOsmId: Number,
       
       /**
        * Battery load percentage.
        * Can be any value from 100 to 0
        */
-      battery: Number,
+      battery: {
+        type: Number,
+        notify: true,
+      },
       
       /**
        * Result of the routing. Needs vehicle, startOsmId,
@@ -114,14 +132,15 @@
      * Sets the route variable
      */
     getRoute : function() {
-      var ajax = document.querySelector('#route');
+      var ajax = this.$.route;
       ajax.url = this.url +
-        "vehicles/"   + this.vehicle +
-        "/routes/"    + this.startOsmId +
-        "-"           + this.targetOsmId +
+        "vehicles/"   + this.vehicleIndex +
+        "/routes/"    + this.originOsmId +
+        "-"           + this.destinationOsmId +
         "/opt/energy" +
         "?battery="   + this.battery +
         "&algorithm=EnergyAStar";
+      console.log(ajax.url);
     },
     
     /**
@@ -133,6 +152,29 @@
         "vehicles/"   + this.vehicle +
         "/ranges/"    + this.startOsmId +
         "?battery="   + this.battery;
+    },
+
+    convertInputToOsmId: function() {
+      this.pickPointUrl = "https://api.pickpoint.io/v1/forward?key=7szZGLLUxmE-Kk3ERCK3&q=";
+      this.$.getOriginOsmId.url = this.pickPointUrl + this.origin;
+      this.$.getOriginOsmId.generateRequest();
+
+      this.$.getDestinationOsmId.url = this.pickPointUrl + this.destination;
+      this.$.getDestinationOsmId.generateRequest();
+    },
+
+    handleOriginResponse: function(event) {
+      this.originOsmId = event.detail.response[0].osm_id;
+      console.log(event.detail.response[0].osm_id);
+    },
+
+    handleDestinationResponse: function(event) {
+      this.destinationOsmId = event.detail.response[0].osm_id;
+      console.log(event.detail.response[0].osm_id);
+
+      // Wait until (hopefully) both OSM IDs come back...
+      // I know, this is terrible. Will research & implement better options (some sort of a callback).
+      window.setTimeout(this.getRoute(), 1000);
     }
   });
   </script>
