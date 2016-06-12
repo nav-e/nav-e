@@ -1,0 +1,32 @@
+{
+  "name": "gn-path-follower",
+  "version": "1.0.7",
+  "authors": [
+    "Anonymous <anonymous@example.com>"
+  ],
+  "description": "An element providing a solution to no problem in particular.",
+  "keywords": [
+    "web-component",
+    "polymer",
+    "seed"
+  ],
+  "main": "gn-path-follower.html",
+  "license": "http://polymer.github.io/LICENSE.txt",
+  "homepage": "https://github.com/<USERNAME>/seed-element/",
+  "ignore": [
+    "/.*",
+    "/test/"
+  ],
+  "dependencies": {
+    "polymer": "Polymer/polymer#^1.2.0",
+    "gn-map": "https://github.com/Greennav/gn-map.git"
+  },
+  "devDependencies": {
+    "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",
+    "web-component-tester": "^4.0.0",
+    "gn-gps-simulator": "git@github.com:tom3012/gn-gps-simulator.git",
+    "paper-button": "PolymerElements/paper-button#^1.0.12",
+    "gn-api": "https://github.com/Greennav/gn-api.git",
+    "paper-slider": "PolymerElements/paper-slider#^1.0.11"
+  }
+}
