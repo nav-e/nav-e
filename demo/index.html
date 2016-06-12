@@ -14,24 +14,44 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
     <title>gn-gps-simulator Demo</title>
     <script src="../../webcomponentsjs/webcomponents-lite.min.js"></script>
+    <link rel="import" href="../../gn-api/gn-api.html">
     <link rel="import" href="../gn-gps-simulator.html">
-    <link rel="import" href="../../iron-ajax/iron-ajax.html">
     <link rel="import" href="../../paper-button/paper-button.html">
+    <link rel="import" href="../../paper-slider/paper-slider.html">
+    <link rel="import" href="../../paper-styles/color.html">
   </head>
   <body unresolved>
+    <style is="custom-style">
+      paper-button.green {
+        background-color: var(--paper-green-500);
+        color: white;
+      }
+      paper-button.red {
+        background-color: var(--paper-red-500);
+        color: white;
+      }
+      paper-slider {
+        --paper-slider-pin-start-color: var(--google-blue-700);
+        --paper-slider-knob-start-color: var(--google-blue-700);
+        --paper-slider-knob-start-border-color: var(--google-blue-700);
+      }
+    </style>
 
     <p>An example of <code>&lt;gn-gps-simulator&gt;</code>:</p>
 
-    <paper-button id="startSim" raised>start</paper-button>
+    <gn-api id="gnapi"></gn-api>
+
+    <h3>Speed: <span id="speedLabel"></span> points per second</h3>
+    <paper-slider id="speed" pin snaps max="5" min="0.5" step="0.5" value="1"></paper-slider><br>
+
+    <paper-button id="getRoute" raised>get route</paper-button>
+    <paper-button id="startSim" class="green" raised>start</paper-button>
+    <paper-button id="stopSim" class="red" raised>stop</paper-button>
     <paper-button id="resetSim" raised>reset</paper-button>
 
     <template is="dom-bind">
-      <iron-ajax  id="ajax"
-                  url="example.json"
-                  last-response="{{positions}}" auto></iron-ajax>
 
       <gn-gps-simulator id="sim"
-                        positions="[[positions]]"
                         longitude="{{lon}}"
                         latitude="{{lat}}"></gn-gps-simulator>
 
@@ -40,15 +60,44 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     </template>
 
     <script>
+      var gnapi = document.getElementById("gnapi");
+      document.getElementById("getRoute").addEventListener("click", function() {
+          // It is important to get route from gn-api, before starting the simulation.
+        gnapi.getRoute();
+      });
       document.getElementById("startSim").addEventListener("click", function() {
-        var startSim = document.getElementById("sim");
-        startSim.startSimulation();
+        if (gnapi.route) {
+          Polymer.dom(this).innerHTML = "continue";
+          var sim = document.getElementById("sim");
+          sim.waypoints = gnapi.route.route;
+          sim.startSimulation();
+        } else {
+          alert("Press 'get route' first!");
+        }
+      });
+      document.getElementById("stopSim").addEventListener("click", function() {
+        var stopSim = document.getElementById("sim");
+        stopSim.stopSimulation();
       });
       document.getElementById("resetSim").addEventListener("click", function() {
-        var resetSim = document.getElementById("sim");
-        resetSim.resetSimulation();
+        if (gnapi.route) {
+          startButton = document.getElementById("startSim")
+          Polymer.dom(startButton).innerHTML = "start";
+          var resetSim = document.getElementById("sim");
+          resetSim.resetSimulation();
+        } else {
+          alert("Press 'get route' first!");
+        }
+      });
+      document.addEventListener("WebComponentsReady", function() {
+        var speed = document.querySelector("#speed");
+        var speedLabel = document.querySelector("#speedLabel");
+        speedLabel.textContent = speed.value;
+        speed.addEventListener("value-change", function() {
+          speedLabel.textContent = speed.value;
+          sim.speed = speed.value;
+        });
       });
     </script>
-
   </body>
 </html>

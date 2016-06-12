@@ -15,12 +15,16 @@ Emulates a moving gps signal.
 
 Example:
 
-    <paper-button id="sim.startSimulation()">start</paper-button>
+    <gn-api id="gnapi" route="{{waypoints}}"></gn-api>
 
-    <iron-ajax url="example.json" last-response="{{positions}}" auto></iron-ajax>
+    <paper-button id="gnapi.getRoute()">get route</paper-button>
+
+    <paper-button id="sim.startSimulation()">start</paper-button>
+    <paper-button id="sim.stopSimulation()">stop</paper-button>
+    <paper-button id="sim.restartSimulation()">reset</paper-button>
 
     <gn-gps-simulator id="sim"
-                      positions="[[positions]]"
+                      waypoints="{{waypoints}}"
                       longitude="{{lon}}"
                       latitude="{{lat}}"></gn-gps-simulator>
 
@@ -28,34 +32,36 @@ Example:
     <h2>latitude="<span>[[lat]]</span>"</h2>
 
 @demo demo/index.html
-@hero hero.svg
 -->
 
 <script>
+  // timeout variable to stop setTimeout()
+  var _timeout;
+
   Polymer({
     is: 'gn-gps-simulator',
 
     properties: {
       /**
-       * Array with coordinates, e.g [ {"lon":foo, "lat":bar}, {...} ]
+       * Object with coordinates, e.g { {"longitude":foo, "latitude":bar}, {...} }
        */
-      positions: {
-        type: Array,
+      waypoints: {
+        type: Object,
         value: function () { return []; }
       },
 
 
       /**
-       * Current position in `positions` array.
+       * Current waypoint in `waypoints` array.
        */
-      positionsIndex: {
+      waypointsIndex: {
         type: Number,
         value: 0
       },
 
 
       /**
-       * `True` if Simulation is active. If last index in `positions` is reached
+       * `True` if Simulation is active. If last index in `waypoints` is reached
        * this will switch to `false` again.
        */
       isDriving: {
@@ -64,7 +70,7 @@ Example:
       },
 
       /**
-       * Sets the starting longitude.
+       * Sets the longitude.
        */
       longitude: {
         type: Number,
@@ -72,7 +78,7 @@ Example:
       },
 
       /**
-       * Sets the starting latitude.
+       * Sets the latitude.
        */
       latitude: {
         type: Number,
@@ -80,11 +86,11 @@ Example:
       },
 
       /**
-       * Sets the speed in ms. Smaller is faster!
+       * Sets the speed in waypoint per s.
        */
       speed: {
         type: Number,
-        value: 1000
+        value: 1
       }
     },
 
@@ -122,49 +128,58 @@ Example:
      * Calling `_drive()` and starts the simulation.
      */
     startSimulation: function() {
-      this.isDriving = true;
-      this._drive();
-    },
-
-
-    /**
-     * Sets the next position in `positions` according to `speed`
-     */
-    _drive: function() {
-      if (this.isDriving) {
-        this._setNextPosition();
-        setTimeout(function() {
-          this._drive();
-        }.bind(this), this.speed);
+      if (!route) {
+        alert("No routing informations.");
+      } else {
+        this.isDriving = true;
+        this._drive();
       }
     },
 
-    // stopSimulation: function() {
-    //
-    // },
-
 
     /**
-     * Resets `longitude` and `latitude` to starting points.
+     * Sets the next waypoint in `waypoints` according to `speed`
      */
-    resetSimulation: function() {
-      // this.stopSimulation();
-      this.longitude = this.positions[0].lon;
-      this.latitude = this.positions[0].lat;
-      this.positionsIndex = 0;
+    _drive: function() {
+      if (this.isDriving) {
+        this._setNextwaypoint();
+        _timeout = setTimeout(function() {
+          this._drive();
+        }.bind(this), (1 / this.speed * 1000));
+      }
     },
 
 
     /**
-     * Sets `longitude` and `latitude` according to `positions` if `isDriving`
-     * is `true` and `positionsIndex` hasn't reached last position.
+     * Stops the simulation at current waypoint.
      */
-    _setNextPosition: function() {
+    stopSimulation: function() {
+      clearTimeout(_timeout);
+      this.isDriving = false;
+    },
+
+
+    /**
+     * Stops the simulation and resets `longitude` and `latitude` to starting points.
+     */
+    resetSimulation: function() {
+      this.stopSimulation();
+      this.longitude = this.waypoints[0].longitude;
+      this.latitude = this.waypoints[0].latitude;
+      this.waypointsIndex = 0;
+    },
+
+
+    /**
+     * Sets `longitude` and `latitude` according to `waypoints` if `isDriving`
+     * is `true` and `waypointsIndex` hasn't reached last waypoint.
+     */
+    _setNextwaypoint: function() {
       if (this.isDriving) {
-        if (this.positionsIndex < this.positions.length) {
-          this.longitude = this.positions[this.positionsIndex].lon;
-          this.latitude = this.positions[this.positionsIndex].lat;
-          this.positionsIndex += 1;
+        if (this.waypointsIndex < this.waypoints.length) {
+          this.longitude = this.waypoints[this.waypointsIndex].longitude;
+          this.latitude = this.waypoints[this.waypointsIndex].latitude;
+          this.waypointsIndex += 1;
         } else {
           this.isDriving = false;
         }
