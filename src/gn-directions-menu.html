@@ -24,6 +24,13 @@
 
       #Route, #Erreichbarkeit {
         padding: 0 20px;
+
+        /*
+         * This is to enable scroll behavior of the drawer on mobile.
+         * Works on all devices in Chrome DevTools, but not on an actual iPhone4, for example.
+         */
+        overflow:scroll;
+        height: calc(100vh - 112px);
       }
 
       #addStopovers {
@@ -42,6 +49,10 @@
         --paper-slider-knob-color: var(--app-primary-color);
         --paper-slider-active-color: var(--app-primary-color);
         --paper-slider-pin-color: var(--app-primary-color);
+      }
+
+      .actionButton {
+        margin: 10px 0 20px;
       }
     </style>
 
@@ -90,11 +101,9 @@
           <paper-slider pin value="{{battery}}"></paper-slider>
         </div>
 
-        <div class="card-actions">
-          <div class="right">
-            <paper-button raised on-tap="getDirections" disabled="[[!isFormValid]]">Get directions<iron-icon icon="gn-icons:directions"></iron-icon></paper-button>
-          </div>
-        </div>
+
+        <paper-button class="actionButton" raised on-tap="getDirections" disabled="[[!isFormValid]]">Get directions<iron-icon icon="gn-icons:directions"></iron-icon></paper-button>
+
       </div>
 
 
@@ -185,7 +194,7 @@
       },
 
       getDirections: function() {
-        this.$.gnApi.getRoute();
+        this.$.gnApi.convertInputToOsmId();
       },
 
       /**
