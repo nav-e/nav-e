@@ -42,7 +42,9 @@
     
     properties: {
 
-      // Server URL
+      /**
+       * Server url
+       */
       url: {
         type: String,
         value: "http://localhost:6833/greennav/"
@@ -66,17 +68,7 @@
         type: Number,
         notify: true
       },
-      
-      /**
-       * Route/range start as OSM-ID -- currently not used
-       */
-      originOsmId: Number,
-      
-      /**
-       * Route target as OSM-ID -- currently not used
-       */
-      destinationOsmId: Number,
-      
+
       /**
        * Battery load percentage.
        * Can be any value from 100 to 0
@@ -147,34 +139,70 @@
      * Sets the range variable
      */
     getRange : function() {
-      var ajax = document.querySelector('#range');
+      var ajax = this.$.range;
       ajax.url = this.url +
-        "vehicles/"   + this.vehicle +
-        "/ranges/"    + this.startOsmId +
+        "vehicles/"   + this.vehicleIndex +
+        "/ranges/"    + this.originOsmId +
         "?battery="   + this.battery;
+      console.log(ajax.url);
     },
 
-    convertInputToOsmId: function() {
+
+    /**
+     * General API call that converts `origin` or `destination` input fields to OSM IDs
+     */
+    getDirections: function() {
+      // Initialize OSM IDs to 0.
+      this.originOsmId = 0;
+      this.destinationOsmId = 0;
+
+      // Compute the OSM ID for `origin` if the mode is route OR range.
       this.pickPointUrl = "https://api.pickpoint.io/v1/forward?key=7szZGLLUxmE-Kk3ERCK3&q=";
       this.$.getOriginOsmId.url = this.pickPointUrl + this.origin;
       this.$.getOriginOsmId.generateRequest();
 
-      this.$.getDestinationOsmId.url = this.pickPointUrl + this.destination;
-      this.$.getDestinationOsmId.generateRequest();
+      // Route mode is 0, range is 1. (Comes from the selected paper-tabs index in gn-directions-menu.)
+      // Thus, for `route` mode, we need to get the destinationOsmId as well.
+      if (this.mode === 0) {
+        this.$.getDestinationOsmId.url = this.pickPointUrl + this.destination;
+        this.$.getDestinationOsmId.generateRequest();
+      }
     },
 
+
+    /**
+     * Assigns the corresponding OSM ID to `originOsmId` and calls `getRoute()`
+     * if `destinationOsmId` has been assigned as well.
+     */
     handleOriginResponse: function(event) {
       this.originOsmId = event.detail.response[0].osm_id;
-      console.log(event.detail.response[0].osm_id);
+
+      // If the directions mode is `range`, compute it right away.
+      if (this.mode === 1) {
+        this.getRange();
+      } else {
+        // If the directions mode is `route` and originOsmId has been assigned,
+        // check if destinationOsmId has been assigned and if it has, call getRoute().
+        if (this.destinationOsmId !== 0) {
+          this.getRoute();
+        }
+      }
     },
 
+    /**
+     * Assigns the corresponding OSM ID to `destinationOsmId` and calls `getRoute()`
+     * if `originOsmId` has been assigned as well.
+     */
     handleDestinationResponse: function(event) {
       this.destinationOsmId = event.detail.response[0].osm_id;
-      console.log(event.detail.response[0].osm_id);
 
-      // Wait until (hopefully) both OSM IDs come back...
-      // I know, this is terrible. Will research & implement better options (some sort of a callback).
-      window.setTimeout(this.getRoute(), 1000);
+      // If the directions mode is `route` and destinationOsmId has been assigned,
+      // check if originOsmId has been assigned and if it has, call getRoute().
+      if (this.mode === 0) {
+        if (this.originOsmId !== 0) {
+          this.getRoute();
+        }
+      }
     }
   });
   </script>
