@@ -58,7 +58,7 @@
 
     <!-- Passing the parameters to the API element. Note the attribute vs. property naming, as per
     https://www.polymer-project.org/1.0/docs/devguide/properties#property-name-mapping -->
-    <gn-api id="gnApi" origin="{{origin}}" destination="{{destination}}" vehicle-index="{{vehicleIndex}}" battery="{{battery}}"></gn-api>
+    <gn-api id="gnApi" origin="{{origin}}" destination="{{destination}}" vehicle-index="{{vehicleIndex}}" battery="{{battery}}" mode="{{selected}}"></gn-api>
 
     <paper-tabs noink selected="{{selected}}">
       <paper-tab>ROUTE</paper-tab>
@@ -102,7 +102,7 @@
         </div>
 
 
-        <paper-button class="actionButton" raised on-tap="getRoute" disabled="[[!isFormValid]]">Get directions<iron-icon icon="gn-icons:near-me"></iron-icon></paper-button>
+        <paper-button class="actionButton" raised on-tap="getDirections" disabled="[[!isFormValid]]">Get directions<iron-icon icon="gn-icons:near-me"></iron-icon></paper-button>
 
       </div>
 
@@ -126,7 +126,7 @@
           <paper-slider pin value="{{battery}}"></paper-slider>
         </div>
 
-        <paper-button class="actionButton" raised on-tap="getRange" disabled="[[!origin]]">Get range<iron-icon icon="gn-icons:near-me"></iron-icon></paper-button>
+        <paper-button class="actionButton" raised on-tap="getDirections" disabled="[[!origin]]">Get range<iron-icon icon="gn-icons:near-me"></iron-icon></paper-button>
 
       </div>
 
@@ -197,14 +197,11 @@
         this.isFormValid = false;
       },
 
-      getRoute: function() {
-        this.$.gnApi.convertInputToOsmId();
-        // this.$.gnApi.getRoute();
-      },
-
-      getRange: function() {
-        this.$.gnApi.convertInputToOsmId();
-        // this.$.gnApi.getRoute();
+      /**
+       * General API call - it will decide whether it should compute route or range based on this.selected (mode)
+       */
+      getDirections: function() {
+        this.$.gnApi.getDirections();
       },
 
       /**
