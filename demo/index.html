@@ -24,56 +24,87 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     <p>An example of <code>&lt;gn-path-follower&gt;</code>:</p>
 
-    <gn-api id="gnapi"></gn-api>
+    <template is="dom-bind" id="demo">
+      <style is="custom-style">
+        .controls {
+          margin: 25px;
+        }
+        .flex-horizontal {
+          @apply(--layout-horizontal);
+        }
+        .flexchild {
+          @apply(--layout-flex);
+        }
+        paper-button.green {
+          background-color: var(--paper-green-500);
+          color: white;
+        }
+        paper-button.red {
+          background-color: var(--paper-red-500);
+          color: white;
+        }
+        paper-slider {
+          --paper-slider-pin-start-color: var(--google-blue-700);
+          --paper-slider-knob-start-color: var(--google-blue-700);
+          --paper-slider-knob-start-border-color: var(--google-blue-700);
+        }
+      </style>
 
-    <h3>Speed: <span id="speedLabel"></span> points per second</h3>
-    <paper-slider id="speed" pin snaps max="5" min="0.5" step="0.5" value="1"></paper-slider><br>
+      <gn-api id="gnapi"></gn-api>
 
-    <paper-button id="getRoute" raised>get route</paper-button>
-    <paper-button id="startSim" class="green" raised>start</paper-button>
-    <paper-button id="stopSim" class="red" raised>stop</paper-button>
-    <paper-button id="resetSim" raised>reset</paper-button>
+      <div class="container flex-horizontal">
+        <div class="controls">
+          <h3>Speed: <span id="speedLabel"></span> points per second</h3>
+          <paper-slider id="speed" pin snaps max="5" min="0.5" step="0.5" value="1"></paper-slider><br>
 
-    <template is="dom-bind">
+          <paper-button on-tap="getRoute" raised>get route</paper-button>
+          <paper-button id="startButton" on-tap="startSim" class="green" raised>start</paper-button>
+          <paper-button on-tap="stopSim" class="red" raised>stop</paper-button>
+          <paper-button on-tap="resetSim" raised>reset</paper-button>
+        </div>
 
-      <gn-gps-simulator id="sim"
-                        longitude="{{lon}}"
-                        latitude="{{lat}}"></gn-gps-simulator>
+        <div class="flexchild">
+          <gn-gps-simulator id="sim"
+                            longitude="{{lon}}"
+                            latitude="{{lat}}"></gn-gps-simulator>
 
-      <gn-path-follower latitude="[[lat]]"
-                          longitude="[[lon]]"></gn-path-follower>
+          <gn-path-follower id="map"
+                            latitude="[[lat]]"
+                            longitude="[[lon]]"></gn-path-follower>
+        </div>
+      </div>
     </template>
 
     <script>
-      var gnapi = document.getElementById("gnapi");
-      document.getElementById("getRoute").addEventListener("click", function() {
-          // It is important to get route from gn-api, before starting the simulation.
+      var demo = document.querySelector("#demo");
+      demo.getRoute = function() {
+        var gnapi = document.getElementById("gnapi");
+        // It is important to get route from gn-api, before starting the simulation.
         gnapi.getRoute();
-      });
-      document.getElementById("startSim").addEventListener("click", function() {
+      }
+      demo.startSim = function() {
         if (gnapi.route) {
-          Polymer.dom(this).innerHTML = "continue";
-          var sim = document.getElementById("sim");
+          Polymer.dom(this.$.startButton).innerHTML = "continue";
           sim.waypoints = gnapi.route.route;
           sim.startSimulation();
         } else {
           alert("Press 'get route' first!");
         }
-      });
-      document.getElementById("stopSim").addEventListener("click", function() {
+      }
+      demo.stopSim = function() {
         var stopSim = document.getElementById("sim");
         stopSim.stopSimulation();
-      });
-      document.getElementById("resetSim").addEventListener("click", function() {
+      }
+      demo.resetSim = function() {
         if (gnapi.route) {
           startButton = document.getElementById("startSim")
-          Polymer.dom(startButton).innerHTML = "start";
+          Polymer.dom(this.$.startButton).innerHTML = "start";
           var resetSim = document.getElementById("sim");
           resetSim.resetSimulation();
         } else {
           alert("Press 'get route' first!");
         }
-      });
+      }
       document.addEventListener("WebComponentsReady", function() {
         var speed = document.querySelector("#speed");
         var speedLabel = document.querySelector("#speedLabel");
@@ -84,6 +115,5 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         });
       });
     </script>
-
   </body>
 </html>
