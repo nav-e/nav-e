@@ -71,6 +71,47 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       paper-dialog a {
         color: var(--app-primary-color);
       }
+
+      #mapTypeButtons {
+        position: absolute;
+        left: 112px;
+        top: 74px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+      }
+
+      #mapTypeButtons button{
+        background-color: white;
+        border: 1px solid #edefed;
+        height: 32px;
+        color: #444444;
+      }
+
+      #mapTypeButtons button:focus {
+        outline-width: 0;
+      }
+
+      #mapTypeButtons button:hover {
+        background-color: whitesmoke !important;
+      }
+
+      #mapTypeButtons button:nth-child(1) {
+        border-radius: 3px 0 0 3px;
+      }
+
+      #mapTypeButtons button:nth-child(2) {
+        border-radius: 0 3px 3px 0;
+        border-left: 0px;
+      }
+
+      .iron-selected {
+        color: black !important;
+        text-shadow: 0 0 0 black;
+      }
+
+      .gmnoprint {
+        display: none !important;
+      }
+
     </style>
 
     <app-location route="{{route}}"></app-location>
@@ -100,11 +141,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           </app-toolbar>
         </app-header>
 
-        <gn-map class="flex"
+        <gn-map 
                 longitude="11.15"
                 latitude="50"
                 zoom="6"
-                map-type="GoogleMap">
+                map-type="{{mapType}}">
           <gn-poly>
             <template is="dom-repeat" items="{{ route.route }}">
               <gn-point 
@@ -114,6 +155,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             </template>
           </gn-poly>
         </gn-map>
+
+        <!-- @TODO: Open Street Map is not loading. -->
+        <iron-selector id="mapTypeButtons" selected={{mapType}} attr-for-selected="name">
+          <button name="GoogleMap">Google Map</button><button name="OpenStreetMap">Open Street Map</button>
+        </iron-selector>
 
         <paper-dialog id="info">
           <h2>Green Navigation</h2>
