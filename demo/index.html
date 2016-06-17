@@ -17,32 +17,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <link rel="import" href="../gn-gps-routing.html">
   </head>
   <body unresolved>
-
-    <p>An example of <code>&lt;gn-gps-routing&gt;</code>:</p>
-
-    <p>Make words! <button id="saybtn">Say Something</button></p>
-    <p>Make lasers! <button id="laserbtn">Fire lasers</button></p>
-
-    <gn-gps-routing author='{"name": "Lord Meowser", "image": "http://lorempixel.com/g/300/200/cats/"}' fancy>
-      <h2>Hello gn-gps-routing</h2>
-    </gn-gps-routing>
-
-    <script>
-      var seedElement = document.querySelector('gn-gps-routing');
-
-      document.querySelector('#saybtn').addEventListener('click', function() {
-        alert(seedElement.sayHello('Hallo!'));
-      });
-
-      document.querySelector('#laserbtn').addEventListener('click', function() {
-        seedElement.fireLasers();
-      });
-
-      document.addEventListener("gn-gps-routing-lasers", function(e) {
-        console.log(e.detail.sound);
-      });
-
-    </script>
-
+    <gn-gps-routing></gn-gps-routing>
   </body>
 </html>
