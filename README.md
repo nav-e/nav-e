@@ -74,5 +74,4 @@ Call the `startSimulation()` method and the position will move according to the 
 
 ### In Progress
 
-- Find solution for `Maximum call stack size exceed`
-- Caching of map data to avoid "flickering"
+- Caching of map data to avoid "flickering" (doesn't apply for Google maps because of license restrictions)
