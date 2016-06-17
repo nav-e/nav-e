@@ -17,6 +17,16 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <link rel="import" href="../gn-gps-routing.html">
   </head>
   <body unresolved>
-    <gn-gps-routing></gn-gps-routing>
+    <gn-gps-routing id="gnGpsRouting"></gn-gps-routing>
+
+    <p>Latitude: <span id="currLat">loading...</span></p>
+    <p>Longitude: <span id="currLng">loading...</span></p>
+
+    <script>
+      document.addEventListener("gn-gps-coordinates", function(e) {
+        document.getElementById('currLat').innerHTML = e.detail.latitude;
+        document.getElementById('currLng').innerHTML = e.detail.longitude;        
+      });
+    </script>
   </body>
 </html>
