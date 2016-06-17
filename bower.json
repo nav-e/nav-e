@@ -1,5 +1,5 @@
 {
-  "name": "seed-element",
+  "name": "gn-gps-routing",
   "version": "1.0.7",
   "authors": [
     "Anonymous <anonymous@example.com>"
@@ -10,9 +10,9 @@
     "polymer",
     "seed"
   ],
-  "main": "seed-element.html",
+  "main": "gn-gps-routing.html",
   "license": "http://polymer.github.io/LICENSE.txt",
-  "homepage": "https://github.com/<USERNAME>/seed-element/",
+  "homepage": "https://github.com/<USERNAME>/gn-gps-routing/",
   "ignore": [
     "/.*",
     "/test/"
