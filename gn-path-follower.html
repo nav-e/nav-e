@@ -9,8 +9,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 -->
 
 <link rel="import" href="../polymer/polymer.html">
-<link rel="import" href="../gn-map/gn-map.html">
-<link rel="import" href="../gn-map/gn-marker.html">
+<link rel="import" href="../google-map/google-map.html">
+<link rel="import" href="../google-map/google-map-marker.html">
+<!-- <link rel="import" href="../osm-map/osm-map.html"> -->
+<!-- <link rel="import" href="../osm-map/osm-marker.html"> -->
 
 <!--
 Navigation path follower for mobile phones, cars or gn-gps-simulator
@@ -31,15 +33,24 @@ Example:
     <style>
       :host {
         display: block;
+        width: 100%;
+        height: 100%;
+        margin: 0;
+      }
+      .map {
+        width: 100%;
+        height: 100%;
+        margin: 0;
       }
     </style>
 
-    <gn-map latitude="{{latitude}}"
-            longitude="{{longitude}}"
-            map-type="OpenStreetMap"
-            zoom="20">
-      <gn-marker latitude="{{latitude}}" longitude="{{longitude}}"></gn-marker>
-    </gn-map>
+    <!-- <osm-map class="map" latitude="{{latitude}}" longitude="{{longitude}}" zoom="20">
+      <osm-marker latitude="{{latitude}}" longitude="{{longitude}}"></osm-marker>
+    </osm-map> -->
+
+    <google-map class="map" latitude="{{latitude}}" longitude="{{longitude}}" zoom="20">
+      <google-map-marker latitude="{{latitude}}" longitude="{{longitude}}"></google-map-marker>
+    </google-map>
 
   </template>
 
