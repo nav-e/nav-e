@@ -15,7 +15,7 @@ Emulates a moving gps signal.
 
 Example:
 
-    <gn-api id="gnapi" route="{{waypoints}}"></gn-api>
+    <gn-api id="gnapi" route="{{route}}"></gn-api>
 
     <paper-button id="gnapi.getRoute()">get route</paper-button>
 
@@ -24,7 +24,7 @@ Example:
     <paper-button id="sim.restartSimulation()">reset</paper-button>
 
     <gn-gps-simulator id="sim"
-                      waypoints="{{waypoints}}"
+                      route="{{route}}"
                       longitude="{{lon}}"
                       latitude="{{lat}}"></gn-gps-simulator>
 
@@ -45,23 +45,23 @@ Example:
       /**
        * Object with coordinates, e.g { {"longitude":foo, "latitude":bar}, {...} }
        */
-      waypoints: {
+      route: {
         type: Object,
         value: function () { return []; }
       },
 
 
       /**
-       * Current waypoint in `waypoints` array.
+       * Current waypoint in `route` array.
        */
-      waypointsIndex: {
+      routeIndex: {
         type: Number,
         value: 0
       },
 
 
       /**
-       * `True` if Simulation is active. If last index in `waypoints` is reached
+       * `True` if Simulation is active. If last index in `route` is reached
        * this will switch to `false` again.
        */
       isDriving: {
@@ -138,11 +138,11 @@ Example:
 
 
     /**
-     * Sets the next waypoint in `waypoints` according to `speed`
+     * Sets the next waypoint in `route` according to `speed`
      */
     _drive: function() {
       if (this.isDriving) {
-        this._setNextwaypoint();
+        this._setNextWaypoint();
         _timeout = setTimeout(function() {
           this._drive();
         }.bind(this), (1 / this.speed * 1000));
@@ -164,22 +164,22 @@ Example:
      */
     resetSimulation: function() {
       this.stopSimulation();
-      this.longitude = this.waypoints[0].longitude;
-      this.latitude = this.waypoints[0].latitude;
+      this.longitude = this.route[0].longitude;
+      this.latitude = this.route[0].latitude;
       this.waypointsIndex = 0;
     },
 
 
     /**
-     * Sets `longitude` and `latitude` according to `waypoints` if `isDriving`
-     * is `true` and `waypointsIndex` hasn't reached last waypoint.
+     * Sets `longitude` and `latitude` according to `route` if `isDriving`
+     * is `true` and `routeIndex` hasn't reached last waypoint.
      */
-    _setNextwaypoint: function() {
+    _setNextWaypoint: function() {
       if (this.isDriving) {
-        if (this.waypointsIndex < this.waypoints.length) {
-          this.longitude = this.waypoints[this.waypointsIndex].longitude;
-          this.latitude = this.waypoints[this.waypointsIndex].latitude;
-          this.waypointsIndex += 1;
+        if (this.routeIndex < this.route.length) {
+          this.longitude = this.route[this.routeIndex].longitude;
+          this.latitude = this.route[this.routeIndex].latitude;
+          this.routeIndex += 1;
         } else {
           this.isDriving = false;
         }
