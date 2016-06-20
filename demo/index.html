@@ -69,7 +69,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         if (gnapi.route) {
           Polymer.dom(this).innerHTML = "continue";
           var sim = document.getElementById("sim");
-          sim.waypoints = gnapi.route.route;
+          sim.route = gnapi.route.route;
           sim.startSimulation();
         } else {
           alert("Press 'get route' first!");
