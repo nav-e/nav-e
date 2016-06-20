@@ -63,14 +63,16 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         }
       </style>
 
-      <gn-api id="gnapi"></gn-api>
+      <gn-api id="gnapi" route="{{route}}"></gn-api>
 
       <gn-gps-simulator id="sim"
+                        waypoints="{{route.route}}"
                         longitude="{{lon}}"
                         latitude="{{lat}}"></gn-gps-simulator>
 
       <gn-path-follower id="map"
                         class="content fit"
+                        route="{{route.route}}"
                         latitude="[[lat]]"
                         longitude="[[lon]]"></gn-path-follower>
 
@@ -96,7 +98,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       demo.startSim = function() {
         if (gnapi.route) {
           Polymer.dom(this.$.startButton).innerHTML = "continue";
-          sim.waypoints = gnapi.route.route;
           sim.startSimulation();
         } else {
           alert("Press 'get route' first!");
