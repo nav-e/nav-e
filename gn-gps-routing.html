@@ -69,7 +69,8 @@ Example:
 
         // If the browser supports geolocation API:
         if (navigator.geolocation) {
-          navigator.geolocation.getCurrentPosition(function(position) {
+          navigator.geolocation.watchPosition(function(position) {
+            console.log(0);
             this.latitude = position.coords.latitude;
             this.longitude = position.coords.longitude;
             
@@ -79,6 +80,8 @@ Example:
             });
           }, function() {
             console.error('Unable to retrieve your location.');
+          }, {
+            enableHighAccuracy: true
           });
         } else {
           console.error('Your browser doesn\'t support geolocation.')
