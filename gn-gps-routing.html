@@ -1,0 +1,92 @@
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../polymer/polymer.html">
+
+<!--
+GreenNav Polymer element for obtaining the GPS coordinates of the device.
+
+Example:
+
+    <gn-gps-routing></gn-gps-routing>
+
+@demo demo/index.html
+@hero hero.svg
+-->
+
+<dom-module id="gn-gps-routing">
+  <template>
+    
+  </template>
+
+  <script>
+    Polymer({
+      is: 'gn-gps-routing',
+
+      properties: {
+
+        latitude: {
+          type: Number,
+          notify: true,
+          value: function() {
+            return 0;
+          }
+        },
+
+        longitude: {
+          type: Number,
+          value: function() {
+            return 0;
+          }
+        }
+      },
+
+      ready: function() {
+        // `ready` is called after all elements have been configured, but
+        // propagates bottom-up. This element's children are ready, but parents
+        // are not.
+        //
+        // This is the point where you should make modifications to the DOM (when
+        // necessary), or kick off any processes the element wants to perform.
+        this.getCoords();
+      },
+
+      /**
+       * Obtains the user's current location and fires an 'gn-gps-coordinates' event with the coordinates object.
+       * 
+       * This is needed for the demo purposes, as data-binding does not work without a parent Polymer element.
+       * Normally the properties would be accessed directly.
+       */
+      getCoords: function() {
+        var ctx = this;
+
+        // If the browser supports geolocation API:
+        if (navigator.geolocation) {
+          navigator.geolocation.watchPosition(function(position) {
+            console.log(0);
+            this.latitude = position.coords.latitude;
+            this.longitude = position.coords.longitude;
+            
+            ctx.fire('gn-gps-coordinates', {
+              latitude: this.latitude,
+              longitude: this.longitude
+            });
+          }, function() {
+            console.error('Unable to retrieve your location.');
+          }, {
+            enableHighAccuracy: true
+          });
+        } else {
+          console.error('Your browser doesn\'t support geolocation.')
+        }
+      }
+    });
+  </script>
+</dom-module>
