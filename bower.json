@@ -19,7 +19,9 @@
   ],
   "dependencies": {
     "polymer": "Polymer/polymer#^1.2.0",
-    "gn-map": "https://github.com/Greennav/gn-map.git"
+    "gn-map": "https://github.com/Greennav/gn-map.git",
+    "google-map": "GoogleWebComponents/google-map#^1.1.10",
+    "osm-map": "FabianBormann/osm-map"
   },
   "devDependencies": {
     "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",
@@ -27,6 +29,7 @@
     "gn-gps-simulator": "git@github.com:tom3012/gn-gps-simulator.git",
     "paper-button": "PolymerElements/paper-button#^1.0.12",
     "gn-api": "https://github.com/Greennav/gn-api.git",
-    "paper-slider": "PolymerElements/paper-slider#^1.0.11"
+    "paper-slider": "PolymerElements/paper-slider#^1.0.11",
+    "paper-material": "PolymerElements/paper-material#^1.0.6"
   }
 }

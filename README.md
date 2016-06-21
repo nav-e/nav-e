@@ -1,6 +1,8 @@
 # gn-path-follower
 
-Navigation path follower for mobile phones, cars or gn-gps-simulator.
+Navigation path follower for mobile phones, cars or gn-gps-simulator. Below is a little screencast:
+
+![Loading gif](https://cloud.githubusercontent.com/assets/9342018/16197501/90ccaa72-3702-11e6-92c4-6547192f4680.gif)
 
 ## Setup Instructions
 
@@ -74,5 +76,4 @@ Call the `startSimulation()` method and the position will move according to the 
 
 ### In Progress
 
-- Find solution for `Maximum call stack size exceed`
-- Caching of map data to avoid "flickering"
+- Caching of map data to avoid "flickering" (doesn't apply for Google maps because of license restrictions)
