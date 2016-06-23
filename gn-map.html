@@ -7,6 +7,7 @@
 <link rel="import" href="../osm-map/osm-poly.html">
 <link rel="import" href="../osm-map/osm-point.html">
 <link rel="import" href="../osm-map/osm-marker.html">
+<link rel="import" href="../iron-ajax/iron-ajax.html">
 <!--
     
 The `gn-map` element provides a wrapper for different map types.
@@ -45,7 +46,7 @@ By default `map-type="GoogleMap"`
       }
     </style>
 
-    <template id="osmMap" is="dom-if" if="{{_typeIsOpenStreetMap(mapType)}}">
+    <!-- <template id="osmMap" is="dom-if" if="{{_typeIsOpenStreetMap(mapType)}}">
       <osm-map longitude="{{longitude}}" latitude="{{latitude}}" zoom="{{zoom}}">
         <template is="dom-repeat" items="{{polygons}}">
           <osm-poly fill-opacity="{{item.fillOpacity}}" stroke-color$="{{item.strokeColor}}" width$="{{item.width}}" closed$="{{item.closed}}" fill-color$="{{item.fillColor}}">
@@ -58,10 +59,10 @@ By default `map-type="GoogleMap"`
           <osm-marker longitude$="{{item.longitude}}" latitude$="{{item.latitude}}"></osm-marker>
         </template>
       </osm-map>
-    </template>
+    </template> -->
 
-    <template id="googleMap" is="dom-if" if="{{_typeIsGoogleMap(mapType)}}">
-      <google-map longitude="{{longitude}}" latitude="{{latitude}}" zoom="{{zoom}}">
+    <!-- <template is="dom-if" if="{{_typeIsGoogleMap(mapType)}}"> -->
+      <google-map id="googleMap" longitude="{{longitude}}" latitude="{{latitude}}" zoom="{{zoom}}">
         <template is="dom-repeat" items="{{polygons}}">
           <google-map-poly fill-opacity="{{item.fillOpacity}}" stroke-color$="{{item.strokeColor}}" width$="{{item.width}}" closed$="{{item.closed}}" fill-color$="{{item.fillColor}}">
             <template is="dom-repeat" items="{{item.points}}">
@@ -73,7 +74,15 @@ By default `map-type="GoogleMap"`
           <google-map-marker longitude$="{{item.longitude}}" latitude$="{{item.latitude}}"></google-map-marker>
         </template>  
       </google-map>
-    </template>
+    <!-- </template> -->
+
+    <iron-ajax
+      id="weatherAjax"
+      url="[[requestString]]"
+      handle-as="json"
+      on-response="processResults"
+      debounce-duration="300">
+    </iron-ajax>
 
     <content></content>
   </template>
@@ -194,6 +203,102 @@ By default `map-type="GoogleMap"`
             self.push('markers', marker);
           });
       });    
+
+      // @TODO: Implement dynamic loading of weather items on a mouse drag event. 
+      this.getBounds();
+    },
+
+    getBounds: function() {
+      // Make sure to keep the "global" Polymer context to be able to call methods from inner functions.
+      var ctx = this;
+      ctx.gmap = document.querySelector('google-map');
+      ctx.gmap.addEventListener('api-load', function(e) {
+
+        // @TODO: find the google-map event that fires last and call getBounds at that time.
+        // Without setTimeout getBounds returns null.
+        setTimeout(function() {
+          var bounds = ctx.gmap.map.getBounds();
+          var NE = bounds.getNorthEast();
+          var SW = bounds.getSouthWest();
+          ctx.getWeather(NE.lat(), NE.lng(), SW.lat(), SW.lng());
+        }, 1500);
+      });
+    },
+
+    getWeather: function(northLat, eastLng, southLat, westLng) {
+      // @TODO: Stop extra requests being sent
+      var gettingData = true;
+
+      var openWeatherMapKey = "733446808ddd15de03a2fa4d46e5e17e";
+      this.requestString = "http://api.openweathermap.org/data/2.5/box/city?bbox="
+                          + westLng + "," + northLat + "," //left top
+                          + eastLng + "," + southLat + "," //right bottom
+                          + this.gmap.map.getZoom()
+                          + "&cluster=yes&format=json"
+                          + "&APPID=" + openWeatherMapKey;
+      this.$.weatherAjax.generateRequest();
+    },
+
+    processResults: function(e) {
+      var ctx = this;
+      var results = e.detail.response.list;
+
+      if (results.length > 0) {
+        this.resetData();
+        results.forEach(function(result) {
+          ctx.geoJSON.features.push(ctx.jsontoGeoJson(result));
+        });
+        this.drawIcons();
+      }
+    },
+
+    resetData: function() {
+      this.geoJSON = {
+        type: "FeatureCollection",
+        features: []
+      };
+    },
+
+    jsontoGeoJson: function(weatherItem) {
+      var feature = {
+        type: "Feature",
+        properties: {
+          city: weatherItem.name,
+          weather: weatherItem.weather[0].main,
+          temperature: weatherItem.main.temp,
+          min: weatherItem.main.temp_min,
+          max: weatherItem.main.temp_max,
+          humidity: weatherItem.main.humidity,
+          pressure: weatherItem.main.pressure,
+          windSpeed: weatherItem.wind.speed,
+          windDegrees: weatherItem.wind.deg,
+          windGust: weatherItem.wind.gust,
+          icon: "http://openweathermap.org/img/w/"
+                + weatherItem.weather[0].icon  + ".png",
+          coordinates: [weatherItem.coord.lon, weatherItem.coord.lat]
+        },
+        geometry: {
+          type: "Point",
+          coordinates: [weatherItem.coord.lon, weatherItem.coord.lat]
+        }
+      };
+      // Set the custom marker icon
+      this.gmap.map.data.setStyle(function(feature) {
+        return {
+          icon: {
+            url: feature.getProperty('icon'),
+            anchor: new google.maps.Point(25, 25)
+          }
+        };
+      });
+
+      // returns object
+      return feature;
+    },
+
+    drawIcons: function() {
+      this.gmap.map.data.addGeoJson(this.geoJSON);
+      this.gettingData = false;
     },
 
     addPolygon: function (points, strokeColor, width, closed, fillColor, fillOpacity) {
@@ -231,6 +336,10 @@ By default `map-type="GoogleMap"`
 
     _typeIsGoogleMap: function (mapType) {      
         return mapType === 'GoogleMap';
+    },
+
+    _handleResponse: function(e) {
+      console.log(e);
     }
   });
 </script>

@@ -33,8 +33,8 @@
       <button on-tap="addPolygon">Add Polygon</button>
       <button on-tap="addMarker">Add Marker</button>
       <gn-map id="map" class="content fit" 
-        latitude="53.694089" longitude="10.608718" zoom="13" map-type="GoogleMap">
- 	  <!--  <gn-marker latitude="53.834089" longitude="10.703718"></gn-marker> -->
+        latitude="53.694089" longitude="10.608718" zoom="7" map-type="GoogleMap">
+    <!--  <gn-marker latitude="53.834089" longitude="10.703718"></gn-marker> -->
         <gn-poly fill-color="red" stroke-color="red" closed>
           <gn-point latitude="53.699089" longitude="10.603718"></gn-point>
           <gn-point latitude="53.694089" longitude="10.608718"></gn-point>
@@ -43,7 +43,7 @@
         </gn-poly>
 
         <gn-marker></gn-marker>
-  	  </gn-map>
+      </gn-map>
     <script>
       var demo = document.querySelector('#demo');
       
