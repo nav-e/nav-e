@@ -62,7 +62,7 @@ By default `map-type="GoogleMap"`
     </template> -->
 
     <!-- <template is="dom-if" if="{{_typeIsGoogleMap(mapType)}}"> -->
-      <google-map id="googleMap" longitude="{{longitude}}" latitude="{{latitude}}" zoom="{{zoom}}">
+      <google-map id="googleMap" longitude="{{longitude}}" latitude="{{latitude}}" zoom="{{zoom}}" drag-events>
         <template is="dom-repeat" items="{{polygons}}">
           <google-map-poly fill-opacity="{{item.fillOpacity}}" stroke-color$="{{item.strokeColor}}" width$="{{item.width}}" closed$="{{item.closed}}" fill-color$="{{item.fillColor}}">
             <template is="dom-repeat" items="{{item.points}}">
@@ -204,25 +204,43 @@ By default `map-type="GoogleMap"`
           });
       });    
 
-      // @TODO: Implement dynamic loading of weather items on a mouse drag event. 
-      this.getBounds();
-    },
-
-    getBounds: function() {
       // Make sure to keep the "global" Polymer context to be able to call methods from inner functions.
       var ctx = this;
-      ctx.gmap = document.querySelector('google-map');
-      ctx.gmap.addEventListener('api-load', function(e) {
 
-        // @TODO: find the google-map event that fires last and call getBounds at that time.
-        // Without setTimeout getBounds returns null.
-        setTimeout(function() {
-          var bounds = ctx.gmap.map.getBounds();
-          var NE = bounds.getNorthEast();
-          var SW = bounds.getSouthWest();
-          ctx.getWeather(NE.lat(), NE.lng(), SW.lat(), SW.lng());
-        }, 1500);
+      this.gmap = document.querySelector('google-map');
+      this.gmap.addEventListener('api-load', function(e) {
+        ctx.checkIfDataRequested();
       });
+      this.gmap.addEventListener('google-map-dragend', function(e) {
+        ctx.checkIfDataRequested();
+      });
+    },
+
+    checkIfDataRequested: function() {
+      while (this.gettingData === true) {
+        var requests = this.$.weatherAjax.activeRequests;
+        if (requests.length > 0) {
+          requests.forEach(function(request) {
+            request.abort();
+          });
+        }
+        this.gettingData = false;
+      }
+      this.getCoords();
+    },
+
+    getCoords: function() {
+      // Make sure to keep the "global" Polymer context to be able to call methods from inner functions.
+      var ctx = this;
+
+      // @TODO: find the google-map event that fires last and call getBounds at that time.
+      // Without setTimeout getBounds returns null.
+      setTimeout(function() {
+        var bounds = ctx.gmap.map.getBounds();
+        var NE = bounds.getNorthEast();
+        var SW = bounds.getSouthWest();
+        ctx.getWeather(NE.lat(), NE.lng(), SW.lat(), SW.lng());
+      }, 500);
     },
 
     getWeather: function(northLat, eastLng, southLat, westLng) {
@@ -253,10 +271,16 @@ By default `map-type="GoogleMap"`
     },
 
     resetData: function() {
-      this.geoJSON = {
+      var ctx = this;
+      ctx.geoJSON = {
         type: "FeatureCollection",
         features: []
       };
+      
+      // Clean up the cache
+      ctx.gmap.map.data.forEach(function(feature) {
+        ctx.gmap.map.data.remove(feature);
+      });
     },
 
     jsontoGeoJson: function(weatherItem) {
@@ -336,10 +360,6 @@ By default `map-type="GoogleMap"`
 
     _typeIsGoogleMap: function (mapType) {      
         return mapType === 'GoogleMap';
-    },
-
-    _handleResponse: function(e) {
-      console.log(e);
     }
   });
 </script>
