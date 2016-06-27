@@ -206,13 +206,12 @@ By default `map-type="GoogleMap"`
 
       // Make sure to keep the "global" Polymer context to be able to call methods from inner functions.
       var ctx = this;
+      ctx.gmap = document.querySelector('google-map');
 
-      this.gmap = document.querySelector('google-map');
-      this.gmap.addEventListener('api-load', function(e) {
+      // Initial weather request begins here
+      ctx.gmap.addEventListener('api-load', function(e) {
         ctx.checkIfDataRequested();
-      });
-      this.gmap.addEventListener('google-map-dragend', function(e) {
-        ctx.checkIfDataRequested();
+        ctx.addMapListeners();
       });
     },
 
@@ -227,6 +226,13 @@ By default `map-type="GoogleMap"`
         this.gettingData = false;
       }
       this.getCoords();
+    },
+
+    addMapListeners: function() {
+      var ctx = this;
+      ctx.gmap.map.addListener('idle', function() {
+        ctx.checkIfDataRequested();
+      });
     },
 
     getCoords: function() {
@@ -245,7 +251,7 @@ By default `map-type="GoogleMap"`
 
     getWeather: function(northLat, eastLng, southLat, westLng) {
       // @TODO: Stop extra requests being sent
-      var gettingData = true;
+      this.gettingData = true;
 
       var openWeatherMapKey = "733446808ddd15de03a2fa4d46e5e17e";
       this.requestString = "http://api.openweathermap.org/data/2.5/box/city?bbox="
