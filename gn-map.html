@@ -84,7 +84,7 @@ By default `map-type="GoogleMap"`
       id="weatherAjax"
       url="[[requestString]]"
       handle-as="json"
-      on-response="processResults"
+      on-response="_processResults"
       debounce-duration="300">
     </iron-ajax>
 
@@ -208,18 +208,20 @@ By default `map-type="GoogleMap"`
           });
       });    
 
-      // Make sure to keep the "global" Polymer context to be able to call methods from inner functions.
+      // Makes sure to keep the "global" Polymer context
+      // to be able to call global scope methods from inner functions.
       var ctx = this;
       ctx.gmap = document.querySelector('google-map');
 
-      // Initial weather request begins here
+      // Initial weather request begins here.
       ctx.gmap.addEventListener('api-load', function(e) {
-        ctx.checkIfDataRequested();
-        ctx.addMapListeners();
+        ctx._checkIfDataRequested();
+        ctx._addMapListeners();
       });
     },
 
-    checkIfDataRequested: function() {
+    _checkIfDataRequested: function() {
+      // Stop extra requests being sent.
       while (this.gettingData === true) {
         var requests = this.$.weatherAjax.activeRequests;
         if (requests.length > 0) {
@@ -229,19 +231,21 @@ By default `map-type="GoogleMap"`
         }
         this.gettingData = false;
       }
-      this.getCoords();
+      this._getCoords();
     },
 
-    addMapListeners: function() {
+    _addMapListeners: function() {
       var ctx = this;
       ctx.gmap.map.addListener('idle', function() {
-        ctx.checkIfDataRequested();
+        ctx._checkIfDataRequested();
       });
+
       ctx.gmap.map.data.addListener('click', function(event) {
         // Close the previous infowindow if it exists.
         if (this.infowindow) {
           this.infowindow.close();
         }
+
         this.infowindow = new google.maps.InfoWindow();
         this.infowindow.setContent(
           "<img src=" + event.feature.getProperty("icon") + ">" +
@@ -249,6 +253,7 @@ By default `map-type="GoogleMap"`
           "<br />" + event.feature.getProperty("temperature") + "&deg;C" +
           "<br />" + event.feature.getProperty("weather")
         );
+
         this.infowindow.setOptions({
           position:{
             lat: event.latLng.lat(),
@@ -259,26 +264,27 @@ By default `map-type="GoogleMap"`
             height: -15
           }
         });
+
         this.infowindow.open(ctx.gmap.map);
       });
     },
 
-    getCoords: function() {
-      // Make sure to keep the "global" Polymer context to be able to call methods from inner functions.
+    // Gets the coordinates (bounds) of the bounding box.
+    _getCoords: function() {
       var ctx = this;
 
-      // @TODO: find the google-map event that fires last and call getBounds at that time.
+      // @TODO: Find the google-map event that fires last and call getBounds at that time.
       // Without setTimeout getBounds returns null.
       setTimeout(function() {
         var bounds = ctx.gmap.map.getBounds();
         var NE = bounds.getNorthEast();
         var SW = bounds.getSouthWest();
-        ctx.getWeather(NE.lat(), NE.lng(), SW.lat(), SW.lng());
+        ctx._getWeather(NE.lat(), NE.lng(), SW.lat(), SW.lng());
       }, 500);
     },
 
-    getWeather: function(northLat, eastLng, southLat, westLng) {
-      // @TODO: Stop extra requests being sent
+    // Fires an ajax request to the OpenWeatherMap API.
+    _getWeather: function(northLat, eastLng, southLat, westLng) {
       this.gettingData = true;
 
       var openWeatherMapKey = "733446808ddd15de03a2fa4d46e5e17e";
@@ -291,19 +297,27 @@ By default `map-type="GoogleMap"`
       this.$.weatherAjax.generateRequest();
     },
 
-    processResults: function(e) {
+    // Parses the weatherAjax response.
+    _processResults: function(e) {
       var ctx = this;
       var results = e.detail.response.list;
 
       if (results.length > 0) {
         this.resetData();
         results.forEach(function(result) {
-          ctx.geoJSON.features.push(ctx.jsontoGeoJson(result));
+          ctx.geoJSON.features.push(ctx._jsontoGeoJson(result));
         });
         this.drawIcons();
+      } else {
+        console.warn("No weather found for the current zoom level. Try zooming out to include some major cities.", e.detail.response);
       }
     },
 
+    /**
+     * Clears all markers from the map.
+     *
+     * @method resetData
+     */
     resetData: function() {
       var ctx = this;
       ctx.geoJSON = {
@@ -311,13 +325,13 @@ By default `map-type="GoogleMap"`
         features: []
       };
       
-      // Clean up the cache
+      // Clean up the cache.
       ctx.gmap.map.data.forEach(function(feature) {
         ctx.gmap.map.data.remove(feature);
       });
     },
 
-    jsontoGeoJson: function(weatherItem) {
+    _jsontoGeoJson: function(weatherItem) {
       var feature = {
         type: "Feature",
         properties: {
@@ -340,7 +354,8 @@ By default `map-type="GoogleMap"`
           coordinates: [weatherItem.coord.lon, weatherItem.coord.lat]
         }
       };
-      // Set the custom marker icon
+
+      // Set the custom marker icon.
       this.gmap.map.data.setStyle(function(feature) {
         return {
           icon: {
@@ -350,10 +365,15 @@ By default `map-type="GoogleMap"`
         };
       });
 
-      // returns object
+      // Returns the feature object (to be appended to this.geoJSON.features list).
       return feature;
     },
 
+    /**
+     * Displays the weather icons on the map.
+     *
+     * @method drawIcons
+     */
     drawIcons: function() {
       this.gmap.map.data.addGeoJson(this.geoJSON);
       this.gettingData = false;
