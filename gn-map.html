@@ -44,6 +44,10 @@ By default `map-type="GoogleMap"`
         width: 100%;
         height: 100%;
       }
+
+      google-map /deep/ .gm-style-iw {
+        text-align: center;
+      }
     </style>
 
     <!-- <template id="osmMap" is="dom-if" if="{{_typeIsOpenStreetMap(mapType)}}">
@@ -232,6 +236,27 @@ By default `map-type="GoogleMap"`
       var ctx = this;
       ctx.gmap.map.addListener('idle', function() {
         ctx.checkIfDataRequested();
+      });
+      ctx.gmap.map.data.addListener('click', function(event) {
+        var infowindow = new google.maps.InfoWindow();
+
+        infowindow.setContent(
+          "<img src=" + event.feature.getProperty("icon") + ">" +
+          "<br /><strong>" + event.feature.getProperty("city") + "</strong>" +
+          "<br />" + event.feature.getProperty("temperature") + "&deg;C" +
+          "<br />" + event.feature.getProperty("weather")
+        );
+        infowindow.setOptions({
+          position:{
+            lat: event.latLng.lat(),
+            lng: event.latLng.lng()
+          },
+          pixelOffset: {
+            width: 0,
+            height: -15
+          }
+        });
+        infowindow.open(ctx.gmap.map);
       });
     },
 
