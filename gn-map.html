@@ -164,6 +164,12 @@ By default `map-type="GoogleMap"`
           }
       },
 
+      showWeather: {
+        type: Boolean,
+        reflectToAttribute: true,
+        value: false
+      },
+
       /**
        * Array of user created Polygons
        */
@@ -313,24 +319,6 @@ By default `map-type="GoogleMap"`
       }
     },
 
-    /**
-     * Clears all markers from the map.
-     *
-     * @method resetData
-     */
-    resetData: function() {
-      var ctx = this;
-      ctx.geoJSON = {
-        type: "FeatureCollection",
-        features: []
-      };
-      
-      // Clean up the cache.
-      ctx.gmap.map.data.forEach(function(feature) {
-        ctx.gmap.map.data.remove(feature);
-      });
-    },
-
     _jsontoGeoJson: function(weatherItem) {
       var feature = {
         type: "Feature",
@@ -370,13 +358,33 @@ By default `map-type="GoogleMap"`
     },
 
     /**
+     * Clears all markers from the map.
+     *
+     * @method resetData
+     */
+    resetData: function() {
+      var ctx = this;
+      ctx.geoJSON = {
+        type: "FeatureCollection",
+        features: []
+      };
+      
+      // Clean up the cache.
+      ctx.gmap.map.data.forEach(function(feature) {
+        ctx.gmap.map.data.remove(feature);
+      });
+    },
+
+    /**
      * Displays the weather icons on the map.
      *
      * @method drawIcons
      */
     drawIcons: function() {
-      this.gmap.map.data.addGeoJson(this.geoJSON);
-      this.gettingData = false;
+      if (this.showWeather) {
+        this.gmap.map.data.addGeoJson(this.geoJSON);
+        this.gettingData = false;
+      }
     },
 
     addPolygon: function (points, strokeColor, width, closed, fillColor, fillOpacity) {
