@@ -50,7 +50,7 @@ By default `map-type="GoogleMap"`
       }
     </style>
 
-    <!-- <template id="osmMap" is="dom-if" if="{{_typeIsOpenStreetMap(mapType)}}">
+    <template id="osmMap" is="dom-if" if="{{_typeIsOpenStreetMap(mapType)}}">
       <osm-map longitude="{{longitude}}" latitude="{{latitude}}" zoom="{{zoom}}">
         <template is="dom-repeat" items="{{polygons}}">
           <osm-poly fill-opacity="{{item.fillOpacity}}" stroke-color$="{{item.strokeColor}}" width$="{{item.width}}" closed$="{{item.closed}}" fill-color$="{{item.fillColor}}">
@@ -63,9 +63,9 @@ By default `map-type="GoogleMap"`
           <osm-marker longitude$="{{item.longitude}}" latitude$="{{item.latitude}}"></osm-marker>
         </template>
       </osm-map>
-    </template> -->
+    </template>
 
-    <!-- <template is="dom-if" if="{{_typeIsGoogleMap(mapType)}}"> -->
+    <template is="dom-if" if="{{_typeIsGoogleMap(mapType)}}">
       <google-map id="googleMap" longitude="{{longitude}}" latitude="{{latitude}}" zoom="{{zoom}}" drag-events>
         <template is="dom-repeat" items="{{polygons}}">
           <google-map-poly fill-opacity="{{item.fillOpacity}}" stroke-color$="{{item.strokeColor}}" width$="{{item.width}}" closed$="{{item.closed}}" fill-color$="{{item.fillColor}}">
@@ -78,7 +78,7 @@ By default `map-type="GoogleMap"`
           <google-map-marker longitude$="{{item.longitude}}" latitude$="{{item.latitude}}"></google-map-marker>
         </template>  
       </google-map>
-    <!-- </template> -->
+    </template>
 
     <iron-ajax
       id="weatherAjax"
@@ -217,12 +217,28 @@ By default `map-type="GoogleMap"`
       // Makes sure to keep the "global" Polymer context
       // to be able to call global scope methods from inner functions.
       var ctx = this;
-      ctx.gmap = document.querySelector('google-map');
 
-      // Initial weather request begins here.
-      ctx.gmap.addEventListener('api-load', function(e) {
-        ctx._checkIfDataRequested();
-        ctx._addMapListeners();
+      // DOM changes are async. One way around this is to wait
+      // for the dom-change event. It is fired 3 times, 
+      // and after the 2nd time <google-map> can be queried.
+      var domChangeCounter = 0;
+
+      ctx.gnmap = document.querySelector('gn-map');
+      ctx.gnmap.addEventListener('dom-change', function() {
+
+        domChangeCounter += 1;
+
+        if (domChangeCounter > 1) {
+          // <google-map> can finally be accessed
+          ctx.gmap = document.querySelector('google-map');
+          
+          // Initial weather request begins here.
+          ctx.gmap.addEventListener('api-load', function(e) {
+            ctx._checkIfDataRequested();
+            ctx._addMapListeners();
+          });
+        }
+
       });
     },
 
