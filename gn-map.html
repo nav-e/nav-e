@@ -136,14 +136,14 @@ By default `map-type="GoogleMap"`
       },
 
       /**
-       * Holds the map object and allows to modify values during runtime
+       * Holds the map object and allows to modify values during runtime.
        */
       map: {
         type: Object
       },
 
       /**
-       * Array of polygon objects
+       * Array of polygon objects.
        */
       polygons: {
           type: Array,
@@ -154,7 +154,7 @@ By default `map-type="GoogleMap"`
       },
 
       /**
-       * Array of Marker objects
+       * Array of Marker objects.
        */
       markers: {
           type: Array,
@@ -164,12 +164,19 @@ By default `map-type="GoogleMap"`
           }
       },
 
+      /**
+       * Shows weather in major cities within the map bounds if `true`.
+       */
       showWeather: {
         type: Boolean,
         reflectToAttribute: true,
+        notify: true,
         value: false
       },
 
+      /**
+       * Shows a precipitation layer if `true`.
+       */
       showPrecipitation: {
         type: Boolean,
         reflectToAttribute: true,
@@ -177,7 +184,7 @@ By default `map-type="GoogleMap"`
       },
 
       /**
-       * Array of user created Polygons
+       * Array of user created Polygons.
        */
       _userPolygons: {
         type: Array,
@@ -188,7 +195,7 @@ By default `map-type="GoogleMap"`
       },
 
       /**
-       * Array of user created Markers
+       * Array of user created Markers.
        */
       _userMarkers: {
         type: Array,
@@ -196,6 +203,10 @@ By default `map-type="GoogleMap"`
         value: function () {
           return [];
         }
+      },
+
+      listeners: {
+        'show-weather-changed': 'toggleWeatherIcons'
       }
     },
 
@@ -335,11 +346,11 @@ By default `map-type="GoogleMap"`
       var results = e.detail.response.list;
 
       if (results.length > 0) {
-        this.resetData();
+        this.resetWeatherData();
         results.forEach(function(result) {
           ctx.geoJSON.features.push(ctx._jsontoGeoJson(result));
         });
-        this.drawIcons();
+        this.showWeatherIcons();
       } else {
         console.warn("No weather found for the current zoom level. Try zooming out to include some major cities.", e.detail.response);
       }
@@ -404,28 +415,44 @@ By default `map-type="GoogleMap"`
      *
      * @method resetData
      */
-    resetData: function() {
+    resetWeatherData: function() {
       var ctx = this;
       ctx.geoJSON = {
         type: "FeatureCollection",
         features: []
       };
       
-      // Clean up the cache.
+      // Clean up the map.data cache.
       ctx.gmap.map.data.forEach(function(feature) {
         ctx.gmap.map.data.remove(feature);
       });
     },
 
     /**
-     * Displays the weather icons on the map.
+     * Shows the weather icons on the map.
      *
-     * @method drawIcons
+     * @method showWeatherIcons
      */
-    drawIcons: function() {
+    showWeatherIcons: function() {
       if (this.showWeather) {
         this.gmap.map.data.addGeoJson(this.geoJSON);
         this.gettingData = false;
+      }
+    },
+
+    /**
+     * Toggles the weather icons on the map.
+     *
+     * @method toggleWeatherIcons
+     */
+    toggleWeatherIcons: function() {
+      if (this.geoJSON.features.length > 0) {
+        this.resetData();
+      } else {
+        // Because the map could have been moved, the `this.geoJSON` object
+        // could contain weather data that is irrelevant to the current map bounds.
+        // Thus, to be on the safe side, initiate a new weather request.
+        this._checkIfDataRequested();
       }
     },
 
