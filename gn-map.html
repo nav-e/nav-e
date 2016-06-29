@@ -236,6 +236,18 @@ By default `map-type="GoogleMap"`
           ctx.gmap.addEventListener('api-load', function(e) {
             ctx._checkIfDataRequested();
             ctx._addMapListeners();
+
+            var myMapType = new google.maps.ImageMapType({
+              getTileUrl: function(coord, zoom) {
+                return "http://maps.owm.io:8091/56ce0fcd4376d3010038aaa8/" + 
+                       zoom + "/" + coord.x + "/" + coord.y + "?hash=5";
+              },
+              tileSize: new google.maps.Size(256, 256),
+              maxZoom: 15,
+              minZoom: 0,
+              name: 'mymaptype'
+            });
+            ctx.gmap.map.overlayMapTypes.insertAt(0, myMapType);
           });
         }
 
