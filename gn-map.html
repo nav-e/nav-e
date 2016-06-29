@@ -170,6 +170,12 @@ By default `map-type="GoogleMap"`
         value: false
       },
 
+      showPrecipitation: {
+        type: Boolean,
+        reflectToAttribute: true,
+        value: false
+      },
+
       /**
        * Array of user created Polygons
        */
@@ -237,17 +243,9 @@ By default `map-type="GoogleMap"`
             ctx._checkIfDataRequested();
             ctx._addMapListeners();
 
-            var myMapType = new google.maps.ImageMapType({
-              getTileUrl: function(coord, zoom) {
-                return "http://maps.owm.io:8091/56ce0fcd4376d3010038aaa8/" + 
-                       zoom + "/" + coord.x + "/" + coord.y + "?hash=5";
-              },
-              tileSize: new google.maps.Size(256, 256),
-              maxZoom: 15,
-              minZoom: 0,
-              name: 'mymaptype'
-            });
-            ctx.gmap.map.overlayMapTypes.insertAt(0, myMapType);
+            if (ctx.showPrecipitation) {
+              ctx._overlayPrecipitation();
+            }
           });
         }
 
@@ -383,6 +381,22 @@ By default `map-type="GoogleMap"`
 
       // Returns the feature object (to be appended to this.geoJSON.features list).
       return feature;
+    },
+
+    // Overlays a precipitation layer
+    _overlayPrecipitation: function() {
+      var myMapType = new google.maps.ImageMapType({
+        getTileUrl: function(coord, zoom) {
+          return "http://maps.owm.io:8091/56ce0fcd4376d3010038aaa8/" + 
+                 zoom + "/" + coord.x + "/" + coord.y + "?hash=5";
+        },
+        tileSize: new google.maps.Size(256, 256),
+        maxZoom: 15,
+        minZoom: 0,
+        name: 'mymaptype'
+      });
+      
+      this.gmap.map.overlayMapTypes.insertAt(0, myMapType);
     },
 
     /**
