@@ -172,7 +172,7 @@ By default `map-type="GoogleMap"`
         reflectToAttribute: true,
         notify: true,
         value: false,
-        observer: 'toggleWeatherIcons'
+        observer: 'toggleWeather'
       },
 
       /**
@@ -181,7 +181,8 @@ By default `map-type="GoogleMap"`
       precipitation: {
         type: Boolean,
         reflectToAttribute: true,
-        value: false
+        value: false,
+        observer: 'togglePrecipitation'
       },
 
       /**
@@ -204,10 +205,6 @@ By default `map-type="GoogleMap"`
         value: function () {
           return [];
         }
-      },
-
-      listeners: {
-        'show-weather-changed': 'toggleWeatherIcons'
       }
     },
 
@@ -243,7 +240,6 @@ By default `map-type="GoogleMap"`
 
       ctx.gnmap = document.querySelector('gn-map');
       ctx.gnmap.addEventListener('dom-change', function() {
-
         domChangeCounter += 1;
 
         if (domChangeCounter > 1) {
@@ -259,12 +255,7 @@ By default `map-type="GoogleMap"`
               ctx._overlayPrecipitation();
             }
           });
-
-          ctx.gmap.addEventListener('show-weather-changed', function(e) {
-            console.log(111);
-          });
         }
-
       });
     },
 
@@ -407,11 +398,12 @@ By default `map-type="GoogleMap"`
                  zoom + "/" + coord.x + "/" + coord.y + "?hash=5";
         },
         tileSize: new google.maps.Size(256, 256),
-        maxZoom: 15,
+        maxZoom: 18,
         minZoom: 0,
-        name: 'mymaptype'
+        name: 'mymaptype',
+        opacity: 0.8
       });
-      
+      this.gmap.map.overlayMapTypes.clear();
       this.gmap.map.overlayMapTypes.insertAt(0, myMapType);
     },
 
@@ -448,9 +440,9 @@ By default `map-type="GoogleMap"`
     /**
      * Toggles the weather icons on the map.
      *
-     * @method toggleWeatherIcons
+     * @method toggleWeather
      */
-    toggleWeatherIcons: function() {
+    toggleWeather: function() {
       if (!this.geoJSON) {
         this._checkIfDataRequested();
       } else if (!this.geoJSON.features.length > 0) {
@@ -458,6 +450,19 @@ By default `map-type="GoogleMap"`
       } else {
         this.showWeatherIcons();
         this._checkIfDataRequested();
+      }
+    },
+
+    /**
+     * Toggles the precipitation layer on the map.
+     *
+     * @method togglePrecipitation
+     */
+    togglePrecipitation() {
+      if (this.precipitation && this.gmap) {
+        this._overlayPrecipitation();
+      } else if (!this.precipitation && this.gmap) {
+        this.gmap.map.overlayMapTypes.clear();
       }
     },
 

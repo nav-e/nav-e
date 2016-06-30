@@ -24,6 +24,7 @@
     <button on-tap="addMarker">Add Marker</button>
 
     <paper-toggle-button checked active="{{ weather }}">Weather</paper-toggle-button>
+    <paper-toggle-button checked active="{{ precipitation }}">Precipitation</paper-toggle-button>
 
     <gn-map
       id="map"
@@ -33,7 +34,7 @@
       zoom="10"
       map-type="{{ mapType }}"
       weather="{{ weather }}"
-      precipitation>
+      precipitation="{{ precipitation }}">
       <!--  <gn-marker latitude="53.834089" longitude="10.703718"></gn-marker> -->
       <gn-poly fill-color="red" stroke-color="red" closed>
         <gn-point latitude="53.699089" longitude="10.603718"></gn-point>
