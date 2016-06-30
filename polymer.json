@@ -1,0 +1,6 @@
+{
+  "entrypoint": "index.html",
+  "shell": "src/gn-app.html",
+  "fragments": [
+  ]
+}

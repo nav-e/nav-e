@@ -37,19 +37,19 @@ bower install
 
 ### Run
 
-You can use ```python -m SimpleHTTPServer``` but we prefer to use ```polyserve``` as it restarts on code changes
+You need to install the Polymer CLI (command-line interface) to view a live demo of the app.
 
 ```zsh
-sudo npm install polyserve -g 
+sudo npm install -g polymer-cli
 ```
   
 Now you can simply run 
 
 ```zsh
-polyserve -p 8000
+polymer serve
 ```
-  
-And the front end is now accessible at http://localhost:8000/.
+
+And the webapp is accessible at http://localhost:8080/.
 
 ### Development
 
