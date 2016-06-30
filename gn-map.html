@@ -167,7 +167,7 @@ By default `map-type="GoogleMap"`
       /**
        * Shows weather in major cities within the map bounds if `true`.
        */
-      showWeather: {
+      weather: {
         type: Boolean,
         reflectToAttribute: true,
         notify: true,
@@ -178,7 +178,7 @@ By default `map-type="GoogleMap"`
       /**
        * Shows a precipitation layer if `true`.
        */
-      showPrecipitation: {
+      precipitation: {
         type: Boolean,
         reflectToAttribute: true,
         value: false
@@ -255,7 +255,7 @@ By default `map-type="GoogleMap"`
             ctx._checkIfDataRequested();
             ctx._addMapListeners();
 
-            if (ctx.showPrecipitation) {
+            if (ctx.precipitation) {
               ctx._overlayPrecipitation();
             }
           });
@@ -439,7 +439,7 @@ By default `map-type="GoogleMap"`
      * @method showWeatherIcons
      */
     showWeatherIcons: function() {
-      if (this.showWeather) {
+      if (this.weather) {
         this.gmap.map.data.addGeoJson(this.geoJSON);
         this.gettingData = false;
       }
