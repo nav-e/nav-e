@@ -23,8 +23,8 @@
     <button on-tap="addPolygon">Add Polygon</button>
     <button on-tap="addMarker">Add Marker</button>
 
-    <paper-toggle-button checked active="{{ weather }}">Weather</paper-toggle-button>
-    <paper-toggle-button checked active="{{ precipitation }}">Precipitation</paper-toggle-button>
+    <paper-toggle-button  active="{{ weather }}">Weather</paper-toggle-button>
+    <paper-toggle-button  active="{{ precipitation }}">Precipitation</paper-toggle-button>
 
     <gn-map
       id="map"
@@ -35,7 +35,7 @@
       map-type="{{ mapType }}"
       weather="{{ weather }}"
       precipitation="{{ precipitation }}">
-      <!--  <gn-marker latitude="53.834089" longitude="10.703718"></gn-marker> -->
+       <!-- <gn-marker latitude="53.834089" longitude="10.703718"></gn-marker> -->
       <gn-poly fill-color="red" stroke-color="red" closed>
         <gn-point latitude="53.699089" longitude="10.603718"></gn-point>
         <gn-point latitude="53.694089" longitude="10.608718"></gn-point>
@@ -49,10 +49,6 @@
   <script>
     Polymer({
       is: 'demo-wrapper',
-
-      ready: function() {
-        console.log('demo-ready');
-      },
 
       addPolygon: function () {
         /*demo.points = [

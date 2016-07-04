@@ -7,6 +7,7 @@
 <link rel="import" href="../osm-map/osm-poly.html">
 <link rel="import" href="../osm-map/osm-point.html">
 <link rel="import" href="../osm-map/osm-marker.html">
+<link rel="import" href="../osm-map/osm-layer.html">
 <link rel="import" href="../iron-ajax/iron-ajax.html">
 <!--
     
@@ -51,7 +52,7 @@ By default `map-type="GoogleMap"`
     </style>
 
     <template id="osmMap" is="dom-if" if="{{_typeIsOpenStreetMap(mapType)}}">
-      <osm-map longitude="{{longitude}}" latitude="{{latitude}}" zoom="{{zoom}}">
+      <osm-map longitude="{{longitude}}" latitude="{{latitude}}" zoom="{{zoom}}" class="content fit">
         <template is="dom-repeat" items="{{polygons}}">
           <osm-poly fill-opacity="{{item.fillOpacity}}" stroke-color$="{{item.strokeColor}}" width$="{{item.width}}" closed$="{{item.closed}}" fill-color$="{{item.fillColor}}">
             <template is="dom-repeat" items="{{item.points}}">
@@ -132,7 +133,8 @@ By default `map-type="GoogleMap"`
       mapType: {
         type: String,
         value:"GoogleMap",
-        notify: true
+        notify: true,
+        observer: "toggleMap"
       },
 
       /**
@@ -348,7 +350,7 @@ By default `map-type="GoogleMap"`
         });
         this.showWeatherIcons();
       } else {
-        console.warn("No weather found for the current zoom level. Try zooming out to include some major cities.", e.detail.response);
+        //console.warn("No weather found for the current zoom level. Try zooming out to include some major cities.", e.detail.response);
       }
     },
 
@@ -458,11 +460,46 @@ By default `map-type="GoogleMap"`
      *
      * @method togglePrecipitation
      */
-    togglePrecipitation() {
+    togglePrecipitation: function() {
       if (this.precipitation && this.gmap) {
         this._overlayPrecipitation();
       } else if (!this.precipitation && this.gmap) {
         this.gmap.map.overlayMapTypes.clear();
+      }
+    },
+
+    // IN PROGRESS
+    // Gets called when the map provider is switched.
+    // Make sure to scroll to the bottom of the page after switching to OSM.
+    toggleMap: function() {
+      if (this.mapType === 'OpenStreetMap') {
+        console.log(this.mapType);
+        this.omap = document.querySelector('osm-map');
+        // this.omap is registered only after switching to OSM twice!
+        if (this.omap) {
+          // DOM element
+          console.log(this.omap);
+
+          // `map` object
+          console.log(this.omap.map);
+
+          // errors
+          //console.log(this.omap.map.view);
+          //console.log(this.omap.map.view.getCenter());
+
+          // The only call that does not throw an error.
+          console.log(this.omap.map.getView());
+
+          // errors
+          //console.log(this.omap.map.getZoom());
+
+
+          // The main thing I'm trying to accomplish.
+          // TypeError: not a function.
+          var bounds = this.omap.map.calculateBounds();
+          bounds.toBBOX();
+          console.log(bounds);
+        }
       }
     },
 
