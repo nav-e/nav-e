@@ -188,6 +188,16 @@ By default `map-type="GoogleMap"`
       },
 
       /**
+       * Shows a traffic layer if `true`.
+       */
+      traffic: {
+        type: Boolean,
+        reflectToAttribute: true,
+        value: false,
+        observer: 'toggleTraffic'
+      },
+
+      /**
        * Array of user created Polygons.
        */
       _userPolygons: {
@@ -465,6 +475,20 @@ By default `map-type="GoogleMap"`
         this._overlayPrecipitation();
       } else if (!this.precipitation && this.gmap) {
         this.gmap.map.overlayMapTypes.clear();
+      }
+    },
+
+    /**
+     * Toggles the traffic layer on the map.
+     *
+     * @method toggleTraffic
+     */
+    toggleTraffic: function() {
+      if (this.traffic && this.gmap) {
+        this.trafficLayer = new google.maps.TrafficLayer();
+        this.trafficLayer.setMap(this.gmap.map);
+      } else if (!this.traffic && this.gmap) {
+        this.trafficLayer.setMap(null);
       }
     },
 
