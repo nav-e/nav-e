@@ -24,7 +24,7 @@
     <test-fixture id="gn-map-fixture-with-content">
       <template>
         <gn-map id="map" class="content fit" 
-        latitude="53.694089" longitude="10.608718" zoom="13" map-type="GoogleMap">
+        latitude="53.694089" longitude="10.608718" zoom="10" map-type="GoogleMap">
           <gn-poly fill-color="red" stroke-color="red" closed>
             <gn-point latitude="53.699089" longitude="10.603718"></gn-point>
             <gn-point latitude="53.694089" longitude="10.608718"></gn-point>
@@ -49,7 +49,7 @@
         test('initial values of latitude, longitude, zoom, mapType', function() {
           assert.equal(map.latitude, 53.694089);
           assert.equal(map.longitude, 10.608718);
-          assert.equal(map.zoom, 13);
+          assert.equal(map.zoom, 10);
           assert.equal(map.mapType, "GoogleMap");
         });
 
@@ -67,6 +67,17 @@
           assert.equal(map._userPolygons.length, 0);
           assert.equal(map.markers.length, 1);
           assert.equal(map._userMarkers.length, 0);
+        });
+
+        test('display weather after calling toggleWeather', function(done) {
+          map.setAttribute('weather', '');
+          assert.equal(map.weather, true);
+
+          map.addEventListener('geoJSON-loaded', function(event) {
+            assert.equal(map.weather, true);
+            //assert.property(map, 'geoJSON');
+            done();
+          });
         });
 
       });

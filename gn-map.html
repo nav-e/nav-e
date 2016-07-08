@@ -9,6 +9,7 @@
 <link rel="import" href="../osm-map/osm-marker.html">
 <link rel="import" href="../osm-map/osm-layer.html">
 <link rel="import" href="../iron-ajax/iron-ajax.html">
+<link rel="import" href="weather-precipitation.html">
 <!--
     
 The `gn-map` element provides a wrapper for different map types.
@@ -81,13 +82,15 @@ By default `map-type="GoogleMap"`
       </google-map>
     </template>
 
-    <iron-ajax
-      id="weatherAjax"
-      url="[[requestString]]"
-      handle-as="json"
-      on-response="_processResults"
-      debounce-duration="300">
-    </iron-ajax>
+    <weather-precipitation
+      weather={{weather}}
+      precipitation="{{precipitation}}"
+      north="[[north]]"
+      east="[[east]]"
+      south="[[south]]"
+      west="[[west]]"
+      zoom="[[zoom]]">
+    </weather-precipitation>
 
     <content></content>
   </template>
@@ -269,6 +272,29 @@ By default `map-type="GoogleMap"`
           });
         }
       });
+
+      ctx.weatherPrecipitation = document.querySelector('weather-precipitation');
+      ctx.weatherPrecipitation.addEventListener('geoJSON-loaded', function(e) {
+        ctx._loadDataIntoGoogleMap(e.detail);
+      });
+    },
+
+    _loadDataIntoGoogleMap: function(featureCollection) {
+      var ctx = this;
+      featureCollection.features.forEach(function(feature) {
+      
+        // Set the custom marker icon.
+        ctx.gmap.map.data.setStyle(function(feature) {
+          return {
+            icon: {
+              url: feature.getProperty('icon'),
+              anchor: new google.maps.Point(25, 25)
+            }
+          };
+        });
+      });
+
+      this.gmap.map.data.addGeoJson(featureCollection);
     },
 
     _checkIfDataRequested: function() {
@@ -330,76 +356,14 @@ By default `map-type="GoogleMap"`
         var bounds = ctx.gmap.map.getBounds();
         var NE = bounds.getNorthEast();
         var SW = bounds.getSouthWest();
-        ctx._getWeather(NE.lat(), NE.lng(), SW.lat(), SW.lng());
+
+        // These are to be passed to <weather-precipitation>
+        ctx.north = NE.lat();
+        ctx.east = NE.lng();
+        ctx.south = SW.lat();
+        ctx.west = SW.lng();
+        ctx.zoom = ctx.gmap.map.getZoom();
       }, 500);
-    },
-
-    // Fires an ajax request to the OpenWeatherMap API.
-    _getWeather: function(northLat, eastLng, southLat, westLng) {
-      this.gettingData = true;
-
-      var openWeatherMapKey = "733446808ddd15de03a2fa4d46e5e17e";
-      this.requestString = "http://api.openweathermap.org/data/2.5/box/city?bbox="
-                          + westLng + "," + northLat + "," //left top
-                          + eastLng + "," + southLat + "," //right bottom
-                          + this.gmap.map.getZoom()
-                          + "&cluster=yes&format=json"
-                          + "&APPID=" + openWeatherMapKey;
-      this.$.weatherAjax.generateRequest();
-    },
-
-    // Parses the weatherAjax response.
-    _processResults: function(e) {
-      var ctx = this;
-      var results = e.detail.response.list;
-
-      if (results.length > 0) {
-        this.resetWeatherData();
-        results.forEach(function(result) {
-          ctx.geoJSON.features.push(ctx._jsontoGeoJson(result));
-        });
-        this.showWeatherIcons();
-      } else {
-        //console.warn("No weather found for the current zoom level. Try zooming out to include some major cities.", e.detail.response);
-      }
-    },
-
-    _jsontoGeoJson: function(weatherItem) {
-      var feature = {
-        type: "Feature",
-        properties: {
-          city: weatherItem.name,
-          weather: weatherItem.weather[0].main,
-          temperature: weatherItem.main.temp,
-          min: weatherItem.main.temp_min,
-          max: weatherItem.main.temp_max,
-          humidity: weatherItem.main.humidity,
-          pressure: weatherItem.main.pressure,
-          windSpeed: weatherItem.wind.speed,
-          windDegrees: weatherItem.wind.deg,
-          windGust: weatherItem.wind.gust,
-          icon: "http://openweathermap.org/img/w/"
-                + weatherItem.weather[0].icon  + ".png",
-          coordinates: [weatherItem.coord.lon, weatherItem.coord.lat]
-        },
-        geometry: {
-          type: "Point",
-          coordinates: [weatherItem.coord.lon, weatherItem.coord.lat]
-        }
-      };
-
-      // Set the custom marker icon.
-      this.gmap.map.data.setStyle(function(feature) {
-        return {
-          icon: {
-            url: feature.getProperty('icon'),
-            anchor: new google.maps.Point(25, 25)
-          }
-        };
-      });
-
-      // Returns the feature object (to be appended to this.geoJSON.features list).
-      return feature;
     },
 
     // Overlays a precipitation layer
