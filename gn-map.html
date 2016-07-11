@@ -251,7 +251,7 @@ By default `map-type="GoogleMap"`
           self._userMarkers.forEach(function (marker) {
             self.push('markers', marker);
           });
-      });    
+      });
 
       // Makes sure to keep the "global" Polymer context
       // to be able to call global scope methods from inner functions.
@@ -266,7 +266,7 @@ By default `map-type="GoogleMap"`
       ctx.gnmap.addEventListener('dom-change', function() {
         domChangeCounter += 1;
 
-        if (domChangeCounter > 1) {
+        if (domChangeCounter > 2) {
           // <google-map> can finally be accessed
           ctx.gmap = document.querySelector('google-map');
           
@@ -284,9 +284,12 @@ By default `map-type="GoogleMap"`
 
       ctx.weatherPrecipitation = document.querySelector('weather-precipitation');
       ctx.weatherPrecipitation.addEventListener('geoJSON-loaded', function(e) {
+        console.log('geoJSON-loaded', e);
         ctx.geoJSON = e.detail;
-        if (this.weather) {
+        if (ctx.weather && ctx.mapType === 'GoogleMap') {
           ctx.loadDataIntoGoogleMap(ctx.geoJSON);
+        } else if (ctx.weather && ctx.mapType === 'LeafletMap') {
+          ctx.loadDataIntoLeafletMap(ctx.geoJSON);
         }
       });
     },
@@ -307,6 +310,16 @@ By default `map-type="GoogleMap"`
       });
 
       this.gmap.map.data.addGeoJson(featureCollection);
+    },
+
+    loadDataIntoLeafletMap: function(featureCollection) {
+      var lmap = document.querySelector('leaflet-map').map;
+      var ctx = this;
+      featureCollection.features.forEach(function(feature) {
+        console.log(feature);
+        L.Icon.Default.imagePath = feature.properties.icon;
+        L.geoJson(feature).addTo(lmap);
+      });
     },
 
     _checkIfDataRequested: function() {
@@ -365,16 +378,25 @@ By default `map-type="GoogleMap"`
       // @TODO: Find the google-map event that fires last and call getBounds at that time.
       // Without setTimeout getBounds returns null.
       setTimeout(function() {
-        var bounds = ctx.gmap.map.getBounds();
-        var NE = bounds.getNorthEast();
-        var SW = bounds.getSouthWest();
+        if (ctx.mapType === 'GoogleMap') {
+          var bounds = ctx.gmap.map.getBounds();
+          var NE = bounds.getNorthEast();
+          var SW = bounds.getSouthWest();
 
-        // These are to be passed to <weather-precipitation>
-        ctx.north = NE.lat();
-        ctx.east = NE.lng();
-        ctx.south = SW.lat();
-        ctx.west = SW.lng();
-        ctx.zoom = ctx.gmap.map.getZoom();
+          // These are to be passed to <weather-precipitation>
+          ctx.north = NE.lat();
+          ctx.east = NE.lng();
+          ctx.south = SW.lat();
+          ctx.west = SW.lng();
+          ctx.zoom = ctx.gmap.map.getZoom();
+        } else if (ctx.mapType === 'LeafletMap') {
+          var lmap = document.querySelector('leaflet-map').map;
+          ctx.north = lmap.getBounds().getNorth();
+          ctx.east = lmap.getBounds().getEast();
+          ctx.west = lmap.getBounds().getWest();
+          ctx.south = lmap.getBounds().getSouth();
+          ctx.zoom = lmap.getZoom();
+        }
       }, 500);
     },
 
