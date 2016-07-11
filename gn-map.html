@@ -275,11 +275,14 @@ By default `map-type="GoogleMap"`
 
       ctx.weatherPrecipitation = document.querySelector('weather-precipitation');
       ctx.weatherPrecipitation.addEventListener('geoJSON-loaded', function(e) {
-        ctx._loadDataIntoGoogleMap(e.detail);
+        ctx.geoJSON = e.detail;
+        if (this.weather) {
+          ctx.loadDataIntoGoogleMap(ctx.geoJSON);
+        }
       });
     },
 
-    _loadDataIntoGoogleMap: function(featureCollection) {
+    loadDataIntoGoogleMap: function(featureCollection) {
       var ctx = this;
       featureCollection.features.forEach(function(feature) {
       
@@ -386,14 +389,10 @@ By default `map-type="GoogleMap"`
     /**
      * Clears all markers from the map.
      *
-     * @method resetData
+     * @method removeDataFromGoogleMap
      */
-    resetWeatherData: function() {
+    removeDataFromGoogleMap: function() {
       var ctx = this;
-      ctx.geoJSON = {
-        type: "FeatureCollection",
-        features: []
-      };
       
       // Clean up the map.data cache.
       ctx.gmap.map.data.forEach(function(feature) {
@@ -419,13 +418,10 @@ By default `map-type="GoogleMap"`
      * @method toggleWeather
      */
     toggleWeather: function() {
-      if (!this.geoJSON) {
-        this._checkIfDataRequested();
-      } else if (!this.geoJSON.features.length > 0) {
-        this.resetData();
-      } else {
-        this.showWeatherIcons();
-        this._checkIfDataRequested();
+      if (this.weather && this.geoJSON) {
+        this.loadDataIntoGoogleMap(this.geoJSON);
+      } else if (!this.weather && this.geoJSON) {
+        this.removeDataFromGoogleMap();
       }
     },
 

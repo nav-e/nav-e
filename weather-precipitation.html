@@ -21,7 +21,7 @@
     </iron-ajax>
 
     <content></content>
-    
+
   </template>
 <script>
   Polymer({
@@ -77,7 +77,6 @@
                             + this.zoom
                             + "&cluster=yes&format=json"
                             + "&APPID=" + openWeatherMapKey;
-        //console.log(this.requestString);
 
         if (this.west && this.south && this.east && this.north) {
           this.$.weatherAjax.generateRequest();
@@ -95,7 +94,6 @@
         results.forEach(function(result) {
           ctx.geoJSONwp.features.push(ctx._jsontoGeoJson(result));
         });
-        console.log(this.geoJSONwp);
         ctx.fire('geoJSON-loaded', ctx.geoJSONwp);
         //this.showWeatherIcons();
       } else {
