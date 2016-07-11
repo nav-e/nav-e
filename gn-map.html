@@ -8,6 +8,7 @@
 <link rel="import" href="../osm-map/osm-point.html">
 <link rel="import" href="../osm-map/osm-marker.html">
 <link rel="import" href="../osm-map/osm-layer.html">
+<link rel="import" href="../leaflet-map/leaflet-map.html">
 <link rel="import" href="../iron-ajax/iron-ajax.html">
 <link rel="import" href="weather-precipitation.html">
 <!--
@@ -50,6 +51,10 @@ By default `map-type="GoogleMap"`
       google-map /deep/ .gm-style-iw {
         text-align: center;
       }
+
+      leaflet-map {
+        height: 100%;
+      }
     </style>
 
     <template id="osmMap" is="dom-if" if="{{_typeIsOpenStreetMap(mapType)}}">
@@ -80,6 +85,10 @@ By default `map-type="GoogleMap"`
           <google-map-marker longitude$="{{item.longitude}}" latitude$="{{item.latitude}}"></google-map-marker>
         </template>  
       </google-map>
+    </template>
+
+    <template is="dom-if" if="{{_typeIsLeafletMap(mapType)}}">
+      <leaflet-map id="leafletMap" longitude="{{longitude}}" latitude="{{latitude}}" zoom="{{zoom}}"></leaflet-map>
     </template>
 
     <weather-precipitation
@@ -522,6 +531,10 @@ By default `map-type="GoogleMap"`
 
     _typeIsGoogleMap: function (mapType) {      
         return mapType === 'GoogleMap';
+    },
+
+    _typeIsLeafletMap: function (mapType) {      
+        return mapType === 'LeafletMap';
     }
   });
 </script>
