@@ -299,7 +299,6 @@ By default `map-type="GoogleMap"`
 
       ctx.weatherPrecipitation = document.querySelector('weather-precipitation');
       ctx.weatherPrecipitation.addEventListener('geoJSON-loaded', function(e) {
-        console.log('geoJSON-loaded', e);
         ctx.geoJSON = e.detail;
 
         if (ctx.weather && ctx.mapType === 'GoogleMap') {
@@ -307,6 +306,7 @@ By default `map-type="GoogleMap"`
         } else if (ctx.weather && ctx.mapType === 'LeafletMap') {
           ctx.loadDataIntoLeafletMap(ctx.geoJSON);
         }
+
       });
     },
 
@@ -329,18 +329,10 @@ By default `map-type="GoogleMap"`
     },
 
     loadDataIntoLeafletMap: function(featureCollection) {
-      var lmap = document.querySelector('leaflet-map').map;
-
       var ctx = this;
 
-      this.leafletWeatherMarkers.forEach(function(marker) {
-        lmap.removeLayer(marker);
-      });
-
-      // lmap.eachLayer(function (layer) {
-      //   // lmap.removeLayer(layer);
-      //   console.log(layer);
-      // });
+      ctx.lmap = document.querySelector('leaflet-map').map;
+      ctx.removeDataFromLeafletMap();
 
       featureCollection.features.forEach(function(feature) {
 
@@ -352,7 +344,7 @@ By default `map-type="GoogleMap"`
 
         // Important to swap the coordinates ([1], [0]).
         var tempMarker = L.marker([feature.geometry.coordinates[1], feature.geometry.coordinates[0]], {icon: tempIcon});
-        tempMarker.addTo(lmap);
+        tempMarker.addTo(ctx.lmap);
 
         ctx.leafletWeatherMarkers.push(tempMarker);
 
@@ -364,6 +356,8 @@ By default `map-type="GoogleMap"`
 
       });
     },
+
+
 
     _checkIfDataRequested: function() {
       // Stop extra requests being sent.
@@ -466,11 +460,17 @@ By default `map-type="GoogleMap"`
      * @method removeDataFromGoogleMap
      */
     removeDataFromGoogleMap: function() {
-      var ctx = this;
-      
+      var ctx = this; 
       // Clean up the map.data cache.
       ctx.gmap.map.data.forEach(function(feature) {
         ctx.gmap.map.data.remove(feature);
+      });
+    },
+
+    removeDataFromLeafletMap: function() {
+      var ctx = this;
+      this.leafletWeatherMarkers.forEach(function(marker) {
+        ctx.lmap.removeLayer(marker);
       });
     },
 
@@ -493,9 +493,17 @@ By default `map-type="GoogleMap"`
      */
     toggleWeather: function() {
       if (this.weather && this.geoJSON) {
-        this.loadDataIntoGoogleMap(this.geoJSON);
+        if (this.mapType === 'GoogleMap') {
+          this.loadDataIntoGoogleMap(this.geoJSON);
+        } else if (this.mapType === 'LeafletMap') {
+          this.loadDataIntoLeafletMap(this.geoJSON);
+        }
       } else if (!this.weather && this.geoJSON) {
-        this.removeDataFromGoogleMap();
+        if (this.mapType === 'GoogleMap') {
+          this.removeDataFromGoogleMap();
+        } else if (this.mapType === 'LeafletMap') {
+          this.removeDataFromLeafletMap();
+        }
       }
     },
 
