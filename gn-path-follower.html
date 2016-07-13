@@ -147,6 +147,7 @@ Example:
         dist: {
           type: Number,
           value: 0,
+          readonly: true,
           notify: true
         },
 
@@ -224,7 +225,7 @@ Example:
       * Calculates distance between current location and the next waypoint.
       */
       _getDistance: function() {
-        this.dist = geolib.getDistance(
+        var distance = geolib.getDistance(
           {
             latitude: this.latitude,
             longitude: this.longitude
@@ -233,6 +234,8 @@ Example:
             latitude: this.route[this._routeIndex].latitude,
             longitude: this.route[this._routeIndex].longitude
           }, this.distAccuracy);
+
+        this.set("dist", distance);
       },
 
       /**
