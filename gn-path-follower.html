@@ -13,6 +13,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../google-map/google-map-marker.html">
 <link rel="import" href="../google-map/google-map-point.html">
 <link rel="import" href="../google-map/google-map-poly.html">
+<link rel="import" href="geolib-import.html">
 <!-- <link rel="import" href="../osm-map/osm-map.html"> -->
 <!-- <link rel="import" href="../osm-map/osm-marker.html"> -->
 
@@ -64,34 +65,106 @@ Example:
   </template>
 
   <script>
+    // timeout variable to stop setTimeout() for `onPathTimeout`.
+    var _onPathTimer;
+
     Polymer({
       is: 'gn-path-follower',
 
       properties: {
         /**
-        * Route object to coloring the current route.
+        * Route array to coloring the current route.
         */
         route: {
-          type: Object,
+          type: Array,
           value: function () { return []; }
         },
 
         /**
-         * Sets the starting longitude.
+         * Sets the longitude.
          */
         longitude: {
           type: Number,
           value: 10.703718,
-          notify: true
+          observer: "_isWaypointReached"
         },
 
         /**
-         * Sets the starting latitude.
+         * Sets the latitude.
          */
         latitude: {
           type: Number,
           value: 53.834089,
+          observer: "_isWaypointReached"
+        },
+
+        /**
+        * This value is true, if the distance of current location and the next
+        * waypoint of `route` is smaller than the last calculated distance. If
+        * the distance will increase after `onPathTimeout` is expired `onPath`
+        * will be switched to false.
+        */
+        onPath: {
+          type: Boolean,
+          value: true,
           notify: true
+        },
+
+        /**
+        * Sets the timeout in milliseconds, before `onPath` will be switched
+        * to false. If distance returns to decreasing values within
+        * `onPathTimeout` the internal timer is reset and `onPath` remains
+        * at true. This prevents possibly inaccuracies of the gps signal.
+        */
+        onPathTimeout: {
+          type: Number,
+          value: 3000
+        },
+
+        /**
+        * Specifies the radius of the current location. If the next waypoint of
+        * `route` will be within this radius, the distances will be calculated
+        * with the subsequent waypoint.
+        */
+        locationRadius: {
+          type: Number,
+          value: 1
+        },
+
+        /**
+        * Specifies the distance accuracy of `dist` calculated by geolib
+        * getDistance. Ex.: If getDistance returns 19 with distAccuracy = 10,
+        * the resulting distance will be 20.
+        */
+        distAccuracy: {
+          type: Number,
+          value: 1
+        },
+
+        /**
+        * Distance of the current location to the next waypoint in meters.
+        */
+        dist: {
+          type: Number,
+          value: 0,
+          notify: true
+        },
+
+        /**
+        * Holds the last calculated distance. Necessary to evaluate if current
+        * location moves away from next waypoint.
+        */
+        _lastDist: {
+          type: Number,
+          value: 0
+        },
+
+        /**
+        * Index of the `route` array. Holds the next waypoint to be passed.
+        */
+        _routeIndex: {
+          type: Number,
+          value: 0
         }
       },
 
@@ -120,6 +193,66 @@ Example:
         // removed from a document.
         //
         // Use this to clean up anything you did in `attached`.
+      },
+
+      /**
+      * Will be called whenever current location changes. If the next waypoint
+      * is within `locationRadius` `routeIndex` will be incremented. If the
+      * waypoint is currently not reached `_checkApproach` will be called.
+      */
+      _isWaypointReached: function() {
+        if (this.route.length > 0) {
+          var isReached = geolib.isPointInCircle(
+            {
+              latitude: this.route[this._routeIndex].latitude,
+              longitude: this.route[this._routeIndex].longitude
+            },
+            {
+              latitude: this.latitude,
+              longitude: this.longitude
+            }, this.locationRadius);
+
+          if (isReached) {
+            this._routeIndex += 1;
+          } else {
+            this._checkApproach();
+          }
+        }
+      },
+
+      /**
+      * Calculates distance between current location and the next waypoint.
+      */
+      _getDistance: function() {
+        this.dist = geolib.getDistance(
+          {
+            latitude: this.latitude,
+            longitude: this.longitude
+          },
+          {
+            latitude: this.route[this._routeIndex].latitude,
+            longitude: this.route[this._routeIndex].longitude
+          }, this.distAccuracy);
+      },
+
+      /**
+      * Checks if current location moves towards the next waypoint. If yes, then
+      * `onPath` remains at true and the possibly running timer is reset. If the
+      * current location moves away from the waypoint `onPath` will be set to
+      * false after `onPathTimeout` expires.
+      */
+      _checkApproach: function() {
+        this._getDistance();
+
+        if (this.dist <= this._lastDist) {
+          clearTimeout(_onPathTimer);
+          this.onPath = true;
+        } else {
+          _onPathTimer = setTimeout(function() {
+            this.onPath = false;
+          }.bind(this), this.onPathTimer);
+        }
+        this._lastDist = this.dist;
       }
     });
   </script>

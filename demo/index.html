@@ -17,6 +17,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <link rel="import" href="../gn-path-follower.html">
     <link rel="import" href="../../gn-api/gn-api.html">
     <link rel="import" href="../../gn-gps-simulator/gn-gps-simulator.html">
+    <link rel="import" href="../../iron-flex-layout/iron-flex-layout-classes.html">
     <link rel="import" href="../../paper-button/paper-button.html">
     <link rel="import" href="../../paper-material/paper-material.html">
     <link rel="import" href="../../paper-slider/paper-slider.html">
@@ -30,7 +31,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   </head>
   <body unresolved>
     <template is="dom-bind" id="demo">
-      <style is="custom-style">
+      <style is="custom-style" include="iron-flex">
         .controls {
           position: absolute;
           left: 10px;
@@ -68,13 +69,16 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       <gn-gps-simulator id="sim"
                         route="{{route.route}}"
                         longitude="{{lon}}"
-                        latitude="{{lat}}"></gn-gps-simulator>
+                        latitude="{{lat}}"
+                        calc-more-points="true"></gn-gps-simulator>
 
       <gn-path-follower id="map"
                         class="content fit"
                         route="{{route.route}}"
                         latitude="[[lat]]"
-                        longitude="[[lon]]"></gn-path-follower>
+                        longitude="[[lon]]"
+                        on-path="{{hidden}}"
+                        dist="{{distance}}"></gn-path-follower>
 
       <paper-material class="controls" elevation="4">
         <h4>gn-path-follower</h4>
@@ -84,7 +88,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <paper-button on-tap="resetSim" raised>reset</paper-button>
 
         <div class="speed">Speed: <span id="speedLabel"></span> points per second</div>
-        <paper-slider id="speed" pin snaps max="5" min="0.5" step="0.5" value="1"></paper-slider><br>
+        <paper-slider id="speed" pin snaps max="50" step="1" value="25"></paper-slider><br>
+        <div>[[distance]]m away from next waypoint.</div>
+        <div class="speed horizontal layout">
+          <div hidden$="[[hidden]]">You are on path.</div>
+          <div hidden$="[[!hidden]]">No longer on path.</div></div>
       </paper-material>
     </template>
 
