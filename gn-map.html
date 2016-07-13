@@ -52,6 +52,10 @@ By default `map-type="GoogleMap"`
         text-align: center;
       }
 
+      leaflet-map /deep/ .leaflet-popup-content-wrapper {
+        text-align: center;
+      }
+
       leaflet-map {
         height: 100%;
       }
@@ -286,6 +290,7 @@ By default `map-type="GoogleMap"`
       ctx.weatherPrecipitation.addEventListener('geoJSON-loaded', function(e) {
         console.log('geoJSON-loaded', e);
         ctx.geoJSON = e.detail;
+        
         if (ctx.weather && ctx.mapType === 'GoogleMap') {
           ctx.loadDataIntoGoogleMap(ctx.geoJSON);
         } else if (ctx.weather && ctx.mapType === 'LeafletMap') {
@@ -314,11 +319,25 @@ By default `map-type="GoogleMap"`
 
     loadDataIntoLeafletMap: function(featureCollection) {
       var lmap = document.querySelector('leaflet-map').map;
-      var ctx = this;
+
       featureCollection.features.forEach(function(feature) {
-        console.log(feature);
-        L.Icon.Default.imagePath = feature.properties.icon;
-        L.geoJson(feature).addTo(lmap);
+
+        var tempIcon = new L.icon({
+          iconUrl: feature.properties.icon,
+          iconRetinaUrl: feature.properties.icon,
+          iconSize: [40, 40]
+        });
+
+        // Important to swap the coordinates ([1], [0]).
+        var tempMarker = L.marker([feature.geometry.coordinates[1], feature.geometry.coordinates[0]], {icon: tempIcon});
+        tempMarker.addTo(lmap);
+
+        var content = "<img src=" + feature.properties.icon + ">" +
+          "<br /><strong>" + feature.properties.city + "</strong>" +
+          "<br />" + feature.properties.temperature + "&deg;C" +
+          "<br />" + feature.properties.weather;
+        tempMarker.bindPopup(content);
+
       });
     },
 
