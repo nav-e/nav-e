@@ -107,6 +107,7 @@ Example:
         onPath: {
           type: Boolean,
           value: true,
+          readonly: true,
           notify: true
         },
 
@@ -249,10 +250,12 @@ Example:
 
         if (this.dist <= this._lastDist) {
           clearTimeout(_onPathTimer);
-          this.onPath = true;
+          // this.onPath = true;
+          this.set("onPath", true);
         } else {
           _onPathTimer = setTimeout(function() {
-            this.onPath = false;
+            // this.onPath = false;
+            this.set("onPath", false);
           }.bind(this), this.onPathTimer);
         }
         this._lastDist = this.dist;
