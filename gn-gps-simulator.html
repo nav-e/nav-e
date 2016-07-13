@@ -81,6 +81,14 @@ Example:
       },
 
       /**
+      * Specifies the direction in which the simulator drives.
+      */
+      _direction: {
+        type: String,
+        value: "forward"
+      },
+
+      /**
        * `True` if Simulation is active. If last index in `route` is reached
        * this will switch to `false` again.
        */
@@ -176,11 +184,38 @@ Example:
 
 
     /**
+    * Switch direction of simulation. If no argument is given the method
+    * switches the direction. Optional you can specify the direction with
+    * passing `forward` or `backward` as a string.
+    */
+    switchDirection: function(direction) {
+      if (direction === "forward") {
+        this._direction = "forward"
+      } else if (direction === "backward") {
+        this._direction = "backward"
+      } else if (direction === undefined) {
+        if (this._direction === "forward") {
+          this._direction = "backward"
+        } else if (this._direction === "backward") {
+          this._direction = "forward"
+        }
+      } else {
+        throw "Only 'forward', 'backward' or no argument allowed."
+      }
+    },
+
+
+    /**
      * Sets the next waypoint in `route` according to `speed`
      */
     _drive: function() {
       if (this.isDriving) {
-        this._setNextWaypoint();
+        if (this._direction === "forward") {
+          this._setNextWaypoint();
+        } else if (this._direction === "backward") {
+          this._setPrevWaypoint();
+        }
+
         _timeout = setTimeout(function() {
           this._drive();
         }.bind(this), (1 / this.speed * 1000));
@@ -211,7 +246,8 @@ Example:
     /**
      * Sets `longitude` and `latitude` according to `route`
      * (or rather `_finerRoute`) if `isDriving` is `true` and `_routeIndex`
-     * hasn't reached last waypoint.
+     * hasn't reached last waypoint. This method is used, if `_direction` is
+     * set to forward.
      */
     _setNextWaypoint: function() {
       var route;
@@ -229,6 +265,35 @@ Example:
           this._routeIndex += 1;
         } else {
           this.isDriving = false;
+          this._routeIndex = route.length - 1;
+        }
+      }
+    },
+
+
+    /**
+     * Sets `longitude` and `latitude` according to `route`
+     * (or rather `_finerRoute`) if `isDriving` is `true` and `_routeIndex`
+     * hasn't reached last waypoint. This method is used, if `_direction` is
+     * set to backward.
+     */
+    _setPrevWaypoint: function() {
+      var route;
+
+      if (this.interpolationIter > 0) {
+        route = this._finerRoute;
+      } else {
+        route = this.route;
+      }
+
+      if (this.isDriving) {
+        if (this._routeIndex >= 0) {
+          this.longitude = route[this._routeIndex].longitude;
+          this.latitude = route[this._routeIndex].latitude;
+          this._routeIndex -= 1;
+        } else {
+          this.isDriving = false;
+          this._routeIndex = 0;
         }
       }
     }
