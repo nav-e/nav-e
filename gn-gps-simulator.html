@@ -53,21 +53,23 @@ Example:
       },
 
       /**
-      * If true, `finerRoute` is used instead of `route`.
+      * If higher than 0, `_finerRoute` is used instead of `route`. The higher
+      * the value the more iterations are used.
+      * Attention: It is recommended to not use a value higher than ~5, because
+      * the algorithm is not optimized yet.
       */
-      calcMorePoints: {
-        type: Boolean,
-        reflectToAttribute: true,
-        value: false
+      interpolationIter: {
+        type: Number,
+        value: 0
       },
 
       /**
       * Holds the route informations and additionally more points calculated by
-      * `calcFinerRoute`.
+      * `interpolateRoute`.
       */
-      finerRoute: {
+      _finerRoute: {
         type: Array,
-        computed: "calcFinerRoute(route)"
+        computed: "interpolateRoute(route)"
       },
 
       /**
@@ -144,7 +146,7 @@ Example:
 
     /**
     * Calculates midpoint between `start` and `end` and returns this midpoint as
-    * an item for the `finerRoute` array.
+    * an item for the `_finerRoute` array.
     */
     _setMidpoint: function(start, end, callback) {
       var midpoint = {"latitude": 0, "longitude": 0, "turn": 0};
@@ -169,21 +171,18 @@ Example:
     /**
     * Adds more points to the initially route informations according to
     * midpoints between the items. This will be repeated in respect to the
-    * `repeat` value. Returns `finerRoute`, which is used by `_setNextWaypoint`,
-    * if `calcMorePoints` is set.
+    * `repeat` value. Returns `_finerRoute`, which is used by
+    * `_setNextWaypoint`, if `interpolationIter` is set.
     */
-    calcFinerRoute: function(route) {
+    interpolateRoute: function(route) {
       var finerRoute = route.slice();
-      var repeats = 5;
 
-      if (this.calcMorePoints) {
-        for (var r = 0; r < repeats; r++) {
-          var len = finerRoute.length;
-          for (var i = 0; i < (len * 2) - 2; i = i + 2) {
-            this._setMidpoint(finerRoute[i], finerRoute[i+1], function(item) {
-              finerRoute.splice(i+1, 0, item);
-            }.bind(this));
-          }
+      for (var r = 0; r < this.interpolationIter; r++) {
+        var len = finerRoute.length;
+        for (var i = 0; i < (len * 2) - 2; i = i + 2) {
+          this._setMidpoint(finerRoute[i], finerRoute[i+1], function(item) {
+            finerRoute.splice(i+1, 0, item);
+          });
         }
       }
 
@@ -239,14 +238,14 @@ Example:
 
     /**
      * Sets `longitude` and `latitude` according to `route`
-     * (or rather `finerRoute`) if `isDriving` is `true` and `_routeIndex`
+     * (or rather `_finerRoute`) if `isDriving` is `true` and `_routeIndex`
      * hasn't reached last waypoint.
      */
     _setNextWaypoint: function() {
       var route;
 
-      if (this.calcMorePoints) {
-        route = this.finerRoute;
+      if (this.interpolationIter > 0) {
+        route = this._finerRoute;
       } else {
         route = this.route;
       }
