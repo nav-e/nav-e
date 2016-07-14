@@ -438,7 +438,7 @@ By default `map-type="GoogleMap"`
     },
 
     // Overlays a precipitation layer
-    _overlayPrecipitation: function() {
+    _overlayPrecipitationOnGoogleMap: function() {
       var ctx = this;
 
       var myMapType = new google.maps.ImageMapType({
@@ -454,12 +454,14 @@ By default `map-type="GoogleMap"`
       });
       this.gmap.map.overlayMapTypes.clear();
       this.gmap.map.overlayMapTypes.insertAt(0, myMapType);
+    },
 
+    _overlayPrecipitationOnLeafletMap: function() {
       // Leaflet map
-      var layer = L.tileLayer("http://maps.owm.io:8091/56ce0fcd4376d3010038aaa8/{z}/{x}/{y}?hash=5", { attribution: '<a href="https://www.mapzen.com/rights">Attribution.</a>. Data &copy;<a href="https://openstreetmap.org/copyright">OSM</a> contributors.' });
+      this.leafletPrecipitationLayer = L.tileLayer("http://maps.owm.io:8091/56ce0fcd4376d3010038aaa8/{z}/{x}/{y}?hash=5", { attribution: '<a href="https://www.mapzen.com/rights">Attribution.</a>. Data &copy;<a href="https://openstreetmap.org/copyright">OSM</a> contributors.' });
 
-      ctx.lmap = document.querySelector('leaflet-map').map;
-      ctx.lmap.addLayer(layer);
+      this.lmap = document.querySelector('leaflet-map').map;
+      this.lmap.addLayer(this.leafletPrecipitationLayer);
     },
 
     /**
@@ -501,7 +503,6 @@ By default `map-type="GoogleMap"`
      */
     toggleWeather: function() {
       if (this.weather && this.geoJSON) {
-
         if (this.mapType === 'GoogleMap') {
           this.loadDataIntoGoogleMap(this.geoJSON);
         } else if (this.mapType === 'LeafletMap') {
@@ -522,10 +523,18 @@ By default `map-type="GoogleMap"`
      * @method togglePrecipitation
      */
     togglePrecipitation: function() {
-      if (this.precipitation && this.gmap) {
-        this._overlayPrecipitation();
-      } else if (!this.precipitation && this.gmap) {
-        this.gmap.map.overlayMapTypes.clear();
+      if (this.precipitation) {
+        if (this.mapType === 'GoogleMap' && this.gmap) {
+          this._overlayPrecipitationOnGoogleMap();
+        } else if (this.mapType === 'LeafletMap') {
+          this._overlayPrecipitationOnLeafletMap();
+        }
+      } else if (!this.precipitation) {
+        if (this.mapType === 'GoogleMap' && this.gmap) {
+          this.gmap.map.overlayMapTypes.clear();
+        } else if (this.mapType === 'LeafletMap') {
+          this.lmap.removeLayer(this.leafletPrecipitationLayer);
+        }
       }
     },
 
