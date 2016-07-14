@@ -28,13 +28,6 @@
     is: 'weather-precipitation',
 
     properties: {
-      testy: {
-        type: String,
-        value: function() {
-          return 'testy';
-        }
-      },
-
       north: {
         type: Number
       },
@@ -44,12 +37,12 @@
       },
 
       south: {
-        type: Number,
-        observer: 'getWeather'
+        type: Number
       },
 
       west: {
-        type: Number
+        type: Number,
+        observer: 'getWeather'
       },
 
       zoom: {

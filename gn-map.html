@@ -430,8 +430,8 @@ By default `map-type="GoogleMap"`
           var lmap = document.querySelector('leaflet-map').map;
           ctx.north = lmap.getBounds().getNorth();
           ctx.east = lmap.getBounds().getEast();
-          ctx.west = lmap.getBounds().getWest();
           ctx.south = lmap.getBounds().getSouth();
+          ctx.west = lmap.getBounds().getWest();
           ctx.zoom = lmap.getZoom();
         }
       }, 500);
@@ -493,6 +493,7 @@ By default `map-type="GoogleMap"`
      */
     toggleWeather: function() {
       if (this.weather && this.geoJSON) {
+
         if (this.mapType === 'GoogleMap') {
           this.loadDataIntoGoogleMap(this.geoJSON);
         } else if (this.mapType === 'LeafletMap') {
