@@ -439,6 +439,8 @@ By default `map-type="GoogleMap"`
 
     // Overlays a precipitation layer
     _overlayPrecipitation: function() {
+      var ctx = this;
+
       var myMapType = new google.maps.ImageMapType({
         getTileUrl: function(coord, zoom) {
           return "http://maps.owm.io:8091/56ce0fcd4376d3010038aaa8/" + 
@@ -452,6 +454,12 @@ By default `map-type="GoogleMap"`
       });
       this.gmap.map.overlayMapTypes.clear();
       this.gmap.map.overlayMapTypes.insertAt(0, myMapType);
+
+      // Leaflet map
+      var layer = L.tileLayer("http://maps.owm.io:8091/56ce0fcd4376d3010038aaa8/{z}/{x}/{y}?hash=5", { attribution: '<a href="https://www.mapzen.com/rights">Attribution.</a>. Data &copy;<a href="https://openstreetmap.org/copyright">OSM</a> contributors.' });
+
+      ctx.lmap = document.querySelector('leaflet-map').map;
+      ctx.lmap.addLayer(layer);
     },
 
     /**
