@@ -70,14 +70,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                         route="{{route.route}}"
                         longitude="{{lon}}"
                         latitude="{{lat}}"
-                        calc-more-points="true"></gn-gps-simulator>
+                        interpolation-iter="5"
+                        speed="10"></gn-gps-simulator>
 
       <gn-path-follower id="map"
                         class="content fit"
                         route="{{route.route}}"
                         latitude="[[lat]]"
                         longitude="[[lon]]"
-                        on-path="{{hidden}}"
+                        onpath="{{onpath}}"
                         dist="{{distance}}"></gn-path-follower>
 
       <paper-material class="controls" elevation="4">
@@ -86,13 +87,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <paper-button id="startButton" on-tap="startSim" class="green" raised>start</paper-button>
         <paper-button on-tap="stopSim" class="red" raised>stop</paper-button>
         <paper-button on-tap="resetSim" raised>reset</paper-button>
+        <paper-button on-tap="switchDirection" raised>switch direction</paper-button>
 
         <div class="speed">Speed: <span id="speedLabel"></span> points per second</div>
-        <paper-slider id="speed" pin snaps max="50" step="1" value="25"></paper-slider><br>
+        <paper-slider id="speed" pin snaps max="50" step="1" value="10"></paper-slider><br>
         <div>[[distance]]m away from next waypoint.</div>
-        <div class="speed horizontal layout">
-          <div hidden$="[[hidden]]">You are on path.</div>
-          <div hidden$="[[!hidden]]">No longer on path.</div></div>
+        <div class="speed horizontal layout"></div>
+          <div hidden="[[!onpath]]">You are on path.</div>
+          <div hidden="[[onpath]]">No longer on path.</div></div>
       </paper-material>
     </template>
 
@@ -124,6 +126,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         } else {
           alert("Press 'get route' first!");
         }
+      }
+      demo.switchDirection = function() {
+        var switchDirection = document.getElementById("sim");
+        switchDirection.switchDirection();
       }
       document.addEventListener("WebComponentsReady", function() {
         var speed = document.querySelector("#speed");
