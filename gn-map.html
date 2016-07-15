@@ -460,6 +460,8 @@ By default `map-type="GoogleMap"`
       // Leaflet map
       this.leafletPrecipitationLayer = L.tileLayer("http://maps.owm.io:8091/56ce0fcd4376d3010038aaa8/{z}/{x}/{y}?hash=5", { attribution: '<a href="https://www.mapzen.com/rights">Attribution.</a>. Data &copy;<a href="https://openstreetmap.org/copyright">OSM</a> contributors.' });
 
+      this.leafletPrecipitationLayer.setOpacity(0.5);
+
       this.lmap = document.querySelector('leaflet-map').map;
       this.lmap.addLayer(this.leafletPrecipitationLayer);
     },
