@@ -74,7 +74,8 @@ Example:
         */
         route: {
           type: Array,
-          value: function () { return []; }
+          value: function () { return []; },
+          observer: "_setStartpoint"
         },
 
         /**
@@ -175,6 +176,16 @@ Example:
       observers: [
         "_isWaypointReached(longitude, latitude)"
       ],
+
+      /**
+      * Sets coordinates as soon as route exists or changes.
+      */
+      _setStartpoint: function() {
+        if (this.route.length > 0) {
+          this.latitude = this.route[0].latitude;
+          this.longitude = this.route[0].longitude;
+        }
+      },
 
       /**
       * Will be called whenever current location changes. If the next waypoint
