@@ -123,6 +123,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           Polymer.dom(this.$.startButton).innerHTML = "start";
           var resetSim = document.getElementById("sim");
           resetSim.resetSimulation();
+          var map = document.getElementById("map");
+          map._routeIndex = 0;
         } else {
           alert("Press 'get route' first!");
         }
