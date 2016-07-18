@@ -23,7 +23,8 @@
     "paper-dropdown-menu": "PolymerElements/paper-dropdown-menu#~1.1.0",
     "paper-menu": "PolymerElements/paper-menu#~1.2.0",
     "paper-item": "PolymerElements/paper-item#~1.1.2",
-    "leaflet-map": "leaflet-extras/leaflet-map#^1.2.0"
+    "leaflet-map": "leaflet-extras/leaflet-map#^1.2.0",
+    "paper-material": "PolymerElements/paper-material#^1.0.6"
   },
   "devDependencies": {
     "iron-component-page": "PolymerElements/iron-component-page#^1.0.0"

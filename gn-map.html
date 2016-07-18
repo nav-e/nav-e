@@ -1,4 +1,5 @@
 <link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../paper-material/paper-material.html">
 <link rel="import" href="../google-map/google-map.html">
 <link rel="import" href="../google-map/google-map-poly.html">
 <link rel="import" href="../google-map/google-map-point.html">
@@ -60,10 +61,13 @@ By default `map-type="GoogleMap"`
         height: 100%;
       }
 
-      #mapTypeButtons {
+      .mapControls {
         position: absolute;
         top: 65px;
         right: 10px;
+      }
+
+      #mapTypeButtons {
         box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
       }
 
@@ -97,6 +101,23 @@ By default `map-type="GoogleMap"`
         color: black !important;
         text-shadow: 0 0 0 black;
         background-color: whitesmoke !important;
+      }
+
+      .layersToggle {
+         background-color: white;
+         margin-top: 10px;
+         padding: 7px;
+      }
+
+      .layersToggle paper-toggle-button {
+        margin-bottom: 5px;
+        --paper-toggle-button-checked-button-color: #1B5E20;
+        --paper-toggle-button-checked-ink-color: #1B5E20;
+        --paper-toggle-button-checked-bar-color: #1B5E20;
+      }
+
+      .layersToggle paper-toggle-button:last-child {
+        margin-bottom: 0px;
       }
     </style>
 
@@ -144,14 +165,24 @@ By default `map-type="GoogleMap"`
       zoom="[[zoom]]">
     </weather-precipitation>
 
-    <iron-selector id="mapTypeButtons" selected={{mapType}} attr-for-selected="name">
-      <!--
-      The comment below is intentional and removes the mysterious gap between the buttons.
-      http://stackoverflow.com/questions/14574623/how-to-get-rid-of-white-space-between-inline-elements-without-keeping-html-on-s
-      -->
-      <button name="GoogleMap">Google Map</button><!--
-   --><button name="LeafletMap">Leaflet Map</button>
-    </iron-selector>
+    <div class="mapControls">
+      <iron-selector id="mapTypeButtons" selected={{mapType}} attr-for-selected="name">
+        <!--
+        The comment below is intentional and removes the mysterious gap between the buttons.
+        http://stackoverflow.com/questions/14574623/how-to-get-rid-of-white-space-between-inline-elements-without-keeping-html-on-s
+        -->
+        <button name="GoogleMap">Google Map</button><!--
+     --><button name="LeafletMap">Leaflet Map</button>
+      </iron-selector>
+
+      <paper-material class="layersToggle">
+        <paper-toggle-button active="{{ weather }}">Weather</paper-toggle-button>
+        <paper-toggle-button active="{{ precipitation }}">Precipitation</paper-toggle-button>
+        <paper-toggle-button active="{{ traffic }}">Traffic</paper-toggle-button>
+      </paper-material>
+    </div>
+
+
 
     <content></content>
   </template>
