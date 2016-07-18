@@ -10,23 +10,12 @@
 <dom-module id="demo-wrapper">
   <template>
     <style>
-      
     </style>
 
     <p>An example of <code>&lt;gn-map element&gt;</code>:</p>
-    <!-- <paper-dropdown-menu label="Map type" selected-item-label="{{ mapType }}">
-      <paper-menu class="dropdown-content" selected="1">
-        <paper-item>OpenStreetMap</paper-item>
-        <paper-item>GoogleMap</paper-item>
-        <paper-item>LeafletMap</paper-item>
-      </paper-menu>
-    </paper-dropdown-menu> -->
+
     <button on-tap="addPolygon">Add Polygon</button>
     <button on-tap="addMarker">Add Marker</button>
-
-    <!-- <paper-toggle-button active="{{ weather }}">Weather</paper-toggle-button>
-    <paper-toggle-button active="{{ precipitation }}">Precipitation</paper-toggle-button>
-    <paper-toggle-button active="{{ traffic }}">Traffic</paper-toggle-button> -->
 
     <gn-map
       id="map"
