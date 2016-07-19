@@ -26,7 +26,7 @@
     "neon-animation": "PolymerElements/neon-animation#^1.2.3",
     "iron-iconset": "PolymerElements/iron-iconset#^1.0.4",
     "paper-dialog": "PolymerElements/paper-dialog#^1.0.4",
-    "gn-map": "Greennav/gn-map",
+    "gn-map": "marksurnin/gn-map",
     "gn-api": "Greennav/gn-api",
     "gn-search": "Greennav/gn-search",
     "gn-profiles": "Greennav/gn-profiles"
