@@ -36,14 +36,15 @@ Example:
     <style>
       :host {
         display: block;
-        width: 100%;
         height: 100%;
-        margin: 0;
+        position: relative;
       }
-      .map {
-        width: 100%;
-        height: 100%;
-        margin: 0;
+      #map {
+        bottom: 0;
+        left: 0;
+        position: absolute;
+        right: 0;
+        top: 0;
       }
     </style>
 
@@ -135,6 +136,25 @@ Example:
           value: 1
         },
 
+        turnDist: {
+          type: Number,
+          value: 0,
+          readonly: true,
+          notify: true
+        },
+
+        turnCode: {
+          type: Number,
+          value: 0,
+          readonly: true,
+          notify: true
+        },
+
+        _turnIndex: {
+          type: Number,
+          value: 0
+        },
+
         /**
         * Distance of the current location to the next waypoint in meters.
         */
@@ -184,6 +204,19 @@ Example:
         if (this.route.length > 0) {
           this.latitude = this.route[0].latitude;
           this.longitude = this.route[0].longitude;
+          this._getNextTurnInstruction(0);
+        }
+      },
+
+      _getNextTurnInstruction: function(index) {
+        index += 1;
+        if (this.route[index].turn > 0) {
+          this.turnCode = this.route[index].turn;
+          this._turnIndex = index;
+          console.log("Code: ", this.turnCode);
+          console.log("Index: ", this._turnIndex);
+        } else {
+          this._getNextTurnInstruction(index);
         }
       },
 
@@ -206,6 +239,9 @@ Example:
             this._getDistance();
 
           if (isReached) {
+            if (this.route[this._routeIndex].turn > 0) {
+              this._getNextTurnInstruction(this._routeIndex);
+            }
             this._routeIndex += 1;
           }
         }
@@ -225,7 +261,18 @@ Example:
             longitude: this.route[this._routeIndex].longitude
           }, this.distAccuracy);
 
+        var turnDistance = geolib.getDistance(
+          {
+            latitude: this.latitude,
+            longitude: this.longitude
+          },
+          {
+            latitude: this.route[this._turnIndex].latitude,
+            longitude: this.route[this._turnIndex].longitude
+          }, this.distAccuracy);
+
         this._lastDist = this.dist;
+        this.set("turnDist", turnDistance);
         this.set("dist", distance);
       },
 
