@@ -16,6 +16,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <script src="../../webcomponentsjs/webcomponents-lite.min.js"></script>
     <link rel="import" href="../gn-path-follower.html">
     <link rel="import" href="../../gn-api/gn-api.html">
+    <link rel="import" href="../../gn-notification/gn-notification-container.html">
     <link rel="import" href="../../gn-gps-simulator/gn-gps-simulator.html">
     <link rel="import" href="../../iron-flex-layout/iron-flex-layout-classes.html">
     <link rel="import" href="../../iron-icon/iron-icon.html">
@@ -41,6 +42,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
           @apply(--layout-vertical);
         }
+        /*#map {
+          @apply(--layout-vertical);
+        }*/
         .startStop {
           @apply(--layout-horizontal);
         }
@@ -105,12 +109,20 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                         interpolation-iter="5"
                         speed="10"></gn-gps-simulator>
 
-      <gn-path-follower id="map"
-                        route="{{route.route}}"
-                        latitude="[[lat]]"
-                        longitude="[[lon]]"
-                        onpath="{{onpath}}"
-                        dist="{{distance}}"></gn-path-follower>
+      <div id="map" class="flex">
+        <gn-notification-container id="notifications"
+                                   hidden="true"
+                                   turn-code="[[direction]]"
+                                   distance="[[turnDistance]]"></gn-notification-container>
+        <gn-path-follower id="map"
+                          route="{{route.route}}"
+                          latitude="[[lat]]"
+                          longitude="[[lon]]"
+                          onpath="{{onpath}}"
+                          dist="{{distance}}"
+                          turn-code="{{direction}}"
+                          turn-dist="{{turnDistance}}"></gn-path-follower>
+      </div>
     </template>
 
     <script>
@@ -122,8 +134,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           gnapi.getRoute();
           this.async(function() {
             document.getElementById("startButton").disabled = false;
+            var notifications = document.getElementById("notifications")
+            notifications.hidden = false;
+            this.async(function() {
+              notifications.newestNotification = {
+                title: "We wish you a good ride!"
+              };
+            }, 3000);
           }, 500);
-        }, 500)
+        }, 500);
       }
       demo.startSim = function() {
         if (gnapi.route) {
