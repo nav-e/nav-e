@@ -14,29 +14,83 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
     <title>gn-notification Demo</title>
     <script src="../../webcomponentsjs/webcomponents-lite.min.js"></script>
-    <link rel="import" href="../gn-notification.html">
+    <link rel="import" href="../../google-map/google-map.html">
     <link rel="import" href="../../paper-button/paper-button.html">
+    <link rel="import" href="../gn-notification-container.html">
+
+    <style is="custom-style" include="iron-flex iron-positioning"></style>
   </head>
   <body unresolved>
+    <style is="custom-style">
+        #directionExample {
+          margin: 20px;
+        }
+
+        #map {
+          height: 400px;
+        }
+
+        #note {
+          padding: 25px;
+        }
+    </style>
 
     <p>An example of <code>&lt;gn-notification&gt;</code>:</p>
 
-    <paper-button raised onclick="hint.open()">hint notification</paper-button>
-    <paper-button raised onclick="persist.open()">persist notification</paper-button>
-    <paper-button raised onclick="warning.open()">warning notification</paper-button>
-    <paper-button raised onclick="error.open()">error notification</paper-button>
+    <paper-button id="hint" raised>hint notification</paper-button>
+    <paper-button id="persist" raised>persist notification</paper-button>
+    <paper-button id="warning" raised>warning notification</paper-button>
+    <paper-button id="error" raised>error notification</paper-button>
 
-    <gn-notification  id="hint"
-                      title="Hint">This is a hint message.</gn-notification>
-    <gn-notification  id="persist"
-                      persist
-                      title="Hint">This message is persistent.</gn-notification>
-    <gn-notification  id="warning"
-                      warning
-                      title="Warning">Oh, oh... there is a warning message.</gn-notification>
-    <gn-notification  id="error"
-                      error
-                      title="Error">An error has occurred</gn-notification>
+    <div id="note">
+      Note: Please wait until the message is gone, before you open a new
+      notification. There is a known issue with positioning more than one
+      notification.
+    </div>
 
+    <div id="directionExample">
+      <gn-notification-container id="notifications"
+                                 directions="Turn left"
+                                 distance="25"
+                                 unit="m"></gn-notification-container>
+      <google-map id="map" latitude="37.77493" longitude="-122.41942" disable-default-ui="true"
+      api-key="AIzaSyDJtgz6y0MQP6oQsES9SaE9GkcDLMaY1_4"></google-map>
+    </div>
+    <script>
+      var notifications = document.getElementById("notifications");
+
+      var hintMessage = document.getElementById("hint").addEventListener("tap", function() {
+        notifications.set("newestNotification", {
+          title: "This is a hint message",
+          icon: "",
+          type: ""
+        });
+      });
+
+      var persistMessage = document.getElementById("persist").addEventListener("tap", function() {
+        notifications.set("newestNotification", {
+          title: "This message is persistent",
+          icon: "",
+          type: "",
+          persist: true
+        });
+      });
+
+      var warningMessage = document.getElementById("warning").addEventListener("tap", function() {
+        notifications.set("newestNotification", {
+          title: "Oh, oh... there is a warning message",
+          icon: "warning",
+          type: "warning"
+        });
+      });
+
+      var errorMessage = document.getElementById("error").addEventListener("tap", function() {
+        notifications.set("newestNotification", {
+          title: "An error has occurred",
+          icon: "error",
+          type: "error"
+        });
+      });
+    </script>
   </body>
 </html>
