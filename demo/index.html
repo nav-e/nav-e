@@ -29,13 +29,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
     </style>
   </head>
-  <body unresolved>
+  <body unresolved class="horizontal layout">
     <template is="dom-bind" id="demo">
       <style is="custom-style" include="iron-flex">
         .controls {
-          position: absolute;
-          left: 10px;
-          top: 60px;
+          background-color: #fff;
+          padding: 10px;
+          width: 150px;
+
           @apply(--layout-vertical);
         }
         .speed {
@@ -61,8 +62,25 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           --paper-slider-pin-start-color: var(--google-blue-700);
           --paper-slider-knob-start-color: var(--google-blue-700);
           --paper-slider-knob-start-border-color: var(--google-blue-700);
+          width: 100%;
         }
       </style>
+
+      <div class="controls">
+        <h4>gn-path-follower</h4>
+        <paper-button on-tap="getRoute" class="white" raised>get route</paper-button>
+        <paper-button id="startButton" on-tap="startSim" class="green" raised>start</paper-button>
+        <paper-button on-tap="stopSim" class="red" raised>stop</paper-button>
+        <paper-button on-tap="resetSim" raised>reset</paper-button>
+        <paper-button on-tap="switchDirection" raised>switch direction</paper-button>
+
+        <div class="speed">Speed: <span id="speedLabel"></span> points per second</div>
+        <paper-slider id="speed" pin snaps min="1" max="50" step="1" value="10"></paper-slider><br>
+        <div>[[distance]]m away from next waypoint.</div>
+        <div class="speed horizontal layout"></div>
+          <div hidden="[[!onpath]]">You are on path.</div>
+          <div hidden="[[onpath]]">No longer on path.</div></div>
+      </div>
 
       <gn-api id="gnapi" route="{{route}}"></gn-api>
 
@@ -74,28 +92,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                         speed="10"></gn-gps-simulator>
 
       <gn-path-follower id="map"
-                        class="content fit"
                         route="{{route.route}}"
                         latitude="[[lat]]"
                         longitude="[[lon]]"
                         onpath="{{onpath}}"
                         dist="{{distance}}"></gn-path-follower>
-
-      <paper-material class="controls" elevation="4">
-        <h4>gn-path-follower</h4>
-        <paper-button on-tap="getRoute" class="white" raised>get route</paper-button>
-        <paper-button id="startButton" on-tap="startSim" class="green" raised>start</paper-button>
-        <paper-button on-tap="stopSim" class="red" raised>stop</paper-button>
-        <paper-button on-tap="resetSim" raised>reset</paper-button>
-        <paper-button on-tap="switchDirection" raised>switch direction</paper-button>
-
-        <div class="speed">Speed: <span id="speedLabel"></span> points per second</div>
-        <paper-slider id="speed" pin snaps max="50" step="1" value="10"></paper-slider><br>
-        <div>[[distance]]m away from next waypoint.</div>
-        <div class="speed horizontal layout"></div>
-          <div hidden="[[!onpath]]">You are on path.</div>
-          <div hidden="[[onpath]]">No longer on path.</div></div>
-      </paper-material>
     </template>
 
     <script>
