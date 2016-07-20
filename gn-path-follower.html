@@ -136,6 +136,9 @@ Example:
           value: 1
         },
 
+        /**
+        * Distance to next turn.
+        */
         turnDist: {
           type: Number,
           value: 0,
@@ -143,6 +146,9 @@ Example:
           notify: true
         },
 
+        /**
+        * Number which encodes instructions.
+        */
         turnCode: {
           type: Number,
           value: 0,
@@ -150,6 +156,9 @@ Example:
           notify: true
         },
 
+        /**
+        * Index of route array, which has a turn code larger than 0.
+        */
         _turnIndex: {
           type: Number,
           value: 0
@@ -208,6 +217,9 @@ Example:
         }
       },
 
+      /**
+      * Finds the next turn instruction.
+      */
       _getNextTurnInstruction: function(index) {
         index += 1;
         if (this.route[index].turn > 0) {
