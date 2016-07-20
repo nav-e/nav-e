@@ -2,7 +2,7 @@
 
 Navigation path follower for mobile phones, cars or gn-gps-simulator. Below is a little screencast:
 
-![Loading gif](https://cloud.githubusercontent.com/assets/9342018/16197501/90ccaa72-3702-11e6-92c4-6547192f4680.gif)
+![Loading gif](https://cloud.githubusercontent.com/assets/9342018/16989167/6c613fba-4e93-11e6-82c8-3f796b378206.gif)
 
 ## Setup Instructions
 
