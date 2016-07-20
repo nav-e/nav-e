@@ -45,7 +45,6 @@ Example:
     <style is="custom-style" include="iron-flex">
       :host {
         position: relative;
-        height: 100%;
 
         @apply(--layout-vertical);
       }
@@ -65,24 +64,13 @@ Example:
         @apply(--layout-center-justified);
       }
 
-      #distance {
+      .distance {
         font-size: 2.2em;
-        margin-right: 25px;
       }
 
       #instructions {
         font-size: 1.4em;
-      }
-
-      #mapContainer {
-        position: absolute;
-      }
-
-      #map {
-        left: 0;
-        position: absolute;
-        top: 0;
-        z-index: 1;
+        margin-right: 25px;
       }
 
       #notifications {
@@ -107,9 +95,10 @@ Example:
     </style>
 
     <div id="directions">
-      <div id="distance">{{distance}}{{unit}}</div>
+      <div class="distance" hidden$="{{!distance}}">{{distance}}</div>
+      <div class="distance" hidden$="{{!distance}}">{{unit}}</div>
       <!-- <div id="icon"></div -->
-      <div id="instructions">{{directions}}</div>
+      <div id="instructions">{{instruction}}</div>
     </div>
     <div id="notifications"/>
   </template>
@@ -119,21 +108,95 @@ Example:
       is: 'gn-notification-container',
 
       properties: {
-        directions: {
+        /**
+        * Driving instructions.
+        */
+        instruction: {
           type: String,
-          value: ""
+          value: "",
+          readonly: true
         },
 
+        /**
+        * Number which encodes instructions.
+        */
+        turnCode: {
+          type: Number,
+          value: 0
+        },
+
+        /**
+        * Temporary Array for instructions. In future this will
+        * possibly be outsourced.
+        */
+        _turnInstructions: {
+          type: Array,
+          value: function() {
+            return [
+              {
+                turn: 0,
+                text: ""
+              },
+              {
+                turn: 1,
+                text: "Continue straight ahead"
+              },
+              {
+                turn: 2,
+                text: "Turn left"
+              },
+              {
+                turn: 3,
+                text: "Turn right"
+              },
+              {
+                turn: 4,
+                text: "Slightly turn left"
+              },
+              {
+                turn: 5,
+                text: "Slightly turn right"
+              },
+              {
+                turn: 6,
+                text: "Take a sharp left"
+              },
+              {
+                turn: 7,
+                text: "Take a sharp right"
+              },
+              {
+                turn: 20,
+                text: "Turn into the traffic circle"
+              },
+              {
+                turn: 21,
+                text: "Leave the roundabout"
+              }
+            ];
+          }
+        },
+
+        /**
+        * Distance value.
+        */
         distance: {
-          type: String,
-          value: ""
+          type: Number,
+          value: 0
         },
 
+        /**
+        * Unit of distance.
+        */
         unit: {
           type: String,
-          value: ""
+          value: "m"
         },
 
+        /**
+        * Notification object which should look like following.
+        * { title: "", icon: "", type: "", persist: false/true }
+        */
         newestNotification: {
           type: Object
         },
@@ -147,8 +210,18 @@ Example:
       },
 
       observers: [
-        "addNotification(newestNotification)"
+        "addNotification(newestNotification)",
+        "_getTurnInstruction(turnCode)"
       ],
+
+      _getTurnInstruction: function(turnCode) {
+        if (this._turnInstructions !== undefined) {
+          var turn = this._turnInstructions.filter(function (o) {
+            return o.turn === turnCode;
+          });
+          this.set("instruction", turn[0].text);
+        }
+      },
 
       addNotification: function(newestNotification) {
         var notifications = this.$.notifications;
