@@ -32,6 +32,9 @@
     "gn-api": "https://github.com/Greennav/gn-api.git",
     "paper-slider": "PolymerElements/paper-slider#^1.0.11",
     "paper-material": "PolymerElements/paper-material#^1.0.6",
-    "iron-flex-layout": "PolymerElements/iron-flex-layout#^1.3.1"
+    "iron-flex-layout": "PolymerElements/iron-flex-layout#^1.3.1",
+    "gn-notification": "git@github.com:tom3012/gn-notification.git",
+    "iron-icons": "PolymerElements/iron-icons#^1.1.3",
+    "iron-icon": "PolymerElements/iron-icon#^1.0.9"
   }
 }

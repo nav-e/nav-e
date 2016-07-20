@@ -18,6 +18,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <link rel="import" href="../../gn-api/gn-api.html">
     <link rel="import" href="../../gn-gps-simulator/gn-gps-simulator.html">
     <link rel="import" href="../../iron-flex-layout/iron-flex-layout-classes.html">
+    <link rel="import" href="../../iron-icon/iron-icon.html">
+    <link rel="import" href="../../iron-icons/av-icons.html">
     <link rel="import" href="../../paper-button/paper-button.html">
     <link rel="import" href="../../paper-material/paper-material.html">
     <link rel="import" href="../../paper-slider/paper-slider.html">
@@ -35,9 +37,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         .controls {
           background-color: #fff;
           padding: 10px;
-          width: 150px;
+          width: 180px;
 
           @apply(--layout-vertical);
+        }
+        .startStop {
+          @apply(--layout-horizontal);
         }
         .speed {
           margin-top: 25px;
@@ -54,6 +59,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           background-color: var(--paper-red-500);
           color: white;
         }
+        paper-button[disabled] {
+          background-color: var(--paper-grey-500);
+        }
         paper-material {
           background-color: #fff;
           padding: 15px;
@@ -69,8 +77,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       <div class="controls">
         <h4>gn-path-follower</h4>
         <paper-button on-tap="getRoute" class="white" raised>get route</paper-button>
-        <paper-button id="startButton" on-tap="startSim" class="green" raised>start</paper-button>
-        <paper-button on-tap="stopSim" class="red" raised>stop</paper-button>
+        <div class="startStop">
+          <paper-button id="startButton" on-tap="startSim" class="green" raised disabled>
+            <iron-icon id="startIcon" icon="av:play-arrow"></iron-icon>
+          </paper-button>
+          <paper-button on-tap="stopSim" class="red" raised>
+            <iron-icon icon="av:pause"></iron-icon>
+          </paper-button>
+        </div>
         <paper-button on-tap="resetSim" raised>reset</paper-button>
         <paper-button on-tap="switchDirection" raised>switch direction</paper-button>
 
@@ -104,11 +118,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       demo.getRoute = function() {
         var gnapi = document.getElementById("gnapi");
         // It is important to get route from gn-api, before starting the simulation.
-        gnapi.getRoute();
+        this.async(function() {
+          gnapi.getRoute();
+          this.async(function() {
+            document.getElementById("startButton").disabled = false;
+          }, 500);
+        }, 500)
       }
       demo.startSim = function() {
         if (gnapi.route) {
-          Polymer.dom(this.$.startButton).innerHTML = "continue";
           sim.startSimulation();
         } else {
           alert("Press 'get route' first!");
@@ -121,7 +139,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       demo.resetSim = function() {
         if (gnapi.route) {
           startButton = document.getElementById("startSim")
-          Polymer.dom(this.$.startButton).innerHTML = "start";
           var resetSim = document.getElementById("sim");
           resetSim.resetSimulation();
           var map = document.getElementById("map");
