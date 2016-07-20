@@ -49,7 +49,8 @@ Example:
        */
       route: {
         type: Array,
-        value: function () { return []; }
+        value: function () { return []; },
+        observer: "_setStartpoint"
       },
 
       /**
@@ -123,6 +124,16 @@ Example:
     },
 
     // Element Behavior
+    /**
+    * Sets coordinates as soon as route exists or changes.
+    */
+    _setStartpoint: function() {
+      if (this.route.length > 0) {
+        this.latitude = this.route[0].latitude;
+        this.longitude = this.route[0].longitude;
+      }
+    },
+
 
     /**
     * Calculates midpoint between `start` and `end` and returns this midpoint as
