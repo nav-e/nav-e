@@ -13,6 +13,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../google-map/google-map-marker.html">
 <link rel="import" href="../google-map/google-map-point.html">
 <link rel="import" href="../google-map/google-map-poly.html">
+<link rel="import" href="geolib-import.html">
 <!-- <link rel="import" href="../osm-map/osm-map.html"> -->
 <!-- <link rel="import" href="../osm-map/osm-marker.html"> -->
 
@@ -35,14 +36,15 @@ Example:
     <style>
       :host {
         display: block;
-        width: 100%;
         height: 100%;
-        margin: 0;
+        position: relative;
       }
-      .map {
-        width: 100%;
-        height: 100%;
-        margin: 0;
+      #map {
+        bottom: 0;
+        left: 0;
+        position: absolute;
+        right: 0;
+        top: 0;
       }
     </style>
 
@@ -50,7 +52,7 @@ Example:
       <osm-marker latitude="{{latitude}}" longitude="{{longitude}}"></osm-marker>
     </osm-map> -->
 
-    <google-map class="map" latitude="{{latitude}}" longitude="{{longitude}}" zoom="18">
+    <google-map class="map" latitude="{{latitude}}" longitude="{{longitude}}" zoom="19" disable-default-ui="true">
       <google-map-marker latitude="{{latitude}}" longitude="{{longitude}}"></google-map-marker>
         <google-map-poly stroke-color="#00960a" stroke-weight="6">
           <template is="dom-repeat" items="{{route}}">
@@ -69,57 +71,237 @@ Example:
 
       properties: {
         /**
-        * Route object to coloring the current route.
+        * Route array to coloring the current route.
         */
         route: {
-          type: Object,
-          value: function () { return []; }
+          type: Array,
+          value: function () { return []; },
+          observer: "_setStartpoint"
         },
 
         /**
-         * Sets the starting longitude.
+         * Sets the longitude.
          */
         longitude: {
           type: Number,
-          value: 10.703718,
+          value: 10.703718
+        },
+
+        /**
+         * Sets the latitude.
+         */
+        latitude: {
+          type: Number,
+          value: 53.834089
+        },
+
+        /**
+        * This value is true, if the distance of current location and the next
+        * waypoint of `route` is smaller than the last calculated distance. If
+        * the distance will increase `onpath` will be switched to false.
+        */
+        onpath: {
+          type: Boolean,
+          value: true,
+          readonly: true,
           notify: true
         },
 
         /**
-         * Sets the starting latitude.
-         */
-        latitude: {
+        * Sets the maximal distance, before `onpath` will be switched
+        * to false.
+        */
+        maxMoveAwayDist: {
           type: Number,
-          value: 53.834089,
+          value: 3
+        },
+
+        /**
+        * Specifies the radius of the current location. If the next waypoint of
+        * `route` will be within this radius, the distances will be calculated
+        * with the subsequent waypoint.
+        */
+        locationRadius: {
+          type: Number,
+          value: 1
+        },
+
+        /**
+        * Specifies the distance accuracy of `dist` calculated by geolib
+        * getDistance. Ex.: If getDistance returns 19 with distAccuracy = 10,
+        * the resulting distance will be 20.
+        */
+        distAccuracy: {
+          type: Number,
+          value: 1
+        },
+
+        /**
+        * Distance to next turn.
+        */
+        turnDist: {
+          type: Number,
+          value: 0,
+          readonly: true,
           notify: true
+        },
+
+        /**
+        * Number which encodes instructions.
+        */
+        turnCode: {
+          type: Number,
+          value: 0,
+          readonly: true,
+          notify: true
+        },
+
+        /**
+        * Index of route array, which has a turn code larger than 0.
+        */
+        _turnIndex: {
+          type: Number,
+          value: 0
+        },
+
+        /**
+        * Distance of the current location to the next waypoint in meters.
+        */
+        dist: {
+          type: Number,
+          value: 0,
+          readonly: true,
+          notify: true,
+          observer: "_checkApproach"
+        },
+
+        /**
+        * Holds the last calculated distance. Necessary to evaluate if current
+        * location moves away from next waypoint.
+        */
+        _lastDist: {
+          type: Number,
+          value: 0
+        },
+
+        /**
+        * Holds the current distance, which increases if current position moves
+        * away from next waypoint.
+        */
+        _moveAwayDist: {
+          type: Number,
+          value: 0
+        },
+
+        /**
+        * Index of the `route` array. Holds the next waypoint to be passed.
+        */
+        _routeIndex: {
+          type: Number,
+          value: 0
         }
       },
 
-      // Element Lifecycle
+      observers: [
+        "_isWaypointReached(longitude, latitude)"
+      ],
 
-      ready: function() {
-        // `ready` is called after all elements have been configured, but
-        // propagates bottom-up. This element's children are ready, but parents
-        // are not.
-        //
-        // This is the point where you should make modifications to the DOM (when
-        // necessary), or kick off any processes the element wants to perform.
+      /**
+      * Sets coordinates as soon as route exists or changes.
+      */
+      _setStartpoint: function() {
+        if (this.route.length > 0) {
+          this.latitude = this.route[0].latitude;
+          this.longitude = this.route[0].longitude;
+          this._getNextTurnInstruction(0);
+        }
       },
 
-      attached: function() {
-        // `attached` fires once the element and its parents have been inserted
-        // into a document.
-        //
-        // This is a good place to perform any work related to your element's
-        // visual state or active behavior (measuring sizes, beginning animations,
-        // loading resources, etc).
+      /**
+      * Finds the next turn instruction.
+      */
+      _getNextTurnInstruction: function(index) {
+        index += 1;
+        if (this.route[index].turn > 0) {
+          this.turnCode = this.route[index].turn;
+          this._turnIndex = index;
+        } else {
+          this._getNextTurnInstruction(index);
+        }
       },
 
-      detached: function() {
-        // The analog to `attached`, `detached` fires when the element has been
-        // removed from a document.
-        //
-        // Use this to clean up anything you did in `attached`.
+      /**
+      * Will be called whenever current location changes. If the next waypoint
+      * is within `locationRadius` `routeIndex` will be incremented.
+      */
+      _isWaypointReached: function() {
+        if (this.route.length > 0) {
+          var isReached = geolib.isPointInCircle(
+            {
+              latitude: this.route[this._routeIndex].latitude,
+              longitude: this.route[this._routeIndex].longitude
+            },
+            {
+              latitude: this.latitude,
+              longitude: this.longitude
+            }, this.locationRadius);
+
+            this._getDistance();
+
+          if (isReached) {
+            if (this.route[this._routeIndex].turn > 0) {
+              this._getNextTurnInstruction(this._routeIndex);
+            }
+            this._routeIndex += 1;
+          }
+        }
+      },
+
+      /**
+      * Calculates distance between current location and the next waypoint.
+      */
+      _getDistance: function() {
+        var distance = geolib.getDistance(
+          {
+            latitude: this.latitude,
+            longitude: this.longitude
+          },
+          {
+            latitude: this.route[this._routeIndex].latitude,
+            longitude: this.route[this._routeIndex].longitude
+          }, this.distAccuracy);
+
+        var turnDistance = geolib.getDistance(
+          {
+            latitude: this.latitude,
+            longitude: this.longitude
+          },
+          {
+            latitude: this.route[this._turnIndex].latitude,
+            longitude: this.route[this._turnIndex].longitude
+          }, this.distAccuracy);
+
+        this._lastDist = this.dist;
+        this.set("turnDist", turnDistance);
+        this.set("dist", distance);
+      },
+
+      /**
+      * Checks if current location moves towards the next waypoint. If yes, then
+      * `onpath` remains at true. If the current location moves away from the
+      * waypoint `onpath` will be set to false if the distance getting larger
+      * than `maxMoveAwayDist`.
+      */
+      _checkApproach: function() {
+        if (this.dist < this._lastDist) {
+          this._moveAwayDist = 0;
+          this.set("onpath", true);
+        } else if (this._lastDist != 0) {
+          this._moveAwayDist += this.dist - this._lastDist;
+          if (this.maxMoveAwayDist <= this._moveAwayDist) {
+            this.set("onpath", false);
+          }
+        }
       }
     });
   </script>

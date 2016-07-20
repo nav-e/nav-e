@@ -16,7 +16,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <script src="../../webcomponentsjs/webcomponents-lite.min.js"></script>
     <link rel="import" href="../gn-path-follower.html">
     <link rel="import" href="../../gn-api/gn-api.html">
+    <link rel="import" href="../../gn-notification/gn-notification-container.html">
     <link rel="import" href="../../gn-gps-simulator/gn-gps-simulator.html">
+    <link rel="import" href="../../iron-flex-layout/iron-flex-layout-classes.html">
+    <link rel="import" href="../../iron-icon/iron-icon.html">
+    <link rel="import" href="../../iron-icons/av-icons.html">
     <link rel="import" href="../../paper-button/paper-button.html">
     <link rel="import" href="../../paper-material/paper-material.html">
     <link rel="import" href="../../paper-slider/paper-slider.html">
@@ -28,14 +32,21 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
     </style>
   </head>
-  <body unresolved>
+  <body unresolved class="horizontal layout">
     <template is="dom-bind" id="demo">
-      <style is="custom-style">
+      <style is="custom-style" include="iron-flex">
         .controls {
-          position: absolute;
-          left: 10px;
-          top: 60px;
+          background-color: #fff;
+          padding: 10px;
+          width: 180px;
+
           @apply(--layout-vertical);
+        }
+        /*#map {
+          @apply(--layout-vertical);
+        }*/
+        .startStop {
+          @apply(--layout-horizontal);
         }
         .speed {
           margin-top: 25px;
@@ -52,6 +63,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           background-color: var(--paper-red-500);
           color: white;
         }
+        paper-button[disabled] {
+          background-color: var(--paper-grey-500);
+        }
         paper-material {
           background-color: #fff;
           padding: 15px;
@@ -60,32 +74,55 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           --paper-slider-pin-start-color: var(--google-blue-700);
           --paper-slider-knob-start-color: var(--google-blue-700);
           --paper-slider-knob-start-border-color: var(--google-blue-700);
+          width: 100%;
         }
       </style>
+
+      <div class="controls">
+        <h4>gn-path-follower</h4>
+        <paper-button on-tap="getRoute" class="white" raised>get route</paper-button>
+        <div class="startStop">
+          <paper-button id="startButton" on-tap="startSim" class="green" raised disabled>
+            <iron-icon id="startIcon" icon="av:play-arrow"></iron-icon>
+          </paper-button>
+          <paper-button on-tap="stopSim" class="red" raised>
+            <iron-icon icon="av:pause"></iron-icon>
+          </paper-button>
+        </div>
+        <paper-button on-tap="resetSim" raised>reset</paper-button>
+        <paper-button on-tap="switchDirection" raised>switch direction</paper-button>
+
+        <div class="speed">Speed: <span id="speedLabel"></span> points per second</div>
+        <paper-slider id="speed" pin snaps min="1" max="50" step="1" value="10"></paper-slider><br>
+        <div>[[distance]]m away from next waypoint.</div>
+        <div class="speed horizontal layout"></div>
+          <div hidden="[[!onpath]]">You are on path.</div>
+          <div hidden="[[onpath]]">No longer on path.</div></div>
+      </div>
 
       <gn-api id="gnapi" route="{{route}}"></gn-api>
 
       <gn-gps-simulator id="sim"
                         route="{{route.route}}"
                         longitude="{{lon}}"
-                        latitude="{{lat}}"></gn-gps-simulator>
+                        latitude="{{lat}}"
+                        interpolation-iter="5"
+                        speed="10"></gn-gps-simulator>
 
-      <gn-path-follower id="map"
-                        class="content fit"
-                        route="{{route.route}}"
-                        latitude="[[lat]]"
-                        longitude="[[lon]]"></gn-path-follower>
-
-      <paper-material class="controls" elevation="4">
-        <h4>gn-path-follower</h4>
-        <paper-button on-tap="getRoute" class="white" raised>get route</paper-button>
-        <paper-button id="startButton" on-tap="startSim" class="green" raised>start</paper-button>
-        <paper-button on-tap="stopSim" class="red" raised>stop</paper-button>
-        <paper-button on-tap="resetSim" raised>reset</paper-button>
-
-        <div class="speed">Speed: <span id="speedLabel"></span> points per second</div>
-        <paper-slider id="speed" pin snaps max="5" min="0.5" step="0.5" value="1"></paper-slider><br>
-      </paper-material>
+      <div id="map" class="flex">
+        <gn-notification-container id="notifications"
+                                   hidden="true"
+                                   turn-code="[[direction]]"
+                                   distance="[[turnDistance]]"></gn-notification-container>
+        <gn-path-follower id="map"
+                          route="{{route.route}}"
+                          latitude="[[lat]]"
+                          longitude="[[lon]]"
+                          onpath="{{onpath}}"
+                          dist="{{distance}}"
+                          turn-code="{{direction}}"
+                          turn-dist="{{turnDistance}}"></gn-path-follower>
+      </div>
     </template>
 
     <script>
@@ -93,11 +130,22 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       demo.getRoute = function() {
         var gnapi = document.getElementById("gnapi");
         // It is important to get route from gn-api, before starting the simulation.
-        gnapi.getRoute();
+        this.async(function() {
+          gnapi.getRoute();
+          this.async(function() {
+            document.getElementById("startButton").disabled = false;
+            var notifications = document.getElementById("notifications")
+            notifications.hidden = false;
+            this.async(function() {
+              notifications.newestNotification = {
+                title: "We wish you a good ride!"
+              };
+            }, 3000);
+          }, 500);
+        }, 500);
       }
       demo.startSim = function() {
         if (gnapi.route) {
-          Polymer.dom(this.$.startButton).innerHTML = "continue";
           sim.startSimulation();
         } else {
           alert("Press 'get route' first!");
@@ -110,12 +158,17 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       demo.resetSim = function() {
         if (gnapi.route) {
           startButton = document.getElementById("startSim")
-          Polymer.dom(this.$.startButton).innerHTML = "start";
           var resetSim = document.getElementById("sim");
           resetSim.resetSimulation();
+          var map = document.getElementById("map");
+          map._routeIndex = 0;
         } else {
           alert("Press 'get route' first!");
         }
+      }
+      demo.switchDirection = function() {
+        var switchDirection = document.getElementById("sim");
+        switchDirection.switchDirection();
       }
       document.addEventListener("WebComponentsReady", function() {
         var speed = document.querySelector("#speed");
