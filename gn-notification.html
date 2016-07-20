@@ -11,8 +11,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="../iron-icon/iron-icon.html">
 <link rel="import" href="../iron-icons/iron-icons.html">
+<link rel="import" href="../neon-animation/animations/fade-out-animation.html">
+<link rel="import" href="../neon-animation/animations/scale-up-animation.html">
 <link rel="import" href="../paper-dialog-scrollable/paper-dialog-scrollable.html">
 <link rel="import" href="../paper-dialog/paper-dialog.html">
+<link rel="import" href="../paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../paper-styles/color.html">
 
 <!--
@@ -104,10 +107,13 @@ Example:
       }
     </style>
 
-    <paper-dialog id="dialog">
+    <paper-dialog id="dialog"
+                  entry-animation="scale-up-animation"
+                  exit-animation="fade-out-animation">
       <div id="header">
-        <iron-icon id="header-icon" icon="{{icon}}"></iron-icon>
-        <span id="header-title">{{title}}</span>
+        <iron-icon id="header-icon" icon="[[icon]]"></iron-icon>
+        <span id="header-title">[[title]]</span>
+        <paper-icon-button hidden$="[[!persist]]" icon="cancel" on-tap="close"></paper-icon-button>
       </div>
       <paper-dialog-scrollable>
         <content></content>
@@ -129,6 +135,9 @@ Example:
           value: ''
         },
 
+        /*
+        * Set a different icon to the header.
+        */
         icon: {
           type: String,
           value: 'lightbulb-outline'
@@ -152,26 +161,22 @@ Example:
           reflectToAttribute: true
         },
 
-        // /**
-        // * Set `duration` to close the message automatically after duration time.
-        // */
-        // // duration: {
-        // //   type: Number,
-        // //   value: 3000
-        // // },
+        /**
+        * Set `duration` to close the message automatically after duration time.
+        */
+        duration: {
+          type: Number,
+          value: 3000
+        },
 
-        // /**
-        // * Use `persist` to show a persistent message.
-        // */
-        // persist: {
-        //   type: Boolean,
-        //   value: false
-        // },
+        /**
+        * Use `persist` to show a persistent message.
+        */
+        persist: {
+          type: Boolean,
+          value: false
+        },
       },
-
-      // listeners: {
-      //   'dialog.opened': 'autoClose'
-      // },
 
       // Element Lifecycle
 
@@ -207,6 +212,7 @@ Example:
       */
       open: function() {
         this.$.dialog.open();
+        this.autoClose();
       },
 
       /**
@@ -216,12 +222,15 @@ Example:
         this.$.dialog.close();
       },
 
-      // autoClose: function() {
-      //   alert('Test')
-      //   if(this.$.dialog.opened && !this.persist) {
-      //     this.async(this.close, this.duration);
-      //   }
-      // }
+      /**
+      * Closes notification automatically after `duration` if `persist` is
+      * not true.
+      */
+      autoClose: function() {
+        if (!this.persist) {
+          this.async(this.close, this.duration);
+        }
+      }
     });
   </script>
 </dom-module>
