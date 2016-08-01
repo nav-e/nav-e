@@ -179,7 +179,7 @@ By default `map-type="GoogleMap"`
       <paper-material class="layersToggle">
         <paper-toggle-button active="{{ weather }}">Weather</paper-toggle-button>
         <paper-toggle-button active="{{ precipitation }}">Precipitation</paper-toggle-button>
-        <paper-toggle-button active="{{ traffic }}">Traffic</paper-toggle-button>
+        <paper-toggle-button active="{{ traffic }}" disabled="{{_typeIsLeafletMap(mapType)}}">Traffic</paper-toggle-button>
       </paper-material>
     </div>
 
