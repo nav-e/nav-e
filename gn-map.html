@@ -138,7 +138,7 @@ By default `map-type="GoogleMap"`
     </template>
 
     <template is="dom-if" if="{{_typeIsGoogleMap(mapType)}}">
-      <google-map id="googleMap" longitude="{{longitude}}" latitude="{{latitude}}" zoom="{{zoom}}" drag-events>
+      <google-map id="googleMap" longitude="{{longitude}}" latitude="{{latitude}}" zoom="{{zoom}}" api-key="AIzaSyCURfGidiiyj4S8XFOPFftNlhfx5A6ce8o" drag-events>
         <template is="dom-repeat" items="{{polygons}}">
           <google-map-poly fill-opacity="{{item.fillOpacity}}" stroke-color$="{{item.strokeColor}}" width$="{{item.width}}" closed$="{{item.closed}}" fill-color$="{{item.fillColor}}">
             <template is="dom-repeat" items="{{item.points}}">
@@ -222,13 +222,12 @@ By default `map-type="GoogleMap"`
 
       /**
        * The map-type is bind by dom-if template to include different type of maps
-       * Possible values are "GoogleMap" or "OpenStreetMap".
+       * Possible values are "GoogleMap" or "LeafletMap".
        */
       mapType: {
         type: String,
         value:"GoogleMap",
         notify: true,
-        observer: "toggleMap"
       },
 
       /**
@@ -355,14 +354,15 @@ By default `map-type="GoogleMap"`
       // and after the 2nd time <google-map> can be queried.
       var domChangeCounter = 0;
 
-      ctx.gnmap = document.querySelector('gn-map');
+      // Use the /deep/ selector to access shadow DOM.
+      ctx.gnmap = document.querySelector('html /deep/ gn-map');
+
       ctx.gnmap.addEventListener('dom-change', function() {
         domChangeCounter += 1;
+        if (domChangeCounter > 1) {
+          // Accessing shadow DOM again.
+          ctx.gmap = document.querySelector('html /deep/ google-map');
 
-        if (domChangeCounter > 2) {
-          // <google-map> can finally be accessed
-          ctx.gmap = document.querySelector('google-map');
-          
           // Initial weather request begins here.
           ctx.gmap.addEventListener('api-load', function(e) {
             ctx._checkIfDataRequested();
@@ -375,7 +375,7 @@ By default `map-type="GoogleMap"`
         }
       });
 
-      ctx.weatherPrecipitation = document.querySelector('weather-precipitation');
+      ctx.weatherPrecipitation = document.querySelector('html /deep/ weather-precipitation');
       ctx.weatherPrecipitation.addEventListener('geoJSON-loaded', function(e) {
         ctx.geoJSON = e.detail;
 
@@ -390,6 +390,7 @@ By default `map-type="GoogleMap"`
 
     loadDataIntoGoogleMap: function(featureCollection) {
       var ctx = this;
+
       featureCollection.features.forEach(function(feature) {
       
         // Set the custom marker icon.
@@ -403,13 +404,14 @@ By default `map-type="GoogleMap"`
         });
       });
 
-      this.gmap.map.data.addGeoJson(featureCollection);
+      ctx.removeDataFromGoogleMap();
+      ctx.gmap.map.data.addGeoJson(featureCollection);
     },
 
     loadDataIntoLeafletMap: function(featureCollection) {
       var ctx = this;
 
-      ctx.lmap = document.querySelector('leaflet-map').map;
+      ctx.lmap = document.querySelector('html /deep/ leaflet-map').map;
       ctx.removeDataFromLeafletMap();
 
       featureCollection.features.forEach(function(feature) {
@@ -434,8 +436,6 @@ By default `map-type="GoogleMap"`
 
       });
     },
-
-
 
     _checkIfDataRequested: function() {
       // Stop extra requests being sent.
@@ -505,7 +505,7 @@ By default `map-type="GoogleMap"`
           ctx.west = SW.lng();
           ctx.zoom = ctx.gmap.map.getZoom();
         } else if (ctx.mapType === 'LeafletMap') {
-          var lmap = document.querySelector('leaflet-map').map;
+          var lmap = document.querySelector('html /deep/ leaflet-map').map;
           ctx.north = lmap.getBounds().getNorth();
           ctx.east = lmap.getBounds().getEast();
           ctx.south = lmap.getBounds().getSouth();
@@ -528,7 +528,7 @@ By default `map-type="GoogleMap"`
         maxZoom: 18,
         minZoom: 0,
         name: 'mymaptype',
-        opacity: 0.8
+        opacity: 0.6
       });
       this.gmap.map.overlayMapTypes.clear();
       this.gmap.map.overlayMapTypes.insertAt(0, myMapType);
@@ -538,9 +538,9 @@ By default `map-type="GoogleMap"`
       // Leaflet map
       this.leafletPrecipitationLayer = L.tileLayer("http://maps.owm.io:8091/56ce0fcd4376d3010038aaa8/{z}/{x}/{y}?hash=5", { attribution: '<a href="https://www.mapzen.com/rights">Attribution.</a>. Data &copy;<a href="https://openstreetmap.org/copyright">OSM</a> contributors.' });
 
-      this.leafletPrecipitationLayer.setOpacity(0.5);
+      this.leafletPrecipitationLayer.setOpacity(0.6);
 
-      this.lmap = document.querySelector('leaflet-map').map;
+      this.lmap = document.querySelector('html /deep/ leaflet-map').map;
       this.lmap.addLayer(this.leafletPrecipitationLayer);
     },
 
@@ -550,7 +550,8 @@ By default `map-type="GoogleMap"`
      * @method removeDataFromGoogleMap
      */
     removeDataFromGoogleMap: function() {
-      var ctx = this; 
+      var ctx = this;
+
       // Clean up the map.data cache.
       ctx.gmap.map.data.forEach(function(feature) {
         ctx.gmap.map.data.remove(feature);
@@ -629,41 +630,6 @@ By default `map-type="GoogleMap"`
         this.trafficLayer.setMap(this.gmap.map);
       } else if (!this.traffic && this.gmap) {
         this.trafficLayer.setMap(null);
-      }
-    },
-
-    // IN PROGRESS
-    // Gets called when the map provider is switched.
-    // Make sure to scroll to the bottom of the page after switching to OSM.
-    toggleMap: function() {
-      if (this.mapType === 'OpenStreetMap') {
-        console.log(this.mapType);
-        this.omap = document.querySelector('osm-map');
-        // this.omap is registered only after switching to OSM twice!
-        if (this.omap) {
-          // DOM element
-          console.log(this.omap);
-
-          // `map` object
-          console.log(this.omap.map);
-
-          // errors
-          //console.log(this.omap.map.view);
-          //console.log(this.omap.map.view.getCenter());
-
-          // The only call that does not throw an error.
-          console.log(this.omap.map.getView());
-
-          // errors
-          //console.log(this.omap.map.getZoom());
-
-
-          // The main thing I'm trying to accomplish.
-          // TypeError: not a function.
-          var bounds = this.omap.map.calculateBounds();
-          bounds.toBBOX();
-          console.log(bounds);
-        }
       }
     },
 
