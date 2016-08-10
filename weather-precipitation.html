@@ -39,7 +39,7 @@
       south: {
         type: Number
       },
-
+      
       west: {
         type: Number,
         observer: 'getWeather'
@@ -47,6 +47,13 @@
 
       zoom: {
         type: Number
+      },
+
+      requestString {
+        type: String,
+        value: function() {
+          return "";
+        }
       },
 
       gettingData: {
@@ -123,16 +130,6 @@
           coordinates: [weatherItem.coord.lon, weatherItem.coord.lat]
         }
       };
-
-      // Set the custom marker icon.
-      // this.gmap.map.data.setStyle(function(feature) {
-      //   return {
-      //     icon: {
-      //       url: feature.getProperty('icon'),
-      //       anchor: new google.maps.Point(25, 25)
-      //     }
-      //   };
-      // });
 
       // Returns the feature object (to be appended to this.geoJSON.features list).
       return feature;
