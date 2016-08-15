@@ -29,7 +29,8 @@
     "gn-map": "marksurnin/gn-map",
     "gn-api": "Greennav/gn-api",
     "gn-search": "Greennav/gn-search",
-    "gn-profiles": "Greennav/gn-profiles"
+    "gn-profiles": "Greennav/gn-profiles",
+    "polymerfire": "firebase/polymerfire#^0.9.5"
   },
   "devDependencies": {
     "web-component-tester": "^4.0.0"
