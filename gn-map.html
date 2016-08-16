@@ -50,6 +50,7 @@ By default `map-type="GoogleMap"`
         height: 100%;
       }
 
+      /* /deep/ selector is used to target elements in the shadow DOM. */ 
       google-map /deep/ .gm-style-iw {
         text-align: center;
       }
@@ -228,6 +229,7 @@ By default `map-type="GoogleMap"`
         type: String,
         value:"GoogleMap",
         notify: true,
+        observer: '_toggleMapType'
       },
 
       /**
@@ -324,6 +326,7 @@ By default `map-type="GoogleMap"`
       }
     },
 
+    // Initialize many map utilities once the element is attached to the DOM.
     attached: function () {
       var self = this;
       this.addEventListener('update-gn-map', function () {
@@ -375,6 +378,7 @@ By default `map-type="GoogleMap"`
         }
       });
 
+      // Again here is the use of the shadow DOM /deep/ selector. */
       ctx.weatherPrecipitation = document.querySelector('html /deep/ weather-precipitation');
       ctx.weatherPrecipitation.addEventListener('geoJSON-loaded', function(e) {
         ctx.geoJSON = e.detail;
@@ -411,30 +415,37 @@ By default `map-type="GoogleMap"`
     loadDataIntoLeafletMap: function(featureCollection) {
       var ctx = this;
 
-      ctx.lmap = document.querySelector('html /deep/ leaflet-map').map;
-      ctx.removeDataFromLeafletMap();
+      // An interval makes sure that the Leaflet map has loaded
+      // before attempting to draw markers on the map.
+      var interval = setInterval(function() {
+        if (document.querySelector('html /deep/ leaflet-map')) {
+          clearInterval(interval);
+          ctx.lmap = document.querySelector('html /deep/ leaflet-map').map;
+          ctx.removeDataFromLeafletMap();
 
-      featureCollection.features.forEach(function(feature) {
+          featureCollection.features.forEach(function(feature) {
 
-        var tempIcon = new L.icon({
-          iconUrl: feature.properties.icon,
-          iconRetinaUrl: feature.properties.icon,
-          iconSize: [40, 40]
-        });
+            var tempIcon = new L.icon({
+              iconUrl: feature.properties.icon,
+              iconRetinaUrl: feature.properties.icon,
+              iconSize: [40, 40]
+            });
 
-        // Important to swap the coordinates ([1], [0]).
-        var tempMarker = L.marker([feature.geometry.coordinates[1], feature.geometry.coordinates[0]], {icon: tempIcon});
-        tempMarker.addTo(ctx.lmap);
+            // Important to swap the coordinates ([1], [0]).
+            var tempMarker = L.marker([feature.geometry.coordinates[1], feature.geometry.coordinates[0]], {icon: tempIcon});
+            tempMarker.addTo(ctx.lmap);
 
-        ctx.leafletWeatherMarkers.push(tempMarker);
+            ctx.leafletWeatherMarkers.push(tempMarker);
 
-        var content = "<img src=" + feature.properties.icon + ">" +
-          "<br /><strong>" + feature.properties.city + "</strong>" +
-          "<br />" + feature.properties.temperature + "&deg;C" +
-          "<br />" + feature.properties.weather;
-        tempMarker.bindPopup(content);
+            var content = "<img src=" + feature.properties.icon + ">" +
+              "<br /><strong>" + feature.properties.city + "</strong>" +
+              "<br />" + feature.properties.temperature + "&deg;C" +
+              "<br />" + feature.properties.weather;
+            tempMarker.bindPopup(content);
 
-      });
+          });
+        }
+      }, 100);
     },
 
     _checkIfDataRequested: function() {
@@ -451,6 +462,8 @@ By default `map-type="GoogleMap"`
       this._getCoords();
     },
 
+
+    // Initializes a few handy listeners for the Google map.
     _addMapListeners: function() {
       var ctx = this;
       ctx.gmap.map.addListener('idle', function() {
@@ -517,8 +530,6 @@ By default `map-type="GoogleMap"`
 
     // Overlays a precipitation layer
     _overlayPrecipitationOnGoogleMap: function() {
-      var ctx = this;
-
       var myMapType = new google.maps.ImageMapType({
         getTileUrl: function(coord, zoom) {
           return "http://maps.owm.io:8091/56ce0fcd4376d3010038aaa8/" + 
@@ -535,17 +546,26 @@ By default `map-type="GoogleMap"`
     },
 
     _overlayPrecipitationOnLeafletMap: function() {
-      // Leaflet map
+      var ctx = this;
+
+      // Make sure to remove any existing layer.
+      if (this.lmap) {
+        this.lmap.removeLayer(this.leafletPrecipitationLayer);
+      }
+
       this.leafletPrecipitationLayer = L.tileLayer("http://maps.owm.io:8091/56ce0fcd4376d3010038aaa8/{z}/{x}/{y}?hash=5", { attribution: '<a href="https://www.mapzen.com/rights">Attribution.</a>. Data &copy;<a href="https://openstreetmap.org/copyright">OSM</a> contributors.' });
 
       this.leafletPrecipitationLayer.setOpacity(0.6);
 
-      this.lmap = document.querySelector('html /deep/ leaflet-map').map;
-      this.lmap.addLayer(this.leafletPrecipitationLayer);
+      // Need to wait until the Leaflet map has fully loaded.
+      setTimeout(function() {
+        ctx.lmap = document.querySelector('html /deep/ leaflet-map').map;
+        ctx.lmap.addLayer(ctx.leafletPrecipitationLayer);
+      }, 100);
     },
 
     /**
-     * Clears all markers from the map.
+     * Clears all markers from the Google map.
      *
      * @method removeDataFromGoogleMap
      */
@@ -558,6 +578,11 @@ By default `map-type="GoogleMap"`
       });
     },
 
+    /**
+     * Clears all markers from the Leaflet map.
+     *
+     * @method removeDataFromLeafletMap
+     */
     removeDataFromLeafletMap: function() {
       var ctx = this;
       this.leafletWeatherMarkers.forEach(function(marker) {
@@ -614,7 +639,9 @@ By default `map-type="GoogleMap"`
         if (this.mapType === 'GoogleMap' && this.gmap) {
           this.gmap.map.overlayMapTypes.clear();
         } else if (this.mapType === 'LeafletMap') {
-          this.lmap.removeLayer(this.leafletPrecipitationLayer);
+          if (this.lmap) {
+            this.lmap.removeLayer(this.leafletPrecipitationLayer);
+          }
         }
       }
     },
@@ -633,6 +660,20 @@ By default `map-type="GoogleMap"`
       }
     },
 
+    /**
+     * Utility function that aids with keeping the state of weather
+     * precipitation and traffic synchronised across the two map providers.
+     */
+    _toggleMapType: function() {
+      this.toggleWeather();
+      this.togglePrecipitation();
+    },
+
+    /**
+     * Adds a polygon to the map.
+     *
+     * @method addPolygon
+     */
     addPolygon: function (points, strokeColor, width, closed, fillColor, fillOpacity) {
       points = (typeof points === 'undefined') ? [] : points;
       strokeColor = (typeof strokeColor === 'undefined') ? '#0091ea' : strokeColor;
@@ -654,6 +695,11 @@ By default `map-type="GoogleMap"`
       this.fire('update-gn-map');
     },
 
+    /**
+     * Adds a marker to the map.
+     *
+     * @method addMarker
+     */
     addMarker: function (latitude, longitude) {
       this.push('_userMarkers', {
         longitude: Number(longitude),
