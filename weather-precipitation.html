@@ -1,0 +1,140 @@
+<dom-module id="weather-precipitation">
+  <template>
+    <style>
+      :host {
+        display: block;
+        width: 100%;
+        height: 100%;
+      }
+
+      google-map /deep/ .gm-style-iw {
+        text-align: center;
+      }
+    </style>
+
+    <iron-ajax
+      id="weatherAjax"
+      url="[[requestString]]"
+      handle-as="json"
+      on-response="_processResults"
+      debounce-duration="300">
+    </iron-ajax>
+
+    <content></content>
+
+  </template>
+<script>
+  Polymer({
+    is: 'weather-precipitation',
+
+    properties: {
+      north: {
+        type: Number
+      },
+
+      east: {
+        type: Number
+      },
+
+      south: {
+        type: Number
+      },
+      
+      west: {
+        type: Number,
+        observer: 'getWeather'
+      },
+
+      zoom: {
+        type: Number
+      },
+
+      requestString: {
+        type: String,
+        value: function() {
+          return "";
+        }
+      },
+
+      gettingData: {
+        type: Boolean,
+        value: function() {
+          return false;
+        }
+      }
+    },
+
+    getWeather: function() {
+      // Prevent multiple requests from being sent
+      if (this.gettingData === false) {
+        this.gettingData = true;
+        
+        var openWeatherMapKey = "733446808ddd15de03a2fa4d46e5e17e";
+        this.requestString = "http://api.openweathermap.org/data/2.5/box/city?bbox="
+                            + this.west + "," + this.south + "," //left top
+                            + this.east + "," + this.north + "," //right bottom
+                            + this.zoom
+                            + "&cluster=yes&format=json"
+                            + "&APPID=" + openWeatherMapKey;
+
+        if (this.west && this.south && this.east && this.north) {
+          this.$.weatherAjax.generateRequest();
+        }
+      }
+    },
+
+    _processResults: function(e) {
+      this.gettingData = false;
+      var ctx = this;
+      var results = e.detail.response.list;
+
+      if (results.length > 0) {
+        this._resetWeatherData();
+        results.forEach(function(result) {
+          ctx.geoJSONwp.features.push(ctx._jsontoGeoJson(result));
+        });
+        ctx.fire('geoJSON-loaded', ctx.geoJSONwp);
+        //this.showWeatherIcons();
+      } else {
+        console.warn("No weather found for the current zoom level. Try zooming out to include some major cities.", e.detail.response);
+      }
+    },
+
+    _resetWeatherData: function() {
+      this.geoJSONwp = {
+        type: "FeatureCollection",
+        features: []
+      };
+    },
+
+    _jsontoGeoJson: function(weatherItem) {
+      var feature = {
+        type: "Feature",
+        properties: {
+          city: weatherItem.name,
+          weather: weatherItem.weather[0].main,
+          temperature: weatherItem.main.temp,
+          min: weatherItem.main.temp_min,
+          max: weatherItem.main.temp_max,
+          humidity: weatherItem.main.humidity,
+          pressure: weatherItem.main.pressure,
+          windSpeed: weatherItem.wind.speed,
+          windDegrees: weatherItem.wind.deg,
+          windGust: weatherItem.wind.gust,
+          icon: "http://openweathermap.org/img/w/"
+                + weatherItem.weather[0].icon  + ".png",
+          coordinates: [weatherItem.coord.lon, weatherItem.coord.lat]
+        },
+        geometry: {
+          type: "Point",
+          coordinates: [weatherItem.coord.lon, weatherItem.coord.lat]
+        }
+      };
+
+      // Returns the feature object (to be appended to this.geoJSON.features list).
+      return feature;
+    },
+  });
+</script>
+
+</dom-module>

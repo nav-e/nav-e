@@ -1,0 +1,60 @@
+<link rel="import" href="../gn-map.html">
+<link rel="import" href="../gn-marker.html">
+<link rel="import" href="../gn-poly.html">
+<link rel="import" href="../gn-point.html">
+<link rel="import" href="../../paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../paper-menu/paper-menu.html">
+<link rel="import" href="../../paper-item/paper-item.html">
+
+<dom-module id="demo-wrapper">
+  <template>
+    <style>
+    </style>
+
+    <p>An example of <code>&lt;gn-map element&gt;</code>:</p>
+
+    <button on-tap="addPolygon">Add Polygon</button>
+    <button on-tap="addMarker">Add Marker</button>
+
+    <gn-map
+      id="map"
+      class="content fit"
+      latitude="53.694089"
+      longitude="10.608718"
+      zoom="10">
+       <!-- <gn-marker latitude="53.834089" longitude="10.703718"></gn-marker> -->
+      <gn-poly fill-color="red" stroke-color="red" closed>
+        <gn-point latitude="53.699089" longitude="10.603718"></gn-point>
+        <gn-point latitude="53.694089" longitude="10.608718"></gn-point>
+        <gn-point latitude="53.689089" longitude="10.603718"></gn-point>
+        <gn-point latitude="53.694089" longitude="10.598718"></gn-point>
+      </gn-poly>
+
+      <gn-marker></gn-marker>
+    </gn-map>
+  </template>
+  <script>
+    Polymer({
+      is: 'demo-wrapper',
+
+      addPolygon: function () {
+        /*demo.points = [
+          { latitude : "53.799089", longitude : "10.703718" },
+          { latitude : "53.794089", longitude : "10.708718" },
+          { latitude : "53.789089", longitude : "10.703718" },
+          { latitude : "53.794089", longitude : "10.698718" }
+        ];*/
+        document.querySelector('gn-map').addPolygon([
+          { latitude : "53.799089", longitude : "10.703718" },
+          { latitude : "53.794089", longitude : "10.708718" },
+          { latitude : "53.789089", longitude : "10.703718" },
+          { latitude : "53.794089", longitude : "10.698718" }
+        ], "#ff00ff", 1, true, "#ff00ff", 0.75);
+      },
+
+      addMarker: function () {
+        document.querySelector('gn-map').addMarker("53."+String((Math.round(Math.random()*999999)+1)), "10."+String((Math.round(Math.random()*999999)+1)));
+      }
+    });
+  </script>
+</dom-module>

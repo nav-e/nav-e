@@ -75,7 +75,7 @@ Examples:
           "fillColor": this.fillColor,
           "fillOpacity": this.fillOpacity,
           "points": this.points
-        }
+        };
       },
 
       attached: function () {
@@ -83,7 +83,7 @@ Examples:
         this._observer = Polymer.dom(this).observeNodes( function(info) {
           nodesToAdd = info.addedNodes.filter(function(node){
             return node.nodeName == 'GN-POINT'; // get rid of #text nodes
-          })
+          });
           nodesToAdd.forEach(function(point) {
             self.push('points', point.asObject());
           });
