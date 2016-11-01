@@ -1,4 +1,4 @@
-# GreenNav Web-App
+# GreenNav
 
 This project aims to provide a reference implementation for the GreenNavigation front end. It makes use of the different polymer elements created for GreenNav.
 
