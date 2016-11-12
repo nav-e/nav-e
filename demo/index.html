@@ -1,22 +1,50 @@
 <!doctype html>
-<html>
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
-    <title>gn-map Demo</title>
-    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
-    <link rel="import" href="demo-wrapper.html">
-    <style type="text/css">
-      body, html {
-        width: 100%; 
-        height: 100%;
-        margin: 0;
-      }
-    </style>
-  </head>
-  <body>
-    <template is="dom-bind" id="demo">
-      <demo-wrapper></demo-wrapper>
-    </template>
-  </body>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+
+  <title>gn-map demo2</title>
+
+  <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+
+  <link rel="import" href="../../iron-demo-helpers/demo-pages-shared-styles.html">
+  <link rel="import" href="../../iron-demo-helpers/demo-snippet.html">
+  <link rel="import" href="../gn-map.html">
+
+  <style is="custom-style" include="demo-pages-shared-styles">
+    #map {
+      width: 500px;
+      height: 500px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="vertical-section-container centered">
+    <h3>Basic gn-map demo</h3>
+    <!--      <demo-snippet>
+        <template>
+          <gn-map></gn-map>
+        </template>
+      </demo-snippet>-->
+
+        <p>An example of <code>&lt;gn-map element&gt;</code>:</p>
+
+        <gn-map id="map" class="content fit" latitude="53.694089" longitude="10.608718" zoom="10">
+          <gn-marker latitude="53.834089" longitude="10.703718"></gn-marker>
+
+          <gn-poly fill-color="red" stroke-color="red" closed>
+            <gn-point latitude="53.699089" longitude="10.603718"></gn-point>
+            <gn-point latitude="53.694089" longitude="10.608718"></gn-point>
+            <gn-point latitude="53.689089" longitude="10.603718"></gn-point>
+            <gn-point latitude="53.694089" longitude="10.598718"></gn-point>
+          </gn-poly>
+
+          <gn-marker></gn-marker>
+        </gn-map>
+  </div>
+</body>
+
 </html>

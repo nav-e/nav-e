@@ -1,10 +1,8 @@
 {
   "name": "gn-map",
-  "version": "0.0.1",
+  "version": "0.1.1",
   "description": "Greennav polymer web component contains functions and views around the map.",
   "keywords": [
-    "web-component",
-    "web-components",
     "polymer",
     "greennav",
     "map"
@@ -12,21 +10,21 @@
   "main": "gn-map.html",
   "license": "https://github.com/Greennav/gn-map/blob/master/LICENSE",
   "homepage": "http://greennav.github.io/",
-  "ignore": [
-    "/.*",
-    "/demo/"
-  ],
   "dependencies": {
-    "polymer": "Polymer/polymer#^1.0.0",
+    "polymer": "Polymer/polymer#^1.4.0",
+    "paper-menu": "PolymerElements/paper-menu",
+    "paper-material": "PolymerElements/paper-material",
+    "paper-item": "PolymerElements/paper-item",
+    "paper-dropdown-menu": "PolymerElements/paper-dropdown-menu",
+    "paper-toggle-button": "PolymerElements/paper-toggle-button",
     "osm-map": "FabianBormann/osm-map",
-    "google-map": "GoogleWebComponents/google-map#~1.1.7",
-    "paper-dropdown-menu": "PolymerElements/paper-dropdown-menu#~1.1.0",
-    "paper-menu": "PolymerElements/paper-menu#~1.2.0",
-    "paper-item": "PolymerElements/paper-item#~1.1.2",
-    "leaflet-map": "leaflet-extras/leaflet-map#^1.2.0",
-    "paper-material": "PolymerElements/paper-material#^1.0.6"
+    "leaflet-map": "leaflet-extras/leaflet-map",
+    "google-map": "GoogleWebComponents/google-map"
   },
   "devDependencies": {
-    "iron-component-page": "PolymerElements/iron-component-page#^1.0.0"
+    "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",
+    "iron-demo-helpers": "PolymerElements/iron-demo-helpers#^1.0.0",
+    "web-component-tester": "^4.0.0",
+    "webcomponentsjs": "webcomponents/webcomponentsjs#^0.7.0"
   }
 }
