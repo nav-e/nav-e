@@ -1,12 +1,12 @@
-# GreenNav
+# GreenNav Web-App
 
-This project aims to provide a reference implementation for the GreenNavigation front end. It makes use of the different polymer elements created for GreenNav.
+This project aims to provide a reference implementation for a GreenNav (Green Navigation) front end. It makes use of the different polymer elements created for GreenNav.
 
 ## Getting Started 
 
 ### Prerequisites
 
-- Install the latest version of Node.js and NPM 
+- Install the latest version of Node.js and npm 
 
   For Mac OS X or Windows you can download the pre-build installers from https://nodejs.org/en/download/ .
   If you use Linux we recommend to add Node.js to your sources. Eg. for Ubuntu based distributions the most up-to-date ppa   is provided by https://launchpad.net/~chris-lea/+archive/node.js/
@@ -32,24 +32,23 @@ sudo npm install -g bower
 ```zsh
 bower install
 ```
-  
-:heavy_exclamation_mark: To see an example route with a button click, fetch the routing service from [here](https://github.com/Greennav/service-routing) and run the local server (see corresponding README for instructions).
-
-### Run
-
+ 
 You need to install the Polymer CLI (command-line interface) to view a live demo of the app.
 
 ```zsh
 sudo npm install -g polymer-cli
 ```
-  
-Now you can simply run 
+
+:heavy_exclamation_mark: To see an example route with a button click, fetch the routing service from [here](https://github.com/Greennav/service-routing) and run the local server (see corresponding README for instructions).
+
+### Run
 
 ```zsh
+cd /path/to/GreenNav
 polymer serve
 ```
 
-And the webapp is accessible at http://localhost:8080/.
+The web interface is now accessible at http://localhost:8080/ by default.
 
 ### Development
 

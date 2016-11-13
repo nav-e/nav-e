@@ -1,0 +1,207 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
+
+<!--
+@demo demo/index.html
+-->
+<dom-module id="gn-api">
+  <template>
+
+    <iron-ajax
+      auto
+      id="route"
+      handle-as="json"
+      last-response="{{ route }}"></iron-ajax>
+      
+    <iron-ajax
+      auto
+      id="range"
+      handle-as="json"
+      last-response="{{ range }}"></iron-ajax>
+
+    <iron-ajax
+      id="getOriginOsmId"
+      url="https://api.pickpoint.io/v1/forward?key=7szZGLLUxmE-Kk3ERCK3"
+      handle-as="json"
+      on-response="handleOriginResponse"></iron-ajax>
+
+    <iron-ajax
+      id="getDestinationOsmId"
+      url="https://api.pickpoint.io/v1/forward?key=7szZGLLUxmE-Kk3ERCK3"
+      handle-as="json"
+      on-response="handleDestinationResponse"></iron-ajax>
+      
+  </template>
+
+  <script>
+  
+  Polymer({
+    is: 'gn-api',
+    
+    properties: {
+
+      /**
+       * Server url
+       */
+      url: {
+        type: String,
+        value: "http://localhost:6833/greennav/"
+      },
+      
+      /**
+       * List of available vehicles obtained from the backend
+       */
+      vehicles: { 
+        type: Array,
+        notify: true 
+      },
+      
+      /**
+       * Set the vehicle to route with. Needed for route and range
+       * calculation.
+       * 
+       * Possible values are listed in the vehicles variable
+       */
+      vehicleIndex: {
+        type: Number,
+        notify: true
+      },
+
+      /**
+       * Battery load percentage.
+       * Can be any value from 100 to 0
+       */
+      battery: {
+        type: Number,
+        notify: true,
+      },
+      
+      /**
+       * Result of the routing. Needs vehicle, startOsmId,
+       * targetOsmId and battery to be defined. It's not 
+       * calculated automatically, call getRoute() first!
+       */
+      route: {
+        type: Object,
+        notify: true
+      },
+      
+      /**
+       * Result of the range. Needs vehicle, startOsmId
+       * and battery to be defined. It's not 
+       * calculated automatically, call getRange() first!
+       */
+      range: {
+        type: Object,
+        notify: true
+      }
+    },
+    
+    /**
+     * Get the vehicles list
+     * TODO: vehicles are static for now
+     *       later we need some back end communication
+     */
+    getVehicles : function() {
+      vehicles = ["Fiat Fiorino",
+        "Smart Roadster", 
+        "Sam", 
+        "Citysax", 
+        "MUTE", 
+        "Spyder-S", 
+        "Think", 
+        "Luis", 
+        "STROMOS", 
+        "Karabag Fiat 500E", 
+        "Lupower Fiat 500E"
+      ];
+      return vehicles;
+    },
+
+    /**
+     * Sets the route variable
+     */
+    getRoute : function() {
+      var ajax = this.$.route;
+      ajax.url = this.url +
+        "vehicles/"   + this.vehicleIndex +
+        "/routes/"    + this.originOsmId +
+        "-"           + this.destinationOsmId +
+        "/opt/energy" +
+        "?battery="   + this.battery +
+        "&algorithm=EnergyAStar";
+      console.log(ajax.url);
+    },
+    
+    /**
+     * Sets the range variable
+     */
+    getRange : function() {
+      var ajax = this.$.range;
+      ajax.url = this.url +
+        "vehicles/"   + this.vehicleIndex +
+        "/ranges/"    + this.originOsmId +
+        "?battery="   + this.battery;
+      console.log(ajax.url);
+    },
+
+
+    /**
+     * General API call that converts `origin` or `destination` input fields to OSM IDs
+     */
+    getDirections: function() {
+      // Initialize OSM IDs to 0.
+      this.originOsmId = 0;
+      this.destinationOsmId = 0;
+
+      // Compute the OSM ID for `origin` if the mode is route OR range.
+      this.pickPointUrl = "https://api.pickpoint.io/v1/forward?key=7szZGLLUxmE-Kk3ERCK3&q=";
+      this.$.getOriginOsmId.url = this.pickPointUrl + this.origin;
+      this.$.getOriginOsmId.generateRequest();
+
+      // Route mode is 0, range is 1. (Comes from the selected paper-tabs index in gn-directions-menu.)
+      // Thus, for `route` mode, we need to get the destinationOsmId as well.
+      if (this.mode === 0) {
+        this.$.getDestinationOsmId.url = this.pickPointUrl + this.destination;
+        this.$.getDestinationOsmId.generateRequest();
+      }
+    },
+
+
+    /**
+     * Assigns the corresponding OSM ID to `originOsmId` and calls `getRoute()`
+     * if `destinationOsmId` has been assigned as well.
+     */
+    handleOriginResponse: function(event) {
+      this.originOsmId = event.detail.response[0].osm_id;
+
+      // If the directions mode is `range`, compute it right away.
+      if (this.mode === 1) {
+        this.getRange();
+      } else {
+        // If the directions mode is `route` and originOsmId has been assigned,
+        // check if destinationOsmId has been assigned and if it has, call getRoute().
+        if (this.destinationOsmId !== 0) {
+          this.getRoute();
+        }
+      }
+    },
+
+    /**
+     * Assigns the corresponding OSM ID to `destinationOsmId` and calls `getRoute()`
+     * if `originOsmId` has been assigned as well.
+     */
+    handleDestinationResponse: function(event) {
+      this.destinationOsmId = event.detail.response[0].osm_id;
+
+      // If the directions mode is `route` and destinationOsmId has been assigned,
+      // check if originOsmId has been assigned and if it has, call getRoute().
+      if (this.mode === 0) {
+        if (this.originOsmId !== 0) {
+          this.getRoute();
+        }
+      }
+    }
+  });
+  </script>
+</dom-module>

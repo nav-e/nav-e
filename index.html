@@ -6,16 +6,13 @@
     <title>Green Navigation</title>
     <link rel="manifest" href="/manifest.json">
     <link rel="shortcut icon" sizes="32x32" href="/images/app-icon-32.png">
-
     <!-- Older Chrome configuration -->
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="application-name" content="Green Navigation">
 
     <script>
-
       // setup Polymer options
       window.Polymer = {lazyRegister: true, dom: 'shadow'};
-
       // load webcomponents polyfills
       (function() {
         if ('registerElement' in document
@@ -29,13 +26,11 @@
           document.head.appendChild(e);
         }
       })();
-
     </script>
 
-    <link rel="import" href="/modules/gn-skeleton/gn-skeleton.html">
+    <link rel="import" href="modules/gn-skeleton/gn-skeleton.html">
 
     <style>
-
       body {
         margin: 0;
         font-family: 'Roboto', 'Noto', sans-serif;
@@ -43,7 +38,6 @@
         min-height: 100vh;
         background-color: #eee;
       }
-
     </style>
 
   </head>
@@ -52,5 +46,4 @@
     <gn-skeleton></gn-skeleton>
 
   </body>
-      
 </html>

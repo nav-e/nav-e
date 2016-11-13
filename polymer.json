@@ -1,0 +1,6 @@
+{
+  "entrypoint": "index.html",
+  "shell": "modules/gn-skeleton/gn-skeleton.html",
+  "fragments": [
+  ]
+}
