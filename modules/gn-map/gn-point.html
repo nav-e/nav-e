@@ -1,0 +1,36 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<dom-module id="gn-point">
+  <script>
+    Polymer({
+      is: "gn-point",
+
+      properties: {
+        /**
+         * A latitude to center the map on.
+         */
+        latitude: {
+          type: Number,
+          notify: true,
+          value: 53.834089,
+        },
+
+        /**
+         * A longitude to center the map on.
+         */
+        longitude: {
+          type: Number,
+          notify: true,
+          value: 10.703718,
+        }
+      },
+
+      asObject: function() {
+        return {
+          longitude: this.longitude,
+          latitude: this.latitude
+        };
+      }
+    });
+  </script>
+</dom-module>
