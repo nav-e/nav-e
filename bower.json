@@ -34,7 +34,8 @@
     "iron-ajax": "PolymerElements/iron-ajax#~1.1.1",
     "google-map": "GoogleWebComponents/google-map",
     "app-route": "polymerelements/app-route#^0.9.1",
-    "app-layout": "polymerelements/app-layout#^0.10.6"
+    "app-layout": "polymerelements/app-layout#^0.10.6",
+    "Geolib": "geolib#^2.0.21"
   },
   "devDependencies": {
     "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",
