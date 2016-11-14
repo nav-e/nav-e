@@ -31,12 +31,12 @@
     "iron-icon": "PolymerElements/iron-icon#^1.0.8",
     "iron-flex-layout": "polymerelements/iron-flex-layout#^1.0.0",
     "gn-search": "Greennav/gn-search",
-    "gn-profiles": "Greennav/gn-profiles",
     "app-route": "polymerelements/app-route#^0.9.1",
     "app-layout": "polymerelements/app-layout#^0.10.6",
     "osm-map": "FabianBormann/osm-map",
     "leaflet-map": "leaflet-extras/leaflet-map",
-    "google-map": "GoogleWebComponents/google-map"
+    "google-map": "GoogleWebComponents/google-map",
+    "google-chart": "~1.0.4"
   },
   "devDependencies": {
     "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",
