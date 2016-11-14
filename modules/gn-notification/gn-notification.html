@@ -1,0 +1,226 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-icon/iron-icon.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/neon-animation/animations/fade-out-animation.html">
+<link rel="import" href="../../bower_components/neon-animation/animations/scale-up-animation.html">
+<link rel="import" href="../../bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html">
+<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/paper-styles/color.html">
+
+<!--
+An element providing notifications for the GreenNavigation WebApp.
+
+Example:
+
+    <paper-button raised onclick="hint.open()">hint notification</paper-button>
+
+    <gn-notification  id="hint" title="Hint">This is a hint message.</gn-notification>
+
+Example:
+
+    <paper-button raised onclick="warning.open()">warning notification</paper-button>
+    <paper-button raised onclick="error.open()">error notification</paper-button>
+
+    <gn-notification  id="warning" warning title="Warning">
+      Oh, oh... there is a warning message.
+    </gn-notification>
+
+    <gn-notification  id="error" error title="Error">
+      An error has occurred
+    </gn-notification>
+
+@demo demo/index.html
+@hero hero.svg
+-->
+
+<dom-module id="gn-notification">
+  <template>
+    <style>
+      :host {
+        display: inline-block;
+      }
+
+      :host #header {
+        background-color: var(--gn-notification-header-background, --google-grey-500);
+        color: var(--gn-notification-header-color, #fff);
+        margin: 0px;
+        padding: 10px;
+      }
+
+      :host #header-title {
+        font-size: 1.5em;
+        font-weight: bold;
+      }
+
+      :host #header-icon {
+        --iron-icon-height: 32px;
+        --icon-icon-height: 32px;
+      }
+
+      :host #dialog {
+        background-color: var(--gn-notification-background, --google-light-grey-50);
+        color: var(--gn-notification-color, --google-grey-500);
+        /* TODO: Should be responsive */
+        max-width: 250px;
+        max-height: 200px;
+        min-width: 250px;
+        min-height: 200px;
+      }
+
+      :host([warning]) #dialog {
+        background-color: var(--gn-notification-warning-background, --paper-orange-50);
+        color: var(--gn-notification-warning-color, --paper-orange-500);
+
+        @apply(--gn-notification-warning);
+      }
+
+      :host([warning]) #header {
+        background-color: var(--gn-notification-header-warning-background, --paper-orange-500);
+        color: var(--gn-notification-header-warning-color, #fff);
+
+        @apply(--gn-notification-warning);
+      }
+
+      :host([error]) #dialog {
+        background-color: var(--gn-notification-error-background, --paper-red-50);
+        color: var(--gn-notification-error-color, --paper-red-500);
+
+        @apply(--gn-notification-error);
+      }
+
+      :host([error]) #header {
+        background-color: var(--gn-notification-header-error-background, --paper-red-500);
+        color: var(--gn-notification-header-error-color, #fff);
+
+        @apply(--gn-notification-error);
+      }
+    </style>
+
+    <paper-dialog id="dialog"
+                  entry-animation="scale-up-animation"
+                  exit-animation="fade-out-animation">
+      <div id="header">
+        <iron-icon id="header-icon" icon="[[icon]]"></iron-icon>
+        <span id="header-title">[[title]]</span>
+        <paper-icon-button hidden$="[[!persist]]" icon="cancel" on-tap="close"></paper-icon-button>
+      </div>
+      <paper-dialog-scrollable>
+        <content></content>
+      </paper-dialog-scrollable>
+    </paper-dialog>
+
+  </template>
+
+  <script>
+    Polymer({
+      is: 'gn-notification',
+
+      properties: {
+        /**
+        * The text to display as a header.
+        */
+        title: {
+          type: String,
+          value: ''
+        },
+
+        /*
+        * Set a different icon to the header.
+        */
+        icon: {
+          type: String,
+          value: 'lightbulb-outline'
+        },
+
+        /**
+        * Set overall color theme to warning color.
+        */
+        warning: {
+          type: Boolean,
+          value: false,
+          reflectToAttribute: true
+        },
+
+        /**
+        * Set overall color theme to warning color.
+        */
+        error: {
+          type: Boolean,
+          value: false,
+          reflectToAttribute: true
+        },
+
+        /**
+        * Set `duration` to close the message automatically after duration time.
+        */
+        duration: {
+          type: Number,
+          value: 3000
+        },
+
+        /**
+        * Use `persist` to show a persistent message.
+        */
+        persist: {
+          type: Boolean,
+          value: false
+        },
+      },
+
+      // Element Lifecycle
+
+      ready: function() {
+        // `ready` is called after all elements have been configured, but
+        // propagates bottom-up. This element's children are ready, but parents
+        // are not.
+        //
+        // This is the point where you should make modifications to the DOM (when
+        // necessary), or kick off any processes the element wants to perform.
+      },
+
+      attached: function() {
+        // `attached` fires once the element and its parents have been inserted
+        // into a document.
+        //
+        // This is a good place to perform any work related to your element's
+        // visual state or active behavior (measuring sizes, beginning animations,
+        // loading resources, etc).
+      },
+
+      detached: function() {
+        // The analog to `attached`, `detached` fires when the element has been
+        // removed from a document.
+        //
+        // Use this to clean up anything you did in `attached`.
+      },
+
+      // Element Behavior
+
+      /**
+      * Open the gn-notification.
+      */
+      open: function() {
+        this.$.dialog.open();
+        this.autoClose();
+      },
+
+      /**
+      * Close the gn-notification.
+      */
+      close: function() {
+        this.$.dialog.close();
+      },
+
+      /**
+      * Closes notification automatically after `duration` if `persist` is
+      * not true.
+      */
+      autoClose: function() {
+        if (!this.persist) {
+          this.async(this.close, this.duration);
+        }
+      }
+    });
+  </script>
+</dom-module>

@@ -1,0 +1,262 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower_components/iron-icon/iron-icon.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/neon-animation/animations/fade-in-animation.html">
+<link rel="import" href="../../bower_components/neon-animation/animations/fade-out-animation.html">
+<link rel="import" href="../../bower_components/neon-animation/neon-animation-runner-behavior.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/paper-material/paper-material.html">
+<link rel="import" href="../../bower_components/paper-progress/paper-progress.html">
+<link rel="import" href="../../bower_components/paper-styles/color.html">
+
+<!--
+An element providing notifications for the GreenNavigation WebApp.
+
+Example:
+
+    <paper-button raised onclick="hint.open()">hint notification</paper-button>
+
+    <gn-notification  id="hint" title="Hint">This is a hint message.</gn-notification>
+
+Example:
+
+    <paper-button raised onclick="warning.open()">warning notification</paper-button>
+    <paper-button raised onclick="error.open()">error notification</paper-button>
+
+    <gn-notification  id="warning" warning title="Warning">
+      Oh, oh... there is a warning message.
+    </gn-notification>
+
+    <gn-notification  id="error" error title="Error">
+      An error has occurred
+    </gn-notification>
+
+@demo demo/index.html
+@hero hero.svg
+-->
+
+<dom-module id="gn-route-notification">
+  <template>
+    <style is="custom-style" include="iron-flex">
+      :host {
+        display: block;
+      }
+
+      :host #header {
+        border-top: 6px solid var(--gn-notification-header-warning-background, --paper-grey-500);
+        margin: 0px;
+        opacity: var(--dark-primary-opacity);
+        padding: 0px;
+
+        @apply(--layout-horizontal);
+      }
+
+      :host #header-title {
+        display: inline-block;
+        font-size: 1.2em;
+        font-weight: bold;
+        margin: auto;
+
+        @apply(--layout-flex);
+      }
+
+      :host #header-icon {
+        margin-right: 10px;
+        opacity: var(--dark-secondary-opacity);
+        padding: 14px;
+        width: 42px;
+
+        --iron-icon-height: 42px;
+        --icon-icon-height: 42px;
+      }
+
+      :host #dialog {
+        background-color: var(--gn-notification-background, #fff);
+        height: 85px;
+        width: 400px;
+      }
+
+      :host([warning]) #header {
+        border-top: 6px solid var(--gn-notification-header-warning-background, --paper-orange-500);
+
+        @apply(--gn-notification-warning);
+      }
+
+      :host([error]) #header {
+        border-top: 6px solid var(--gn-notification-header-warning-background, --paper-red-500);
+
+        @apply(--gn-notification-error);
+      }
+
+      #closeButton {
+        height: 55px;
+        opacity: var(--dark-secondary-opacity);
+        width: 55px;
+      }
+
+      paper-progress {
+        bottom: 10px;
+        left: 0;
+        margin: auto;
+        position: absolute;
+        right: 0;
+        width: 80%;
+
+        --paper-progress-active-color: #00960a;
+        --paper-progress-height: 2px;
+        --paper-progress-transition-duration: 1s;
+        --paper-progress-transition-timing-function: linear;
+        --paper-progress-transition-transition-delay: 0s;
+      }
+    </style>
+
+    <paper-material id="dialog">
+      <div id="header">
+        <iron-icon id="header-icon" icon="[[icon]]"></iron-icon>
+        <span id="header-title">[[title]]</span>
+        <paper-icon-button id="closeButton"
+                           hidden$="[[!persist]]"
+                           icon="cancel"
+                           on-tap="close"></paper-icon-button>
+      </div>
+      <paper-progress id="closeProgress" class="transiting"></paper-progress>
+    </paper-material>
+
+  </template>
+
+  <script>
+    Polymer({
+      is: 'gn-route-notification',
+
+      behaviors: [
+        Polymer.NeonAnimationRunnerBehavior
+      ],
+
+      properties: {
+        /**
+        * The text to display as a header.
+        */
+        title: {
+          type: String,
+          value: ''
+        },
+
+        /*
+        * Set a different icon to the header.
+        */
+        icon: {
+          type: String,
+          value: 'lightbulb-outline',
+          notify: true
+        },
+
+        /**
+        * Set overall color theme to warning color.
+        */
+        warning: {
+          type: Boolean,
+          value: false,
+          reflectToAttribute: true
+        },
+
+        /**
+        * Set overall color theme to warning color.
+        */
+        error: {
+          type: Boolean,
+          value: false,
+          reflectToAttribute: true
+        },
+
+        /**
+        * Set `duration` to close the message automatically after duration time.
+        */
+        duration: {
+          type: Number,
+          value: 10000
+        },
+
+        /**
+        * Use `persist` to show a persistent message.
+        */
+        persist: {
+          type: Boolean,
+          value: false
+        },
+
+        animationConfig: {
+          type: Object,
+          value: function() {
+            return {
+              'entry': [{
+                name: 'fade-in-animation',
+                node: this,
+                transformOrigin: '0 0'
+              }],
+              'exit': [{
+                name: 'fade-out-animation',
+                node: this
+              }]
+            }
+          }
+        },
+
+        _showing: {
+          type: Boolean,
+          value: false
+        }
+      },
+
+      listeners: {
+        "neon-animation-finish": "_onAnimationFinish"
+      },
+
+      attached: function() {
+        this._showing = true;
+        this.playAnimation('entry');
+
+        if (!this.persist) {
+          this._startProgress();
+        } else {
+          this.$.closeProgress.hidden = true;
+        }
+      },
+
+      // Element Behavior
+
+      _nextProgressStep: function() {
+        if (this.$.closeProgress.value < this.duration / 1000) {
+          var progressAsync = this.async(function() {
+            this.$.closeProgress.value += 1;
+            this._nextProgressStep();
+          }, 1000);
+        } else if (this.$.closeProgress.value === this.duration / 1000) {
+          this.async(function() {
+            this.close();
+          }, 1000);
+        }
+      },
+
+      _startProgress: function() {
+        this.$.closeProgress.value = 0;
+        this.$.closeProgress.max = this.duration / 1000;
+        this._nextProgressStep();
+      },
+
+      _onAnimationFinish: function() {
+        if (this._showing) {
+        } else {
+          this.style.display = '';
+          this.remove();
+        }
+      },
+
+
+      close: function() {
+        this._showing = false;
+        this.playAnimation('exit');
+      }
+    });
+  </script>
+</dom-module>

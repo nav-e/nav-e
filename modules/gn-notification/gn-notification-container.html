@@ -1,0 +1,243 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<!-- <link rel="import" href="../../bower_components/iron-swipeable-container/iron-swipeable-container.html"> -->
+<link rel="import" href="../../bower_components/paper-styles/color.html">
+<link rel="import" href="gn-route-notification.html">
+
+<!--
+An element providing notifications for the GreenNavigation WebApp.
+
+Example:
+
+    <paper-button raised onclick="hint.open()">hint notification</paper-button>
+
+    <gn-notification  id="hint" title="Hint">This is a hint message.</gn-notification>
+
+Example:
+
+    <paper-button raised onclick="warning.open()">warning notification</paper-button>
+    <paper-button raised onclick="error.open()">error notification</paper-button>
+
+    <gn-notification  id="warning" warning title="Warning">
+      Oh, oh... there is a warning message.
+    </gn-notification>
+
+    <gn-notification  id="error" error title="Error">
+      An error has occurred
+    </gn-notification>
+
+@demo demo/index.html
+@hero hero.svg
+-->
+
+<dom-module id="gn-notification-container">
+  <template>
+    <style is="custom-style" include="iron-flex">
+      :host {
+        position: relative;
+
+        @apply(--layout-vertical);
+      }
+
+      #directions {
+        background-color: #00960a;
+        box-shadow: 0px 5px 6px -1px rgba(0, 0, 0, 0.4);
+        color: #fff;
+        font-size: 1.2em;
+        font-weight: bold;
+        height: 50px;
+        line-height: 50px;
+        padding: 10px;
+        position: relative;
+
+        @apply(--layout-horizontal);
+        @apply(--layout-center-justified);
+      }
+
+      .distance {
+        font-size: 2.2em;
+      }
+
+      #instructions {
+        font-size: 1.4em;
+        margin-left: 25px;
+      }
+
+      #notifications {
+        left: 0;
+        margin: auto;
+        position: absolute;
+        right: 0;
+        top: 64px;
+        z-index: 2;
+
+        @apply(--layout-horizontal);
+        @apply(--layout-center-justified);
+      }
+
+      /*.swipe {
+        -moz-user-select: none;
+        -ms-user-select: none;
+        -webkit-user-select: none;
+        user-select: none;
+        cursor: default;
+      }*/
+    </style>
+
+    <div id="directions">
+      <div class="distance" hidden$="{{!distance}}">{{distance}}</div>
+      <div class="distance" hidden$="{{!distance}}">{{unit}}</div>
+      <!-- <div id="icon"></div -->
+      <div id="instructions">{{instruction}}</div>
+    </div>
+    <div id="notifications"/>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'gn-notification-container',
+
+      properties: {
+        /**
+        * Driving instructions.
+        */
+        instruction: {
+          type: String,
+          value: "",
+          readonly: true
+        },
+
+        /**
+        * Number which encodes instructions.
+        */
+        turnCode: {
+          type: Number,
+          value: 0
+        },
+
+        /**
+        * Temporary Array for instructions. In future this will
+        * possibly be outsourced.
+        */
+        _turnInstructions: {
+          type: Array,
+          value: function() {
+            return [
+              {
+                turn: 0,
+                text: ""
+              },
+              {
+                turn: 1,
+                text: "Continue straight ahead"
+              },
+              {
+                turn: 2,
+                text: "Turn left"
+              },
+              {
+                turn: 3,
+                text: "Turn right"
+              },
+              {
+                turn: 4,
+                text: "Slightly turn left"
+              },
+              {
+                turn: 5,
+                text: "Slightly turn right"
+              },
+              {
+                turn: 6,
+                text: "Take a sharp left"
+              },
+              {
+                turn: 7,
+                text: "Take a sharp right"
+              },
+              {
+                turn: 20,
+                text: "Turn into the traffic circle"
+              },
+              {
+                turn: 21,
+                text: "Leave the roundabout"
+              }
+            ];
+          }
+        },
+
+        /**
+        * Distance value.
+        */
+        distance: {
+          type: Number,
+          value: 0
+        },
+
+        /**
+        * Unit of distance.
+        */
+        unit: {
+          type: String,
+          value: "m"
+        },
+
+        /**
+        * Notification object which should look like following.
+        * { title: "", icon: "", type: "", persist: false/true }
+        */
+        newestNotification: {
+          type: Object
+        },
+
+        _notificationStack: {
+          type: Array,
+          value: function() {
+            return [];
+          }
+        }
+      },
+
+      observers: [
+        "addNotification(newestNotification)",
+        "_getTurnInstruction(turnCode)"
+      ],
+
+      _getTurnInstruction: function(turnCode) {
+        if (this._turnInstructions !== undefined) {
+          var turn = this._turnInstructions.filter(function (o) {
+            return o.turn === turnCode;
+          });
+          this.set("instruction", turn[0].text);
+        }
+      },
+
+      addNotification: function(newestNotification) {
+        var notifications = this.$.notifications;
+        // var lastNotification = Polymer.dom(notifications).childNodes[0];
+        var notification = document.createElement("gn-route-notification");
+        // notification.class = "swipe";
+        notification.title = newestNotification.title;
+        notification.icon = newestNotification.icon;
+        if (newestNotification.type !== "") {
+          notification.setAttribute(newestNotification.type, true);
+        }
+        notification.persist = newestNotification.persist;
+        // var lastNotification = document.querySelector("gn-route-notification");
+        // if (lastNotification !== null) {
+        //   lastNotification.hide();
+        // }
+        Polymer.dom(notifications).appendChild(notification);
+      },
+
+      removeNotification: function() {
+        var notifications = this.$.notifications;
+        var lastNotification = Polymer.dom(notifications).childNodes[0];
+        if (Polymer.dom(notifications).children.length > 0) {
+          Polymer.dom(notifications).removeChild(lastNotification);
+        }
+      }
+    });
+  </script>
+</dom-module>
