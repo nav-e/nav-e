@@ -20,7 +20,7 @@ sudo apt-get install nodejs
 
 #### Install dependencies
 
-- Linux, OSX/maxOS
+- Linux, OSX/macOS
 ```zsh
 sudo npm install -g bower polymer-cli
 ```
