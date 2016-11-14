@@ -1,0 +1,302 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="geolib-import.html">
+
+<!--
+Emulates a moving gps signal.
+
+Example:
+
+    <gn-api id="gnapi" route="{{route}}"></gn-api>
+
+    <paper-button id="gnapi.getRoute()">get route</paper-button>
+
+    <paper-button id="sim.startSimulation()">start</paper-button>
+    <paper-button id="sim.stopSimulation()">stop</paper-button>
+    <paper-button id="sim.restartSimulation()">reset</paper-button>
+
+    <gn-gps-simulator id="sim"
+                      route="{{route}}"
+                      longitude="{{lon}}"
+                      latitude="{{lat}}"></gn-gps-simulator>
+
+    <h2>longitude="<span>[[lon]]</span>"</h2>
+    <h2>latitude="<span>[[lat]]</span>"</h2>
+
+@demo demo/index.html
+-->
+
+<script>
+  // timeout variable to stop setTimeout()
+  var _timeout;
+
+  Polymer({
+    is: 'gn-gps-simulator',
+
+    properties: {
+      /**
+       * Array with coordinates,
+       * e.g [ {"longitude": 10.703718, "latitude": 53.834089}, ... ]
+       */
+      route: {
+        type: Array,
+        value: function () { return []; },
+        observer: "_setStartpoint"
+      },
+
+      /**
+      * If higher than 0, `_finerRoute` is used instead of `route`. The higher
+      * the value the more iterations are used.
+      * Attention: It is recommended to not use a value higher than ~5, because
+      * the algorithm is not optimized yet.
+      */
+      interpolationIter: {
+        type: Number,
+        value: 0
+      },
+
+      /**
+      * Holds the route informations and additionally more points calculated by
+      * `interpolateRoute`.
+      */
+      _finerRoute: {
+        type: Array,
+        computed: "interpolateRoute(route)"
+      },
+
+      /**
+       * Current waypoint in `route` array.
+       */
+      _routeIndex: {
+        type: Number,
+        value: 0
+      },
+
+      /**
+      * Specifies the direction in which the simulator drives.
+      */
+      _direction: {
+        type: String,
+        value: "forward"
+      },
+
+      /**
+       * `True` if Simulation is active. If last index in `route` is reached
+       * this will switch to `false` again.
+       */
+      isDriving: {
+        type: Boolean,
+        value: false
+      },
+
+      /**
+       * Sets the longitude.
+       */
+      longitude: {
+        type: Number,
+        notify: true
+      },
+
+      /**
+       * Sets the latitude.
+       */
+      latitude: {
+        type: Number,
+        notify: true
+      },
+
+      /**
+       * Sets the speed in waypoint per s.
+       */
+      speed: {
+        type: Number,
+        value: 1
+      }
+    },
+
+    // Element Behavior
+    /**
+    * Sets coordinates as soon as route exists or changes.
+    */
+    _setStartpoint: function() {
+      if (this.route.length > 0) {
+        this.latitude = this.route[0].latitude;
+        this.longitude = this.route[0].longitude;
+      }
+    },
+
+
+    /**
+    * Calculates midpoint between `start` and `end` and returns this midpoint as
+    * an item for the `_finerRoute` array.
+    */
+    _setMidpoint: function(start, end, callback) {
+      var midpoint = {"latitude": 0, "longitude": 0, "turn": 0};
+      var center = geolib.getCenter([
+        {
+          latitude: start.latitude,
+          longitude: start.longitude
+        },
+        {
+          latitude: end.latitude,
+          longitude: end.longitude
+        }
+      ]);
+
+      midpoint.latitude = geolib.latitude(center);
+      midpoint.longitude = geolib.longitude(center);
+
+      callback(midpoint);
+    },
+
+
+    /**
+    * Adds more points to the initially route informations according to
+    * midpoints between the items. This will be repeated in respect to the
+    * `repeat` value. Returns `_finerRoute`, which is used by
+    * `_setNextWaypoint`, if `interpolationIter` is set.
+    */
+    interpolateRoute: function(route) {
+      var finerRoute = route.slice();
+
+      for (var r = 0; r < this.interpolationIter; r++) {
+        var len = finerRoute.length;
+        for (var i = 0; i < (len * 2) - 2; i = i + 2) {
+          this._setMidpoint(finerRoute[i], finerRoute[i+1], function(item) {
+            finerRoute.splice(i+1, 0, item);
+          });
+        }
+      }
+
+      return finerRoute;
+    },
+
+
+    /**
+     * Calling `_drive()` and starts the simulation.
+     */
+    startSimulation: function() {
+      if (!this.route) {
+        alert("No routing informations.");
+      } else {
+        this.isDriving = true;
+        this._drive();
+      }
+    },
+
+
+    /**
+    * Switch direction of simulation. If no argument is given the method
+    * switches the direction. Optional you can specify the direction with
+    * passing `forward` or `backward` as a string.
+    */
+    switchDirection: function(direction) {
+      if (direction === "forward") {
+        this._direction = "forward"
+      } else if (direction === "backward") {
+        this._direction = "backward"
+      } else if (direction === undefined) {
+        if (this._direction === "forward") {
+          this._direction = "backward"
+        } else if (this._direction === "backward") {
+          this._direction = "forward"
+        }
+      } else {
+        throw "Only 'forward', 'backward' or no argument allowed."
+      }
+    },
+
+
+    /**
+     * Sets the next waypoint in `route` according to `speed`
+     */
+    _drive: function() {
+      if (this.isDriving) {
+        if (this._direction === "forward") {
+          this._setNextWaypoint();
+        } else if (this._direction === "backward") {
+          this._setPrevWaypoint();
+        }
+
+        _timeout = setTimeout(function() {
+          this._drive();
+        }.bind(this), (1 / this.speed * 1000));
+      }
+    },
+
+
+    /**
+     * Stops the simulation at current waypoint.
+     */
+    stopSimulation: function() {
+      clearTimeout(_timeout);
+      this.isDriving = false;
+    },
+
+
+    /**
+     * Stops the simulation and resets `longitude` and `latitude` to starting points.
+     */
+    resetSimulation: function() {
+      this.stopSimulation();
+      this.longitude = this.route[0].longitude;
+      this.latitude = this.route[0].latitude;
+      this._routeIndex = 0;
+    },
+
+
+    /**
+     * Sets `longitude` and `latitude` according to `route`
+     * (or rather `_finerRoute`) if `isDriving` is `true` and `_routeIndex`
+     * hasn't reached last waypoint. This method is used, if `_direction` is
+     * set to forward.
+     */
+    _setNextWaypoint: function() {
+      var route;
+
+      if (this.interpolationIter > 0) {
+        route = this._finerRoute;
+      } else {
+        route = this.route;
+      }
+
+      if (this.isDriving) {
+        if (this._routeIndex < route.length) {
+          this.longitude = route[this._routeIndex].longitude;
+          this.latitude = route[this._routeIndex].latitude;
+          this._routeIndex += 1;
+        } else {
+          this.isDriving = false;
+          this._routeIndex = route.length - 1;
+        }
+      }
+    },
+
+
+    /**
+     * Sets `longitude` and `latitude` according to `route`
+     * (or rather `_finerRoute`) if `isDriving` is `true` and `_routeIndex`
+     * hasn't reached last waypoint. This method is used, if `_direction` is
+     * set to backward.
+     */
+    _setPrevWaypoint: function() {
+      var route;
+
+      if (this.interpolationIter > 0) {
+        route = this._finerRoute;
+      } else {
+        route = this.route;
+      }
+
+      if (this.isDriving) {
+        if (this._routeIndex >= 0) {
+          this.longitude = route[this._routeIndex].longitude;
+          this.latitude = route[this._routeIndex].latitude;
+          this._routeIndex -= 1;
+        } else {
+          this.isDriving = false;
+          this._routeIndex = 0;
+        }
+      }
+    }
+  });
+</script>
