@@ -29,4 +29,3 @@ Call the `startSimulation()` method and the position will move according to the 
 <h2>longitude="<span>[[lon]]</span>"</h2>
 <h2>latitude="<span>[[lat]]</span>"</h2>
 ```
->>>>>>> gn-gps-simulator/master

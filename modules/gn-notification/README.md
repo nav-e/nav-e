@@ -50,4 +50,3 @@ Example with different color settings for _warning_ and _error_ messages:
 
 - [ ] Add voice output (?)
 - [ ] Implement Google Authentificaiton
->>>>>>> gn-notification/master
