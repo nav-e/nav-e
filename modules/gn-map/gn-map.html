@@ -146,10 +146,10 @@ By default `map-type="GoogleMap"`
 
     <template is="dom-if" if="{{_typeIsGoogleMap(mapType)}}">
       <google-map map="{{map}}" id="googleMap" longitude="{{longitude}}" latitude="{{latitude}}" zoom="{{zoom}}" api-key="AIzaSyCURfGidiiyj4S8XFOPFftNlhfx5A6ce8o" drag-events>
-        <google-map-poly closed fill-color="red" fill-opacity=".25" stroke-weight="1">
-          <google-map-point latitude="37.779" longitude="-122.3892"></google-map-point>
-          <google-map-point latitude="37.804" longitude="-122.2711"></google-map-point>
-          <google-map-point latitude="37.386" longitude="-122.0837"></google-map-point>
+        <google-map-poly stroke-weight="4" stroke-color="red">
+          <template is="dom-repeat" items="{{waypoints}}">
+            <google-map-point longitude="{{item.longitude}}" latitude="{{item.latitude}}"></google-map-point>
+          </template>
         </google-map-poly>
       </google-map>
     </template>
@@ -244,6 +244,17 @@ By default `map-type="GoogleMap"`
        * Array of polygon objects.
        */
       polygons: {
+          type: Array,
+          notify: true,
+          value: function () {
+            return [];
+          }
+      },
+
+      /**
+       * Array of waypoint objects.
+       */
+      waypoints: {
           type: Array,
           notify: true,
           value: function () {
@@ -349,33 +360,13 @@ By default `map-type="GoogleMap"`
           self.push('markers', marker);
         });
 
-        var googleMap = self.$$('#googleMap');
-        console.log(googleMap)
-        var googlePolygons = [].slice.call(googleMap.getElementsByTagName('google-map-poly'))
-
-        /*googlePolygons.forEach(googleMapPoly => {
-          googleMap.removeChild(googleMapPoly);
-        })*/
-
         self.polygons.forEach(polygon => {
-          var googleMapPoly = document.createElement('google-map-poly');
-          googleMapPoly.setAttribute('fill-opacity', polygon.fillOpacity);
-          googleMapPoly.setAttribute('stroke-color', polygon.strokeColor);
-          googleMapPoly.setAttribute('width', polygon.width);
-          googleMapPoly.setAttribute('closed', polygon.closed);
-          //googleMapPoly.map = this.map;
-          googleMapPoly.setAttribute('fill-color', polygon.fillColor);
-
           polygon.points.forEach(point => {
-            var googleMapPoint = document.createElement('google-map-point');
-            googleMapPoint.setAttribute('longitude', point.longitude);
-            googleMapPoint.setAttribute('latitude', point.latitude);
-            //googleMapPoint.map = this.map;
-            googleMapPoly.appendChild(googleMapPoint);           
+            self.push('waypoints', {
+              longitude: point.longitude,
+              latitude: point.latitude
+            });         
           });
-
-          console.log(googleMapPoly);
-          Polymer.dom(this.$$('#googleMap')).appendChild(googleMapPoly);
         });
       });
 

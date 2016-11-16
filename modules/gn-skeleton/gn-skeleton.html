@@ -145,16 +145,13 @@
 
         route: {
           type: Object,
-          notify: true,
-          observer: '_printRoute'
+          notify: true
         }
       },
 
       observers: [
         '_routePageChanged(routeData.page)'
       ],
-
-      _printRoute: r => console.log(r),
 
       _routePageChanged: function(page) {
         this.page = page || 'view1';
