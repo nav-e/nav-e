@@ -9,7 +9,7 @@
 <link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
 <link rel="import" href="../../bower_components/neon-animation/animations/fade-in-animation.html">
 <link rel="import" href="../../bower_components/neon-animation/neon-animation-runner-behavior.html">
-<link rel="import" href="../../bower_components/gn-api/gn-api.html">
+<link rel="import" href="../gn-api/gn-api.html">
 
 <link rel="import" href="gn-icons.html">
 
@@ -62,7 +62,7 @@
 
     <!-- Passing the parameters to the API element. Note the attribute vs. property naming, as per
     https://www.polymer-project.org/1.0/docs/devguide/properties#property-name-mapping -->
-    <gn-api id="gnApi" origin="{{origin}}" destination="{{destination}}" vehicle-index="{{vehicleIndex}}" battery="{{battery}}" mode="{{selected}}"></gn-api>
+    <gn-api id="gnApi" route="{{route}}" origin="{{origin}}" destination="{{destination}}" vehicle-index="{{vehicleIndex}}" battery="{{battery}}" mode="{{selected}}"></gn-api>
 
     <paper-tabs noink selected="{{selected}}">
       <paper-tab>Route</paper-tab>
@@ -169,6 +169,11 @@
           value: function() {
             return 0;
           }
+        },
+
+        route: {
+          type: Object,
+          notify: true
         },
 
         battery: {

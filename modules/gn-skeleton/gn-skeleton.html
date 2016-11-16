@@ -67,19 +67,19 @@
       }
     </style>
 
-    <app-location route="{{route}}"></app-location>
+    <!-- <app-location route="{{route}}"></app-location>
     <app-route
         route="{{route}}"
         pattern="/:page"
         data="{{routeData}}"
-        tail="{{subroute}}"></app-route>
+        tail="{{subroute}}"></app-route> -->
 
     <app-drawer-layout fullbleed>
 
       <!-- Drawer content -->
       <app-drawer>
         <app-toolbar>Green Navigation</app-toolbar>
-        <gn-directions-menu vehicles="{{vehicles}}"></gn-directions-menu>
+        <gn-directions-menu vehicles="{{vehicles}}" route="{{route}}"></gn-directions-menu>
       </app-drawer>
 
       <!-- Main content -->
@@ -143,11 +143,18 @@
           observer: '_pageChanged'
         },
 
+        route: {
+          type: Object,
+          notify: true,
+          observer: '_printRoute'
+        }
       },
 
       observers: [
         '_routePageChanged(routeData.page)'
       ],
+
+      _printRoute: r => console.log(r),
 
       _routePageChanged: function(page) {
         this.page = page || 'view1';
@@ -155,8 +162,8 @@
 
       _pageChanged: function(page) {
         // load page import on demand.
-        this.importHref(
-          this.resolveUrl('my-' + page + '.html'), null, null, true);
+        // this.importHref(
+        //   this.resolveUrl('my-' + page + '.html'), null, null, true);
       },
 
       _toggleInfoDialog: function(e) {

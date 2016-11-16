@@ -123,33 +123,34 @@ By default `map-type="GoogleMap"`
       }
     </style>
 
+    <!--
+
+    ! old osm implementation as reference for new leaflet implementation !
+
     <template id="osmMap" is="dom-if" if="{{_typeIsOpenStreetMap(mapType)}}">
       <osm-map longitude="{{longitude}}" latitude="{{latitude}}" zoom="{{zoom}}" class="content fit">
         <template is="dom-repeat" items="{{polygons}}">
-          <osm-poly fill-opacity="{{item.fillOpacity}}" stroke-color$="{{item.strokeColor}}" width$="{{item.width}}" closed$="{{item.closed}}" fill-color$="{{item.fillColor}}">
-            <template is="dom-repeat" items="{{item.points}}">
+          <osm-poly fill-opacity$="{{item.fillOpacity}}" stroke-color$="{{item.strokeColor}}" width$="{{item.width}}" closed$="{{item.closed}}" fill-color$="{{item.fillColor}}">
+            <template is="dom-repeat" items$="{{item.points}}">
               <osm-point longitude$="{{item.longitude}}" latitude$="{{item.latitude}}"></osm-point>
             </template>
           </osm-poly>
         </template>
-        <template is="dom-repeat" items="{{markers}}">
+        <template is="dom-repeat" items$="{{markers}}">
           <osm-marker longitude$="{{item.longitude}}" latitude$="{{item.latitude}}"></osm-marker>
         </template>
       </osm-map>
     </template>
 
+    -->
+
     <template is="dom-if" if="{{_typeIsGoogleMap(mapType)}}">
-      <google-map id="googleMap" longitude="{{longitude}}" latitude="{{latitude}}" zoom="{{zoom}}" api-key="AIzaSyCURfGidiiyj4S8XFOPFftNlhfx5A6ce8o" drag-events>
-        <template is="dom-repeat" items="{{polygons}}">
-          <google-map-poly fill-opacity="{{item.fillOpacity}}" stroke-color$="{{item.strokeColor}}" width$="{{item.width}}" closed$="{{item.closed}}" fill-color$="{{item.fillColor}}">
-            <template is="dom-repeat" items="{{item.points}}">
-              <google-map-point longitude$="{{item.longitude}}" latitude$="{{item.latitude}}"></google-map-point>
-            </template>
-          </google-map-poly>
-        </template>
-        <template is="dom-repeat" items="{{markers}}">
-          <google-map-marker longitude$="{{item.longitude}}" latitude$="{{item.latitude}}"></google-map-marker>
-        </template>  
+      <google-map map="{{map}}" id="googleMap" longitude="{{longitude}}" latitude="{{latitude}}" zoom="{{zoom}}" api-key="AIzaSyCURfGidiiyj4S8XFOPFftNlhfx5A6ce8o" drag-events>
+        <google-map-poly closed fill-color="red" fill-opacity=".25" stroke-weight="1">
+          <google-map-point latitude="37.779" longitude="-122.3892"></google-map-point>
+          <google-map-point latitude="37.804" longitude="-122.2711"></google-map-point>
+          <google-map-point latitude="37.386" longitude="-122.0837"></google-map-point>
+        </google-map-poly>
       </google-map>
     </template>
 
@@ -327,25 +328,55 @@ By default `map-type="GoogleMap"`
     },
 
     // Initialize many map utilities once the element is attached to the DOM.
-    attached: function () {
+    attached: function() {
       var self = this;
-      this.addEventListener('update-gn-map', function () {
-          self.splice('polygons', -1);
-          self.splice('markers', -1);
+      this.addEventListener('update-gn-map', function() {
+        self.splice('polygons', -1);
+        self.splice('markers', -1);
 
-          self.queryAllEffectiveChildren('gn-poly').forEach(function (polygon) {
-            self.push('polygons', polygon.asObject());
-          });
-          self._userPolygons.forEach(function (polygon) {
-            self.push('polygons', polygon);
+        self.queryAllEffectiveChildren('gn-poly').forEach(polygon => {
+          self.push('polygons', polygon.asObject());
+        });
+
+        self._userPolygons.forEach(polygon => {
+          self.push('polygons', polygon);
+        });
+
+        self.queryAllEffectiveChildren('gn-marker').forEach(function (marker) {
+          self.push('markers', marker.asObject());
+        });
+        self._userMarkers.forEach(function (marker) {
+          self.push('markers', marker);
+        });
+
+        var googleMap = self.$$('#googleMap');
+        console.log(googleMap)
+        var googlePolygons = [].slice.call(googleMap.getElementsByTagName('google-map-poly'))
+
+        /*googlePolygons.forEach(googleMapPoly => {
+          googleMap.removeChild(googleMapPoly);
+        })*/
+
+        self.polygons.forEach(polygon => {
+          var googleMapPoly = document.createElement('google-map-poly');
+          googleMapPoly.setAttribute('fill-opacity', polygon.fillOpacity);
+          googleMapPoly.setAttribute('stroke-color', polygon.strokeColor);
+          googleMapPoly.setAttribute('width', polygon.width);
+          googleMapPoly.setAttribute('closed', polygon.closed);
+          //googleMapPoly.map = this.map;
+          googleMapPoly.setAttribute('fill-color', polygon.fillColor);
+
+          polygon.points.forEach(point => {
+            var googleMapPoint = document.createElement('google-map-point');
+            googleMapPoint.setAttribute('longitude', point.longitude);
+            googleMapPoint.setAttribute('latitude', point.latitude);
+            //googleMapPoint.map = this.map;
+            googleMapPoly.appendChild(googleMapPoint);           
           });
 
-          self.queryAllEffectiveChildren('gn-marker').forEach(function (marker) {
-            self.push('markers', marker.asObject());
-          });
-          self._userMarkers.forEach(function (marker) {
-            self.push('markers', marker);
-          });
+          console.log(googleMapPoly);
+          Polymer.dom(this.$$('#googleMap')).appendChild(googleMapPoly);
+        });
       });
 
       // Makes sure to keep the "global" Polymer context
