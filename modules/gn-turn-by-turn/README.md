@@ -31,9 +31,3 @@ Call the `startSimulation()` method and the position will move according to the 
 <gn-path-follower latitude="[[lat]]"
                   longitude="[[lon]]"></gn-path-follower>
 ```
-
-## TODO
-
-### In Progress
-
-- Caching of map data to avoid "flickering" (doesn't apply for Google maps because of license restrictions)
