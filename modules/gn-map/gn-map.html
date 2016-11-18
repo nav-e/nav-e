@@ -123,11 +123,7 @@ By default `map-type="GoogleMap"`
       }
     </style>
 
-    <!--
-
-    ! old osm implementation as reference for new leaflet implementation !
-
-    <template id="osmMap" is="dom-if" if="{{_typeIsOpenStreetMap(mapType)}}">
+    <template restamp="true" id="osmMap" is="dom-if" if="{{_typeIsOpenStreetMap(mapType)}}">
       <osm-map longitude="{{longitude}}" latitude="{{latitude}}" zoom="{{zoom}}" class="content fit">
         <template is="dom-repeat" items="{{polygons}}">
           <osm-poly fill-opacity$="{{item.fillOpacity}}" stroke-color$="{{item.strokeColor}}" width$="{{item.width}}" closed$="{{item.closed}}" fill-color$="{{item.fillColor}}">
@@ -142,20 +138,14 @@ By default `map-type="GoogleMap"`
       </osm-map>
     </template>
 
-    -->
-
     <template is="dom-if" if="{{_typeIsGoogleMap(mapType)}}">
       <google-map map="{{map}}" id="googleMap" longitude="{{longitude}}" latitude="{{latitude}}" zoom="{{zoom}}" api-key="AIzaSyCURfGidiiyj4S8XFOPFftNlhfx5A6ce8o" drag-events>
-        <google-map-poly stroke-weight="4" stroke-color="red">
+        <google-map-poly stroke-weight="6" stroke-color="#00960a">
           <template is="dom-repeat" items="{{waypoints}}">
             <google-map-point longitude="{{item.longitude}}" latitude="{{item.latitude}}"></google-map-point>
           </template>
         </google-map-poly>
       </google-map>
-    </template>
-
-    <template is="dom-if" if="{{_typeIsLeafletMap(mapType)}}">
-      <leaflet-map id="leafletMap" longitude="{{longitude}}" latitude="{{latitude}}" zoom="{{zoom}}"></leaflet-map>
     </template>
 
     <weather-precipitation
@@ -175,7 +165,7 @@ By default `map-type="GoogleMap"`
         http://stackoverflow.com/questions/14574623/how-to-get-rid-of-white-space-between-inline-elements-without-keeping-html-on-s
         -->
         <button name="GoogleMap">Google Map</button><!--
-     --><button name="LeafletMap">Leaflet Map</button>
+     --><button name="OpenStreetMap">OpenStreetMap</button>
       </iron-selector>
 
       <paper-material class="layersToggle">
@@ -434,6 +424,10 @@ By default `map-type="GoogleMap"`
       ctx.gmap.map.data.addGeoJson(featureCollection);
     },
 
+    
+    /*
+    Needs to adjust for osm map
+
     loadDataIntoLeafletMap: function(featureCollection) {
       var ctx = this;
 
@@ -468,7 +462,8 @@ By default `map-type="GoogleMap"`
           });
         }
       }, 100);
-    },
+
+    },*/
 
     _checkIfDataRequested: function() {
       // Stop extra requests being sent.
