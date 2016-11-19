@@ -10,7 +10,6 @@
 <link rel="import" href="../../bower_components/osm-map/osm-point.html">
 <link rel="import" href="../../bower_components/osm-map/osm-marker.html">
 <link rel="import" href="../../bower_components/osm-map/osm-layer.html">
-<link rel="import" href="../../bower_components/leaflet-map/leaflet-map.html">
 <link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
 <link rel="import" href="weather-precipitation.html">
 <!--
@@ -53,14 +52,6 @@ By default `map-type="GoogleMap"`
       /* /deep/ selector is used to target elements in the shadow DOM. */ 
       google-map /deep/ .gm-style-iw {
         text-align: center;
-      }
-
-      leaflet-map /deep/ .leaflet-popup-content-wrapper {
-        text-align: center;
-      }
-
-      leaflet-map {
-        height: 100%;
       }
 
       .mapControls {
@@ -169,9 +160,9 @@ By default `map-type="GoogleMap"`
       </iron-selector>
 
       <paper-material class="layersToggle">
-        <paper-toggle-button active="{{ weather }}">Weather</paper-toggle-button>
-        <paper-toggle-button active="{{ precipitation }}">Precipitation</paper-toggle-button>
-        <paper-toggle-button active="{{ traffic }}" disabled="{{_typeIsLeafletMap(mapType)}}">Traffic</paper-toggle-button>
+        <paper-toggle-button active="{{ weather }}" disabled="{{_typeIsOpenStreetMap(mapType)}}">Weather</paper-toggle-button>
+        <paper-toggle-button active="{{ precipitation }}" disabled="{{_typeIsOpenStreetMap(mapType)}}">Precipitation</paper-toggle-button>
+        <paper-toggle-button active="{{ traffic }}" disabled="{{_typeIsOpenStreetMap(mapType)}}">Traffic</paper-toggle-button>
       </paper-material>
     </div>
 
@@ -359,58 +350,38 @@ By default `map-type="GoogleMap"`
           });
         });
       });
+    
+      self.gmap = document.querySelector('google-map');
+      // Initial weather request begins here.
+      self.gmap.addEventListener('api-load', function(e) {
+        self._checkIfDataRequested();
+        self._addMapListeners();
 
-      // Makes sure to keep the "global" Polymer context
-      // to be able to call global scope methods from inner functions.
-      var ctx = this;
-
-      // DOM changes are async. One way around this is to wait
-      // for the dom-change event. It is fired 3 times, 
-      // and after the 2nd time <google-map> can be queried.
-      var domChangeCounter = 0;
-
-      // Use the /deep/ selector to access shadow DOM.
-      ctx.gnmap = document.querySelector('html /deep/ gn-map');
-
-      ctx.gnmap.addEventListener('dom-change', function() {
-        domChangeCounter += 1;
-        if (domChangeCounter > 1) {
-          // Accessing shadow DOM again.
-          ctx.gmap = document.querySelector('html /deep/ google-map');
-
-          // Initial weather request begins here.
-          ctx.gmap.addEventListener('api-load', function(e) {
-            ctx._checkIfDataRequested();
-            ctx._addMapListeners();
-
-            if (ctx.precipitation) {
-              ctx._overlayPrecipitation();
-            }
-          });
+        if (self.precipitation) {
+          self._overlayPrecipitation();
         }
       });
 
-      // Again here is the use of the shadow DOM /deep/ selector. */
-      ctx.weatherPrecipitation = document.querySelector('html /deep/ weather-precipitation');
-      ctx.weatherPrecipitation.addEventListener('geoJSON-loaded', function(e) {
-        ctx.geoJSON = e.detail;
+      self.weatherPrecipitation = document.querySelector('weather-precipitation');
+      self.weatherPrecipitation.addEventListener('geoJSON-loaded', function(e) {
+        self.geoJSON = e.detail;
 
-        if (ctx.weather && ctx.mapType === 'GoogleMap') {
-          ctx.loadDataIntoGoogleMap(ctx.geoJSON);
-        } else if (ctx.weather && ctx.mapType === 'LeafletMap') {
-          ctx.loadDataIntoLeafletMap(ctx.geoJSON);
+        if (self.weather && self.mapType === 'GoogleMap') {
+          self.loadDataIntoGoogleMap(self.geoJSON);
+        } else if (self.weather && self.mapType === 'OpenStreetMap') {
+          self.loadDataIntoOpenStreetMap(self.geoJSON);
         }
 
       });
     },
 
     loadDataIntoGoogleMap: function(featureCollection) {
-      var ctx = this;
+      var self = this;
 
       featureCollection.features.forEach(function(feature) {
       
         // Set the custom marker icon.
-        ctx.gmap.map.data.setStyle(function(feature) {
+        self.gmap.map.data.setStyle(function(feature) {
           return {
             icon: {
               url: feature.getProperty('icon'),
@@ -420,24 +391,23 @@ By default `map-type="GoogleMap"`
         });
       });
 
-      ctx.removeDataFromGoogleMap();
-      ctx.gmap.map.data.addGeoJson(featureCollection);
+      self.removeDataFromGoogleMap();
+      self.gmap.map.data.addGeoJson(featureCollection);
     },
 
-    
-    /*
-    Needs to adjust for osm map
+    loadDataIntoOpenStreetMap: function(featureCollection) {
+      /*
+      Needs to be adjust for OSM 
 
-    loadDataIntoLeafletMap: function(featureCollection) {
-      var ctx = this;
+      var self = this;
 
-      // An interval makes sure that the Leaflet map has loaded
+      // An interval makes sure that the osm map has loaded
       // before attempting to draw markers on the map.
       var interval = setInterval(function() {
-        if (document.querySelector('html /deep/ leaflet-map')) {
+        if (document.querySelector('osm-map')) {
           clearInterval(interval);
-          ctx.lmap = document.querySelector('html /deep/ leaflet-map').map;
-          ctx.removeDataFromLeafletMap();
+          self.osmMap = document.querySelector('osm-map').map;
+          self.removeDataFromLeafletMap();
 
           featureCollection.features.forEach(function(feature) {
 
@@ -449,9 +419,9 @@ By default `map-type="GoogleMap"`
 
             // Important to swap the coordinates ([1], [0]).
             var tempMarker = L.marker([feature.geometry.coordinates[1], feature.geometry.coordinates[0]], {icon: tempIcon});
-            tempMarker.addTo(ctx.lmap);
+            tempMarker.addTo(self.osmMap);
 
-            ctx.leafletWeatherMarkers.push(tempMarker);
+            self.leafletWeatherMarkers.push(tempMarker);
 
             var content = "<img src=" + feature.properties.icon + ">" +
               "<br /><strong>" + feature.properties.city + "</strong>" +
@@ -461,9 +431,9 @@ By default `map-type="GoogleMap"`
 
           });
         }
-      }, 100);
+      }, 100);*/
 
-    },*/
+    },
 
     _checkIfDataRequested: function() {
       // Stop extra requests being sent.
@@ -535,12 +505,12 @@ By default `map-type="GoogleMap"`
           ctx.west = SW.lng();
           ctx.zoom = ctx.gmap.map.getZoom();
         } else if (ctx.mapType === 'LeafletMap') {
-          var lmap = document.querySelector('html /deep/ leaflet-map').map;
-          ctx.north = lmap.getBounds().getNorth();
-          ctx.east = lmap.getBounds().getEast();
-          ctx.south = lmap.getBounds().getSouth();
-          ctx.west = lmap.getBounds().getWest();
-          ctx.zoom = lmap.getZoom();
+          var osmMap = document.querySelector('html /deep/ leaflet-map').map;
+          ctx.north = osmMap.getBounds().getNorth();
+          ctx.east = osmMap.getBounds().getEast();
+          ctx.south = osmMap.getBounds().getSouth();
+          ctx.west = osmMap.getBounds().getWest();
+          ctx.zoom = osmMap.getZoom();
         }
       }, 500);
     },
@@ -566,8 +536,8 @@ By default `map-type="GoogleMap"`
       var ctx = this;
 
       // Make sure to remove any existing layer.
-      if (this.lmap) {
-        this.lmap.removeLayer(this.leafletPrecipitationLayer);
+      if (this.osmMap) {
+        this.osmMap.removeLayer(this.leafletPrecipitationLayer);
       }
 
       this.leafletPrecipitationLayer = L.tileLayer("http://maps.owm.io:8091/56ce0fcd4376d3010038aaa8/{z}/{x}/{y}?hash=5", { attribution: '<a href="https://www.mapzen.com/rights">Attribution.</a>. Data &copy;<a href="https://openstreetmap.org/copyright">OSM</a> contributors.' });
@@ -576,8 +546,8 @@ By default `map-type="GoogleMap"`
 
       // Need to wait until the Leaflet map has fully loaded.
       setTimeout(function() {
-        ctx.lmap = document.querySelector('html /deep/ leaflet-map').map;
-        ctx.lmap.addLayer(ctx.leafletPrecipitationLayer);
+        ctx.osmMap = document.querySelector('html /deep/ leaflet-map').map;
+        ctx.osmMap.addLayer(ctx.leafletPrecipitationLayer);
       }, 100);
     },
 
@@ -603,7 +573,7 @@ By default `map-type="GoogleMap"`
     removeDataFromLeafletMap: function() {
       var ctx = this;
       this.leafletWeatherMarkers.forEach(function(marker) {
-        ctx.lmap.removeLayer(marker);
+        ctx.osmMap.removeLayer(marker);
       });
     },
 
@@ -656,8 +626,8 @@ By default `map-type="GoogleMap"`
         if (this.mapType === 'GoogleMap' && this.gmap) {
           this.gmap.map.overlayMapTypes.clear();
         } else if (this.mapType === 'LeafletMap') {
-          if (this.lmap) {
-            this.lmap.removeLayer(this.leafletPrecipitationLayer);
+          if (this.osmMap) {
+            this.osmMap.removeLayer(this.leafletPrecipitationLayer);
           }
         }
       }
@@ -731,10 +701,6 @@ By default `map-type="GoogleMap"`
 
     _typeIsGoogleMap: function (mapType) {      
         return mapType === 'GoogleMap';
-    },
-
-    _typeIsLeafletMap: function (mapType) {      
-        return mapType === 'LeafletMap';
     }
   });
 </script>
