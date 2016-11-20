@@ -13,8 +13,6 @@
 <link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
 <link rel="import" href="../../bower_components/iron-selector/iron-selector.html">
 <link rel="import" href="../gn-map/gn-map.html">
-<link rel="import" href="../gn-map/gn-poly.html">
-<link rel="import" href="../gn-map/gn-point.html">
 <link rel="import" href="../gn-api/gn-api.html">
 <link rel="import" href="../gn-menu/gn-directions-menu.html">
 <link rel="import" href="../gn-turn-by-turn/gn-path-follower.html">
@@ -48,7 +46,7 @@
         padding-left: 25px;
       }
 
-      paper-button > * {
+      paper-button {
         text-transform: none;
         vertical-align: middle;
       }
@@ -63,8 +61,8 @@
         color: var(--app-primary-color);
       }
 
-      gn-map /deep/ .mapControls {
-        top: 75px;
+      iron-icon {
+        margin-right: 5px;
       }
     </style>
 
@@ -82,17 +80,20 @@
         <app-header condenses reveals effects="waterfall">
           <app-toolbar>
             <paper-icon-button icon="gn-icons:menu" drawer-toggle></paper-icon-button>
-            <span main-title></span>
-            <paper-button data-dialog="info" on-tap="_toggleInfoDialog">Info</paper-button>
-            <paper-button data-dialog="kontakt" on-tap="_toggleKontaktDialog">Contact</paper-button>
+            
+            <span main-title></span>          
+            <paper-button data-dialog="info" on-tap="_toggleInfoDialog">
+              <iron-icon icon="info"></iron-icon>
+              Info
+            </paper-button>
+            <paper-button data-dialog="contact" on-tap="_toggleContactDialog">
+              <iron-icon icon="mail"></iron-icon>
+              Contact
+            </paper-button>
           </app-toolbar>
         </app-header>
 
-        <gn-map 
-                longitude="11.15"
-                latitude="50"
-                zoom="6"
-                map-type="{{mapType}}">
+        <gn-map zoom="9" map-type="{{mapType}}">
           <gn-poly>
             <template is="dom-repeat" items="{{ route.route }}">
               <gn-point 
@@ -117,7 +118,6 @@
                                        turn-code="[[direction]]"
                                        distance="[[turnDistance]]"></gn-notification-container>
           </template>
-
         </gn-map>
 
         <paper-dialog id="info">
@@ -128,32 +128,22 @@
           </p>
         </paper-dialog>
 
-        <paper-dialog id="kontakt">
+        <paper-dialog id="contact">
           <h2>Contact</h2>
           <p>There are several ways to contact us. For questions about coding, issues, etc. please use <a href="https://github.com/Greennav">Github</a></p>
           <p>For more general questions use our <a href="https://plus.google.com/communities/110704433153909631379">G+ page</a> or <a href="https://groups.google.com/forum/#!forum/greennav">Google Groups</a></p>
         </paper-dialog>
-
+        
       </app-header-layout>
-
     </app-drawer-layout>
-
   </template>
 
   <script>
 
     Polymer({
-
       is: 'gn-skeleton',
 
       properties: {
-
-        page: {
-          type: String,
-          reflectToAttribute: true,
-          observer: '_pageChanged'
-        },
-
         route: {
           type: Object,
           notify: true
@@ -161,34 +151,18 @@
 
         turnByTurn: {
           type: Boolean,
-          value: () => true
+          value: true
         }
-      },
-
-      observers: [
-        '_routePageChanged(routeData.page)'
-      ],
-
-      _routePageChanged: function(page) {
-        this.page = page || 'view1';
-      },
-
-      _pageChanged: function(page) {
-        // load page import on demand.
-        // this.importHref(
-        //   this.resolveUrl('my-' + page + '.html'), null, null, true);
       },
 
       _toggleInfoDialog: function(e) {
         this.$.info.toggle();
       },
 
-      _toggleKontaktDialog: function(e) {
-        this.$.kontakt.toggle();
+      _toggleContactDialog: function(e) {
+        this.$.contact.toggle();
       },
 
     });
-
   </script>
-
 </dom-module>
