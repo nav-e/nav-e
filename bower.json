@@ -23,7 +23,6 @@
     "paper-dialog-behavior": "PolymerElements/paper-dialog-behavior#^1.2.6",
     "paper-button": "PolymerElements/paper-button#^1.0.12",
     "paper-progress": "PolymerElements/paper-progress#^1.0.9",
-    "osm-map": "FabianBormann/osm-map",
     "neon-animation": "PolymerElements/neon-animation#^1.2.3",
     "leaflet-map": "leaflet-extras/leaflet-map#^1.0.1",
     "iron-selector": "polymerelements/iron-selector#^1.0.0",
@@ -38,7 +37,6 @@
     "iron-icon": "PolymerElements/iron-icon#^1.0.8",
     "iron-flex-layout": "polymerelements/iron-flex-layout#^1.0.0",
     "iron-ajax": "PolymerElements/iron-ajax#~1.1.1",
-    "google-map": "GoogleWebComponents/google-map",
     "app-route": "polymerelements/app-route#^0.9.1",
     "app-layout": "polymerelements/app-layout#^0.10.6",
     "Geolib": "geolib#^2.0.21"

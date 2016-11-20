@@ -3,15 +3,15 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
-    <title>Green Navigation</title>
-    <link rel="manifest" href="/manifest.json">
-    <link rel="shortcut icon" sizes="32x32" href="/images/greennav-icon-32.png">
-    <!-- Older Chrome configuration -->
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="application-name" content="Green Navigation">
+    
+    <title>Green Navigation</title>
+    
+    <link rel="manifest" href="/manifest.json">
+    <link rel="shortcut icon" sizes="32x32" href="/images/greennav-icon-32.png">
 
     <script>
-      // Polymer options
       window.Polymer = {lazyRegister: true, dom: 'shady'};
     </script>
 
@@ -28,8 +28,6 @@
     </style>
   </head>
   <body>
-
-    <gn-skeleton></gn-skeleton>
-
+    <gn-skeleton />
   </body>
 </html>

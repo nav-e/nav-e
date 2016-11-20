@@ -1,172 +1,23 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/paper-material/paper-material.html">
 <link rel="import" href="../../bower_components/paper-toggle-button/paper-toggle-button.html">
-<link rel="import" href="../../bower_components/google-map/google-map.html">
-<link rel="import" href="../../bower_components/google-map/google-map-poly.html">
-<link rel="import" href="../../bower_components/google-map/google-map-point.html">
-<link rel="import" href="../../bower_components/google-map/google-map-marker.html">
-<link rel="import" href="../../bower_components/osm-map/osm-map.html">
-<link rel="import" href="../../bower_components/osm-map/osm-poly.html">
-<link rel="import" href="../../bower_components/osm-map/osm-point.html">
-<link rel="import" href="../../bower_components/osm-map/osm-marker.html">
-<link rel="import" href="../../bower_components/osm-map/osm-layer.html">
 <link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
-<link rel="import" href="weather-precipitation.html">
-<!--
-    
-The `gn-map` element provides a wrapper for different map types.
-If attribute map-type change, the changes will apply to all child elements.
-At this time `gn-map` supports `google-map` and `osm-map` and all
-children like polygons, points and markers.
 
-Examples:
-
-    <gn-map
-      longitude="9.45"
-      latitude="38.24"
-      zoom="13"
-      map-type="GoogleMap">
-    </gn-map>
-
-    <gn-map
-      longitude="9.45"
-      latitude="38.24"
-      zoom="13"
-      map-type="OpenStreetMap">
-    </gn-map>
-
-By default `map-type="GoogleMap"`
-
-@demo
--->
+<script src="https://openlayers.org/en/v3.19.1/build/ol.js" type="text/javascript"></script>
+<script src="https://maps.googleapis.com/maps/api/js?v=3&key=AIzaSyCURfGidiiyj4S8XFOPFftNlhfx5A6ce8o" type="text/javascript"></script>
+<script type="text/javascript" src="ol3gm.js"></script>
+<link rel="stylesheet" href="ol3gm.css" type="text/css" />
+<link rel="stylesheet" href="https://openlayers.org/en/v3.19.1/css/ol.css" type="text/css">
 
 <dom-module id="gn-map">
   <template>
     <style>
-      :host {
-        display: block;
-        width: 100%;
+      .map {
         height: 100%;
-      }
-
-      /* /deep/ selector is used to target elements in the shadow DOM. */ 
-      google-map /deep/ .gm-style-iw {
-        text-align: center;
-      }
-
-      .mapControls {
-        position: absolute;
-        top: 65px;
-        right: 10px;
-      }
-
-      .mapTypeButtons {
-        box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
-      }
-
-      .mapTypeButtons button{
-        background-color: white;
-        border: 1px solid #edefed;
-        height: 32px;
-        color: #444444;
-        font-size: 12px;
-        padding-top: 3px;
-      }
-
-      .mapTypeButtons button:focus {
-        outline-width: 0;
-      }
-
-      .mapTypeButtons button:hover {
-        background-color: whitesmoke !important;
-      }
-
-      .mapTypeButtons button:nth-child(1) {
-        border-radius: 3px 0 0 3px;
-      }
-
-      .mapTypeButtons button:nth-child(2) {
-        border-radius: 0 3px 3px 0;
-        border-left: 0px;
-      }
-
-      .iron-selected {
-        color: black !important;
-        text-shadow: 0 0 0 black;
-        background-color: whitesmoke !important;
-      }
-
-      .layersToggle {
-         background-color: white;
-         margin-top: 10px;
-         padding: 7px;
-      }
-
-      .layersToggle paper-toggle-button {
-        margin-bottom: 5px;
-        --paper-toggle-button-checked-button-color: #1B5E20;
-        --paper-toggle-button-checked-ink-color: #1B5E20;
-        --paper-toggle-button-checked-bar-color: #1B5E20;
-      }
-
-      .layersToggle paper-toggle-button:last-child {
-        margin-bottom: 0px;
+        width: 100%;
       }
     </style>
-
-    <template restamp="true" id="osmMap" is="dom-if" if="{{_typeIsOpenStreetMap(mapType)}}">
-      <osm-map longitude="{{longitude}}" latitude="{{latitude}}" zoom="{{zoom}}" class="content fit">
-        <template is="dom-repeat" items="{{polygons}}">
-          <osm-poly fill-opacity$="{{item.fillOpacity}}" stroke-color$="{{item.strokeColor}}" width$="{{item.width}}" closed$="{{item.closed}}" fill-color$="{{item.fillColor}}">
-            <template is="dom-repeat" items$="{{item.points}}">
-              <osm-point longitude$="{{item.longitude}}" latitude$="{{item.latitude}}"></osm-point>
-            </template>
-          </osm-poly>
-        </template>
-        <template is="dom-repeat" items$="{{markers}}">
-          <osm-marker longitude$="{{item.longitude}}" latitude$="{{item.latitude}}"></osm-marker>
-        </template>
-      </osm-map>
-    </template>
-
-    <template is="dom-if" if="{{_typeIsGoogleMap(mapType)}}">
-      <google-map map="{{map}}" id="googleMap" longitude="{{longitude}}" latitude="{{latitude}}" zoom="{{zoom}}" api-key="AIzaSyCURfGidiiyj4S8XFOPFftNlhfx5A6ce8o" drag-events>
-        <google-map-poly stroke-weight="6" stroke-color="#00960a">
-          <template is="dom-repeat" items="{{waypoints}}">
-            <google-map-point longitude="{{item.longitude}}" latitude="{{item.latitude}}"></google-map-point>
-          </template>
-        </google-map-poly>
-      </google-map>
-    </template>
-
-    <weather-precipitation
-      weather={{weather}}
-      precipitation="{{precipitation}}"
-      north="[[north]]"
-      east="[[east]]"
-      south="[[south]]"
-      west="[[west]]"
-      zoom="[[zoom]]">
-    </weather-precipitation>
-
-    <div class="mapControls">
-      <iron-selector class="mapTypeButtons" selected={{mapType}} attr-for-selected="name">
-        <!--
-        The comment below is intentional and removes the mysterious gap between the buttons.
-        http://stackoverflow.com/questions/14574623/how-to-get-rid-of-white-space-between-inline-elements-without-keeping-html-on-s
-        -->
-        <button name="GoogleMap">Google Map</button><!--
-     --><button name="OpenStreetMap">OpenStreetMap</button>
-      </iron-selector>
-
-      <paper-material class="layersToggle">
-        <paper-toggle-button active="{{ weather }}" disabled="{{_typeIsOpenStreetMap(mapType)}}">Weather</paper-toggle-button>
-        <paper-toggle-button active="{{ precipitation }}" disabled="{{_typeIsOpenStreetMap(mapType)}}">Precipitation</paper-toggle-button>
-        <paper-toggle-button active="{{ traffic }}" disabled="{{_typeIsOpenStreetMap(mapType)}}">Traffic</paper-toggle-button>
-      </paper-material>
-    </div>
-
-    <content></content>
+    <div id="map" class="map"></div>
   </template>
 <script>
   Polymer({
@@ -215,54 +66,19 @@ By default `map-type="GoogleMap"`
       },
 
       /**
-       * Holds the map object and allows to modify values during runtime.
-       */
-      map: {
-        type: Object
-      },
-
-      /**
        * Array of polygon objects.
        */
       polygons: {
-          type: Array,
-          notify: true,
-          value: function () {
-            return [];
-          }
-      },
-
-      /**
-       * Array of waypoint objects.
-       */
-      waypoints: {
-          type: Array,
-          notify: true,
-          value: function () {
-            return [];
-          }
+        type: Array,
+        readOnly: true,
       },
 
       /**
        * Array of Marker objects.
        */
       markers: {
-          type: Array,
-          notify: true,
-          value: function () {
-            return [];
-          }
-      },
-
-      /**
-       * Array of Marker objects (to clean up weather data when the Leaflet map is moved).
-       */
-      leafletWeatherMarkers: {
         type: Array,
-        notify: true,
-        value: function() {
-          return [];
-        }
+        readOnly: true,
       },
 
       /**
@@ -296,297 +112,58 @@ By default `map-type="GoogleMap"`
         observer: 'toggleTraffic'
       },
 
-      /**
-       * Array of user created Polygons.
-       */
-      _userPolygons: {
-        type: Array,
-        notify: true,
-        value: function () {
-          return [];
-        }
+      _map: {
+        type: Object
       },
 
-      /**
-       * Array of user created Markers.
-       */
-      _userMarkers: {
-        type: Array,
-        notify: true,
-        value: function () {
-          return [];
-        }
+      _layers: {
+        type: Object
       }
     },
 
-    // Initialize many map utilities once the element is attached to the DOM.
     attached: function() {
-      var self = this;
-      this.addEventListener('update-gn-map', function() {
-        self.splice('polygons', -1);
-        self.splice('markers', -1);
+      /*this._layers = [
+        new ol.layer.Tile({
+          //source: new ol.source.OSM()
+          source: new olgm.layer.Google()
+        })
+      ];
 
-        self.queryAllEffectiveChildren('gn-poly').forEach(polygon => {
-          self.push('polygons', polygon.asObject());
-        });
+      this._map = new ol.Map({
+        target: 'map',
+        layers: this._layers,
+        view: new ol.View({
+          center: ol.proj.fromLonLat([this.longitude, this.latitude]),
+          zoom: this.zoom
+        })
+      });*/
 
-        self._userPolygons.forEach(polygon => {
-          self.push('polygons', polygon);
-        });
-
-        self.queryAllEffectiveChildren('gn-marker').forEach(function (marker) {
-          self.push('markers', marker.asObject());
-        });
-        self._userMarkers.forEach(function (marker) {
-          self.push('markers', marker);
-        });
-
-        self.polygons.forEach(polygon => {
-          polygon.points.forEach(point => {
-            self.push('waypoints', {
-              longitude: point.longitude,
-              latitude: point.latitude
-            });         
-          });
-        });
+      // Create a Google Maps layer
+      var googleLayer = new olgm.layer.Google({
+        visible: true
       });
-    
-      self.gmap = document.querySelector('google-map');
-      // Initial weather request begins here.
-      self.gmap.addEventListener('api-load', function(e) {
-        self._checkIfDataRequested();
-        self._addMapListeners();
+      var osmLayer = new ol.layer.Tile({
+        visible: false,
+        source: new ol.source.OSM()
+      })
 
-        if (self.precipitation) {
-          self._overlayPrecipitation();
-        }
-      });
+      // Create a regular OL3 map, containing our Google layer
+      var map = new ol.Map({
+        // use OL3-Google-Maps recommended default interactions
+        interactions: olgm.interaction.defaults(),
+        layers: [
+          googleLayer,
+          osmLayer
+        ],
+        target: 'map',
+        view: new ol.View({
+          center: ol.proj.fromLonLat([this.longitude, this.latitude]),
+          zoom: 12
+        })
+      });   
 
-      self.weatherPrecipitation = document.querySelector('weather-precipitation');
-      self.weatherPrecipitation.addEventListener('geoJSON-loaded', function(e) {
-        self.geoJSON = e.detail;
-
-        if (self.weather && self.mapType === 'GoogleMap') {
-          self.loadDataIntoGoogleMap(self.geoJSON);
-        } else if (self.weather && self.mapType === 'OpenStreetMap') {
-          self.loadDataIntoOpenStreetMap(self.geoJSON);
-        }
-
-      });
-    },
-
-    loadDataIntoGoogleMap: function(featureCollection) {
-      var self = this;
-
-      featureCollection.features.forEach(function(feature) {
-      
-        // Set the custom marker icon.
-        self.gmap.map.data.setStyle(function(feature) {
-          return {
-            icon: {
-              url: feature.getProperty('icon'),
-              anchor: new google.maps.Point(25, 25)
-            }
-          };
-        });
-      });
-
-      self.removeDataFromGoogleMap();
-      self.gmap.map.data.addGeoJson(featureCollection);
-    },
-
-    loadDataIntoOpenStreetMap: function(featureCollection) {
-      /*
-      Needs to be adjust for OSM 
-
-      var self = this;
-
-      // An interval makes sure that the osm map has loaded
-      // before attempting to draw markers on the map.
-      var interval = setInterval(function() {
-        if (document.querySelector('osm-map')) {
-          clearInterval(interval);
-          self.osmMap = document.querySelector('osm-map').map;
-          self.removeDataFromLeafletMap();
-
-          featureCollection.features.forEach(function(feature) {
-
-            var tempIcon = new L.icon({
-              iconUrl: feature.properties.icon,
-              iconRetinaUrl: feature.properties.icon,
-              iconSize: [40, 40]
-            });
-
-            // Important to swap the coordinates ([1], [0]).
-            var tempMarker = L.marker([feature.geometry.coordinates[1], feature.geometry.coordinates[0]], {icon: tempIcon});
-            tempMarker.addTo(self.osmMap);
-
-            self.leafletWeatherMarkers.push(tempMarker);
-
-            var content = "<img src=" + feature.properties.icon + ">" +
-              "<br /><strong>" + feature.properties.city + "</strong>" +
-              "<br />" + feature.properties.temperature + "&deg;C" +
-              "<br />" + feature.properties.weather;
-            tempMarker.bindPopup(content);
-
-          });
-        }
-      }, 100);*/
-
-    },
-
-    _checkIfDataRequested: function() {
-      // Stop extra requests being sent.
-      while (this.gettingData === true) {
-        var requests = this.$.weatherAjax.activeRequests;
-        if (requests.length > 0) {
-          requests.forEach(function(request) {
-            request.abort();
-          });
-        }
-        this.gettingData = false;
-      }
-      this._getCoords();
-    },
-
-
-    // Initializes a few handy listeners for the Google map.
-    _addMapListeners: function() {
-      var ctx = this;
-      ctx.gmap.map.addListener('idle', function() {
-        ctx._checkIfDataRequested();
-      });
-
-      ctx.gmap.map.data.addListener('click', function(event) {
-        // Close the previous infowindow if it exists.
-        if (this.infowindow) {
-          this.infowindow.close();
-        }
-
-        this.infowindow = new google.maps.InfoWindow();
-        this.infowindow.setContent(
-          "<img src=" + event.feature.getProperty("icon") + ">" +
-          "<br /><strong>" + event.feature.getProperty("city") + "</strong>" +
-          "<br />" + event.feature.getProperty("temperature") + "&deg;C" +
-          "<br />" + event.feature.getProperty("weather")
-        );
-
-        this.infowindow.setOptions({
-          position:{
-            lat: event.latLng.lat(),
-            lng: event.latLng.lng()
-          },
-          pixelOffset: {
-            width: 0,
-            height: -15
-          }
-        });
-
-        this.infowindow.open(ctx.gmap.map);
-      });
-    },
-
-    // Gets the coordinates (bounds) of the bounding box.
-    _getCoords: function() {
-      var ctx = this;
-
-      // @TODO: Find the google-map event that fires last and call getBounds at that time.
-      // Without setTimeout getBounds returns null.
-      setTimeout(function() {
-        if (ctx.mapType === 'GoogleMap') {
-          var bounds = ctx.gmap.map.getBounds();
-          var NE = bounds.getNorthEast();
-          var SW = bounds.getSouthWest();
-
-          // These are to be passed to <weather-precipitation>
-          ctx.north = NE.lat();
-          ctx.east = NE.lng();
-          ctx.south = SW.lat();
-          ctx.west = SW.lng();
-          ctx.zoom = ctx.gmap.map.getZoom();
-        } else if (ctx.mapType === 'LeafletMap') {
-          var osmMap = document.querySelector('html /deep/ leaflet-map').map;
-          ctx.north = osmMap.getBounds().getNorth();
-          ctx.east = osmMap.getBounds().getEast();
-          ctx.south = osmMap.getBounds().getSouth();
-          ctx.west = osmMap.getBounds().getWest();
-          ctx.zoom = osmMap.getZoom();
-        }
-      }, 500);
-    },
-
-    // Overlays a precipitation layer
-    _overlayPrecipitationOnGoogleMap: function() {
-      var myMapType = new google.maps.ImageMapType({
-        getTileUrl: function(coord, zoom) {
-          return "http://maps.owm.io:8091/56ce0fcd4376d3010038aaa8/" + 
-                 zoom + "/" + coord.x + "/" + coord.y + "?hash=5";
-        },
-        tileSize: new google.maps.Size(256, 256),
-        maxZoom: 18,
-        minZoom: 0,
-        name: 'mymaptype',
-        opacity: 0.6
-      });
-      this.gmap.map.overlayMapTypes.clear();
-      this.gmap.map.overlayMapTypes.insertAt(0, myMapType);
-    },
-
-    _overlayPrecipitationOnLeafletMap: function() {
-      var ctx = this;
-
-      // Make sure to remove any existing layer.
-      if (this.osmMap) {
-        this.osmMap.removeLayer(this.leafletPrecipitationLayer);
-      }
-
-      this.leafletPrecipitationLayer = L.tileLayer("http://maps.owm.io:8091/56ce0fcd4376d3010038aaa8/{z}/{x}/{y}?hash=5", { attribution: '<a href="https://www.mapzen.com/rights">Attribution.</a>. Data &copy;<a href="https://openstreetmap.org/copyright">OSM</a> contributors.' });
-
-      this.leafletPrecipitationLayer.setOpacity(0.6);
-
-      // Need to wait until the Leaflet map has fully loaded.
-      setTimeout(function() {
-        ctx.osmMap = document.querySelector('html /deep/ leaflet-map').map;
-        ctx.osmMap.addLayer(ctx.leafletPrecipitationLayer);
-      }, 100);
-    },
-
-    /**
-     * Clears all markers from the Google map.
-     *
-     * @method removeDataFromGoogleMap
-     */
-    removeDataFromGoogleMap: function() {
-      var ctx = this;
-
-      // Clean up the map.data cache.
-      ctx.gmap.map.data.forEach(function(feature) {
-        ctx.gmap.map.data.remove(feature);
-      });
-    },
-
-    /**
-     * Clears all markers from the Leaflet map.
-     *
-     * @method removeDataFromLeafletMap
-     */
-    removeDataFromLeafletMap: function() {
-      var ctx = this;
-      this.leafletWeatherMarkers.forEach(function(marker) {
-        ctx.osmMap.removeLayer(marker);
-      });
-    },
-
-    /**
-     * Shows the weather icons on the map.
-     *
-     * @method showWeatherIcons
-     */
-    showWeatherIcons: function() {
-      if (this.weather) {
-        this.gmap.map.data.addGeoJson(this.geoJSON);
-        this.gettingData = false;
-      }
+      var olGM = new olgm.OLGoogleMaps({map: map});
+      olGM.activate();
     },
 
     /**
@@ -595,19 +172,7 @@ By default `map-type="GoogleMap"`
      * @method toggleWeather
      */
     toggleWeather: function() {
-      if (this.weather && this.geoJSON) {
-        if (this.mapType === 'GoogleMap') {
-          this.loadDataIntoGoogleMap(this.geoJSON);
-        } else if (this.mapType === 'LeafletMap') {
-          this.loadDataIntoLeafletMap(this.geoJSON);
-        }
-      } else if (!this.weather && this.geoJSON) {
-        if (this.mapType === 'GoogleMap') {
-          this.removeDataFromGoogleMap();
-        } else if (this.mapType === 'LeafletMap') {
-          this.removeDataFromLeafletMap();
-        }
-      }
+
     },
 
     /**
@@ -616,21 +181,7 @@ By default `map-type="GoogleMap"`
      * @method togglePrecipitation
      */
     togglePrecipitation: function() {
-      if (this.precipitation) {
-        if (this.mapType === 'GoogleMap' && this.gmap) {
-          this._overlayPrecipitationOnGoogleMap();
-        } else if (this.mapType === 'LeafletMap') {
-          this._overlayPrecipitationOnLeafletMap();
-        }
-      } else if (!this.precipitation) {
-        if (this.mapType === 'GoogleMap' && this.gmap) {
-          this.gmap.map.overlayMapTypes.clear();
-        } else if (this.mapType === 'LeafletMap') {
-          if (this.osmMap) {
-            this.osmMap.removeLayer(this.leafletPrecipitationLayer);
-          }
-        }
-      }
+
     },
 
     /**
@@ -639,21 +190,11 @@ By default `map-type="GoogleMap"`
      * @method toggleTraffic
      */
     toggleTraffic: function() {
-      if (this.traffic && this.gmap) {
-        this.trafficLayer = new google.maps.TrafficLayer();
-        this.trafficLayer.setMap(this.gmap.map);
-      } else if (!this.traffic && this.gmap) {
-        this.trafficLayer.setMap(null);
-      }
+
     },
 
-    /**
-     * Utility function that aids with keeping the state of weather
-     * precipitation and traffic synchronised across the two map providers.
-     */
     _toggleMapType: function() {
-      this.toggleWeather();
-      this.togglePrecipitation();
+
     },
 
     /**
@@ -661,25 +202,8 @@ By default `map-type="GoogleMap"`
      *
      * @method addPolygon
      */
-    addPolygon: function (points, strokeColor, width, closed, fillColor, fillOpacity) {
-      points = (typeof points === 'undefined') ? [] : points;
-      strokeColor = (typeof strokeColor === 'undefined') ? '#0091ea' : strokeColor;
-      width = (typeof width === 'undefined') ? 4 : width;
-      closed = (typeof closed === 'undefined') ? false : closed;
-      fillColor = (typeof fillColor === 'undefined') ? '#00960a' : fillColor;
-      fillOpacity = (typeof fillOpacity === 'undefined') ? '0.5' : fillOpacity;
-
-      polygon = {
-        strokeColor: strokeColor,
-        width: width,
-        closed: closed,
-        fillColor: fillColor,
-        points : points,
-        fillOpacity : fillOpacity
-      };
-
-      this.push('_userPolygons', polygon);
-      this.fire('update-gn-map');
+    setRoute: (points, strokeColor, width, closed, fillColor, fillOpacity) => {
+     
     },
 
     /**
@@ -687,20 +211,8 @@ By default `map-type="GoogleMap"`
      *
      * @method addMarker
      */
-    addMarker: function (latitude, longitude) {
-      this.push('_userMarkers', {
-        longitude: Number(longitude),
-        latitude: Number(latitude)
-      });
-      this.fire('update-gn-map');
-    },
+    addMarker: (latitude, longitude) => {
 
-    _typeIsOpenStreetMap: function (mapType) {
-        return mapType === 'OpenStreetMap';
-    },
-
-    _typeIsGoogleMap: function (mapType) {      
-        return mapType === 'GoogleMap';
     }
   });
 </script>
