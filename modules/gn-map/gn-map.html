@@ -13,6 +13,7 @@
 
 <dom-module id="gn-map">
   <template>
+    <style is="custom-style" include="iron-flex iron-flex-alignment"></style>
     <style>
       #map {
         height: 100%;
@@ -30,25 +31,45 @@
         border-radius: 10px;
       }
 
+      #overlayMenu > * {
+        margin: 5px 0px
+      }
+
+      #overlayToggleButton {
+        margin: 0;
+        --paper-icon-button: {
+          width: 40px;
+          height: 40px;
+        }        
+      }
+
       paper-icon-button {
         background-color: var(--app-primary-color);
         color: white;
         border-radius: 20px
       }
+
+      paper-toggle-button {
+        --paper-toggle-button-checked-bar-color:  var(--app-primary-color);
+        --paper-toggle-button-checked-button-color:  var(--app-primary-color);
+        --paper-toggle-button-checked-ink-color: var(--app-primary-color);
+      }      
     </style>
     <div id="map" class="map">
       <div id="overlayMenu">
-        <div class="layout horizontal">
-          <div class="flex"></div>
-          <paper-icon-button on-tap="toggleOverlay" icon="expand-less"></paper-icon-button>
+        <div class="vertical layout end">
+          <div class="flex-end-justified">
+            <paper-icon-button id="overlayToggleButton" on-tap="toggleOverlay" icon="expand-less"></paper-icon-button>
+          </div>
         </div>
         <div hidden="{{overlayMenuHidden}}">
           <paper-dropdown-menu label="Map Type">
-            <paper-listbox class="dropdown-content" selected="0">
-              <paper-item>Open Street Map</paper-item>
-              <paper-item>Google Map</paper-item>
+            <paper-listbox class="dropdown-content" selected={{mapType}} attr-for-selected="value">
+              <paper-item value="OpenStreetMap">Open Street Map</paper-item>
+              <paper-item value="GoogleMap">Google Map</paper-item>
             </paper-listbox>
           </paper-dropdown-menu>
+          <paper-toggle-button disabled="{{!_isGoogleMap(mapType)}}" checked="{{traffic}}">Traffic</paper-toggle-button>
         </div>        
       </div>
     </div>
@@ -89,12 +110,12 @@
       },
 
       /**
-       * The map-type is bind by dom-if template to include different type of maps
-       * Possible values are "GoogleMap" or "LeafletMap".
+       * The map-type attribute is used to support different maps
+       * Possible values are "GoogleMap" or "OpenStreetMap".
        */
       mapType: {
         type: String,
-        value:"GoogleMap",
+        value: 'GoogleMap',
         notify: true,
         observer: '_toggleMapType'
       },
@@ -148,7 +169,7 @@
 
       overlayMenuHidden: {
         type: Boolean,
-        value: true
+        value: false
       },
 
       _map: {
@@ -156,46 +177,42 @@
       },
 
       _layers: {
-        type: Object
+        type: Array,
+        value: []
       }
     },
 
     attached: function() {
       // Create a Google Maps layer
       var googleLayer = new olgm.layer.Google({
-        visible: false,
+        visible: true,
         type: 'base',
         title: 'GoogleMaps'
       });
-
       // Create OSM Layer
       var osmLayer = new ol.layer.Tile({
-        visible: true,
+        visible: false,
         type: 'base',
         title: 'OpenStreetMap',
         source: new ol.source.OSM()
       })
 
-      var map = new ol.Map({
+      this._layers.push(googleLayer);
+      this._layers.push(osmLayer);
+
+      this._map = new ol.Map({
         interactions: olgm.interaction.defaults(),
-        layers: [
-          new ol.layer.Group({
-            title: 'Map Types',
-            layers: [
-              osmLayer,
-              googleLayer
-            ]
-          })
-        ],
+        layers: this._layers,
         target: 'map',
         view: new ol.View({
           center: ol.proj.fromLonLat([this.longitude, this.latitude]),
           zoom: this.zoom
         })
-      });   
+      });
 
-      var olGM = new olgm.OLGoogleMaps({map: map});
-      olGM.activate();
+      this._olGM = new olgm.OLGoogleMaps({map: this._map}); // map is the ol.Map instance
+      this._olGM.activate();
+      this._trafficLayer = new google.maps.TrafficLayer();
     },
 
     /**
@@ -222,19 +239,44 @@
      * @method toggleTraffic
      */
     toggleTraffic: function() {
-
+      if(typeof this._trafficLayer != 'undefined') {
+        if(this.traffic) {
+          var gmap = this._olGM.getGoogleMapsMap();
+          this._trafficLayer.setMap(gmap);
+        }
+        else {
+          this._trafficLayer.setMap();
+        }
+      }
     },
 
     _toggleMapType: function() {
+      if(typeof this._layers != 'undefined') {
+        if(this.mapType == 'GoogleMap') {
+          this._layers[0].setVisible(true);
+          this._layers[1].setVisible(false);
+        }
+        else {
+          this._layers[0].setVisible(false);
+          this._layers[1].setVisible(true);       
+        }
+      }
+    },
 
+    _isGoogleMap: function(mapType) {
+      return mapType == 'GoogleMap'
     },
 
     toggleOverlay: function() {
       if(this.overlayMenuHidden) {
         this.overlayMenuHidden = false;
+        this.$.overlayToggleButton.icon = "expand-less";
+        this.$.overlayMenu.style.background = "rgba(255,255,255,0.8)"
       }
       else {
         this.overlayMenuHidden = true;
+        this.$.overlayToggleButton.icon = "expand-more"; 
+        this.$.overlayMenu.style.background = "rgba(255,255,255,0.0)"   
       }
     },
 

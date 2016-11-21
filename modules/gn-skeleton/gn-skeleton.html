@@ -1,17 +1,16 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 
-<link rel="import" href="../../bower_components/app-layout/app-drawer-layout/app-drawer-layout.html">
-<link rel="import" href="../../bower_components/app-layout/app-drawer/app-drawer.html">
-<link rel="import" href="../../bower_components/app-layout/app-scroll-effects/app-scroll-effects.html">
-<link rel="import" href="../../bower_components/app-layout/app-header/app-header.html">
-<link rel="import" href="../../bower_components/app-layout/app-header-layout/app-header-layout.html">
-<link rel="import" href="../../bower_components/app-layout/app-toolbar/app-toolbar.html">
+<link rel="import" href="../../bower_components/paper-drawer-panel/paper-drawer-panel.html">
+<link rel="import" href="../../bower_components/paper-header-panel/paper-header-panel.html">
+<link rel="import" href="../../bower_components/paper-toolbar/paper-toolbar.html">
 
 <link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html">
 <link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
 <link rel="import" href="../../bower_components/iron-selector/iron-selector.html">
+<link rel="import" href="../../bower_components/iron-icon/iron-icon.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="../gn-map/gn-map.html">
 <link rel="import" href="../gn-api/gn-api.html">
 <link rel="import" href="../gn-menu/gn-directions-menu.html">
@@ -28,22 +27,9 @@
         --app-secondary-color: black;
       }
 
-      app-toolbar {
+      paper-toolbar {
         background-color: var(--app-primary-color);
         color: #fff;
-        --app-toolbar-font-size: 18px;
-      }
-
-      app-header paper-icon-button {
-        --paper-icon-button-ink-color: white;
-      }
-
-      app-header paper-button {
-        padding: 9.8px 7.98px;
-      }
-
-      app-drawer app-toolbar {
-        padding-left: 25px;
       }
 
       paper-button {
@@ -66,76 +52,73 @@
       }
     </style>
 
-    <app-drawer-layout fullbleed>
-
+    <paper-drawer-panel id="test" forceNarrow>
       <!-- Drawer content -->
-      <app-drawer>
-        <app-toolbar>Green Navigation</app-toolbar>
+      <paper-header-panel drawer>
+        <paper-toolbar>
+          <img src="/images/logo-64.png"/>
+        </paper-toolbar>
         <gn-directions-menu turnByTurn={{turnByTurn}} vehicles="{{vehicles}}" route="{{route}}"></gn-directions-menu>
-      </app-drawer>
+      </paper-header-panel>
 
       <!-- Main content -->
-      <app-header-layout has-scrolling-region>
+      <paper-header-panel mode="waterfall" main>
+        <paper-toolbar>
+          <paper-icon-button icon="menu" paper-drawer-toggle></paper-icon-button>
+          <span class="title"></span>          
+          <paper-button data-dialog="info" on-tap="_toggleInfoDialog">
+            <iron-icon icon="info"></iron-icon>
+            Info
+          </paper-button>
+          <paper-button data-dialog="contact" on-tap="_toggleContactDialog">
+            <iron-icon icon="mail"></iron-icon>
+            Contact
+          </paper-button>
+        </paper-toolbar>
 
-        <app-header condenses reveals effects="waterfall">
-          <app-toolbar>
-            <paper-icon-button icon="gn-icons:menu" drawer-toggle></paper-icon-button>
-            
-            <span main-title></span>          
-            <paper-button data-dialog="info" on-tap="_toggleInfoDialog">
-              <iron-icon icon="info"></iron-icon>
-              Info
-            </paper-button>
-            <paper-button data-dialog="contact" on-tap="_toggleContactDialog">
-              <iron-icon icon="mail"></iron-icon>
-              Contact
-            </paper-button>
-          </app-toolbar>
-        </app-header>
+          <gn-map class="content fit" zoom="9" map-type="{{mapType}}">
+            <gn-poly>
+              <template is="dom-repeat" items="{{ route.route }}">
+                <gn-point 
+                    latitude="{{ item.latitude }}" 
+                    longitude="{{ item.longitude }}">
+                </gn-point>
+              </template>
+            </gn-poly>
 
-        <gn-map zoom="9" map-type="{{mapType}}">
-          <gn-poly>
-            <template is="dom-repeat" items="{{ route.route }}">
-              <gn-point 
-                  latitude="{{ item.latitude }}" 
-                  longitude="{{ item.longitude }}">
-              </gn-point>
+            <template is="dom-if" if={{turnByTurn}}>
+              <google-map-marker latitude="{{latitude}}" longitude="{{longitude}}"></google-map-marker>
+              <gn-path-follower id="map"
+                                route="{{route.route}}"
+                                latitude="{{latitude}}"
+                                longitude="{{longitude}}"
+                                onpath="{{onpath}}"
+                                dist="{{distance}}"
+                                turn-code="{{direction}}"
+                                turn-dist="{{turnDistance}}"></gn-path-follower>
+              <gn-notification-container id="notifications"
+                                         hidden="true"
+                                         turn-code="[[direction]]"
+                                         distance="[[turnDistance]]"></gn-notification-container>
             </template>
-          </gn-poly>
+          </gn-map>
 
-          <template is="dom-if" if={{turnByTurn}}>
-            <google-map-marker latitude="{{latitude}}" longitude="{{longitude}}"></google-map-marker>
-            <gn-path-follower id="map"
-                              route="{{route.route}}"
-                              latitude="{{latitude}}"
-                              longitude="{{longitude}}"
-                              onpath="{{onpath}}"
-                              dist="{{distance}}"
-                              turn-code="{{direction}}"
-                              turn-dist="{{turnDistance}}"></gn-path-follower>
-            <gn-notification-container id="notifications"
-                                       hidden="true"
-                                       turn-code="[[direction]]"
-                                       distance="[[turnDistance]]"></gn-notification-container>
-          </template>
-        </gn-map>
+          <paper-dialog id="info">
+            <h2>Green Navigation</h2>
+            <p>The GreenNav organization is a community of young researchers and students at the University of Lübeck. We decided not long ago to go open source in order to collaborate with others and to show what we are working on.</p>
+            <p>The projects of the GreenNav organization are closely related to the student projects at the university’s computer science program. However, with this organisation we invite everyone to participate in the development of experimental routing systems.
+            <br /><a href="http://greennav.github.io/what-is-greennav.html">Get more information about GreenNav</a>
+            </p>
+          </paper-dialog>
 
-        <paper-dialog id="info">
-          <h2>Green Navigation</h2>
-          <p>The GreenNav organization is a community of young researchers and students at the University of Lübeck. We decided not long ago to go open source in order to collaborate with others and to show what we are working on.</p>
-          <p>The projects of the GreenNav organization are closely related to the student projects at the university’s computer science program. However, with this organisation we invite everyone to participate in the development of experimental routing systems.
-          <br /><a href="http://greennav.github.io/what-is-greennav.html">Get more information about GreenNav</a>
-          </p>
-        </paper-dialog>
-
-        <paper-dialog id="contact">
-          <h2>Contact</h2>
-          <p>There are several ways to contact us. For questions about coding, issues, etc. please use <a href="https://github.com/Greennav">Github</a></p>
-          <p>For more general questions use our <a href="https://plus.google.com/communities/110704433153909631379">G+ page</a> or <a href="https://groups.google.com/forum/#!forum/greennav">Google Groups</a></p>
-        </paper-dialog>
-        
-      </app-header-layout>
-    </app-drawer-layout>
+          <paper-dialog id="contact">
+            <h2>Contact</h2>
+            <p>There are several ways to contact us. For questions about coding, issues, etc. please use <a href="https://github.com/Greennav">Github</a></p>
+            <p>For more general questions use our <a href="https://plus.google.com/communities/110704433153909631379">G+ page</a> or <a href="https://groups.google.com/forum/#!forum/greennav">Google Groups</a></p>
+          </paper-dialog>
+        </div>
+      </paper-header-panel>
+    </paper-drawer-panel>
   </template>
 
   <script>
@@ -151,7 +134,7 @@
 
         turnByTurn: {
           type: Boolean,
-          value: true
+          value: false
         }
       },
 
@@ -161,8 +144,7 @@
 
       _toggleContactDialog: function(e) {
         this.$.contact.toggle();
-      },
-
+      }
     });
   </script>
 </dom-module>

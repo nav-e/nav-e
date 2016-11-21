@@ -118,7 +118,7 @@
           <paper-slider pin value="{{battery}}"></paper-slider>
         </div>
 
-        <paper-toggle-button checked="{{turnByTurn}}">Turn-by-Turn Navigation</paper-toggle-button>
+        <paper-toggle-button disabled="true" checked="{{turnByTurn}}">Turn-by-Turn Navigation</paper-toggle-button>
         <paper-button class="actionButton" raised on-tap="getDirections" disabled="[[!isFormValid]]">
           <iron-icon icon="send"></iron-icon>
           Get Directions
@@ -227,7 +227,7 @@
 
         turnByTurn: {
           type: Boolean,
-          value: () => true
+          value: () => false
         }
       },
 
