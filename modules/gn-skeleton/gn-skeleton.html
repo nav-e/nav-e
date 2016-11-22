@@ -76,32 +76,7 @@
           </paper-button>
         </paper-toolbar>
 
-          <gn-map class="content fit" zoom="9" map-type="{{mapType}}">
-            <gn-poly>
-              <template is="dom-repeat" items="{{ route.route }}">
-                <gn-point 
-                    latitude="{{ item.latitude }}" 
-                    longitude="{{ item.longitude }}">
-                </gn-point>
-              </template>
-            </gn-poly>
-
-            <template is="dom-if" if={{turnByTurn}}>
-              <google-map-marker latitude="{{latitude}}" longitude="{{longitude}}"></google-map-marker>
-              <gn-path-follower id="map"
-                                route="{{route.route}}"
-                                latitude="{{latitude}}"
-                                longitude="{{longitude}}"
-                                onpath="{{onpath}}"
-                                dist="{{distance}}"
-                                turn-code="{{direction}}"
-                                turn-dist="{{turnDistance}}"></gn-path-follower>
-              <gn-notification-container id="notifications"
-                                         hidden="true"
-                                         turn-code="[[direction]]"
-                                         distance="[[turnDistance]]"></gn-notification-container>
-            </template>
-          </gn-map>
+          <gn-map class="content fit" route={{route.route}} zoom="9" map-type="{{mapType}}"></gn-map>
 
           <paper-dialog id="info">
             <h2>Green Navigation</h2>
