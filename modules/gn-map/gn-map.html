@@ -5,7 +5,7 @@
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
 
 <link rel="stylesheet" href="https://openlayers.org/en/v3.19.1/css/ol.css" type="text/css">
-<script src="https://openlayers.org/en/v3.19.1/build/ol.js" type="text/javascript"></script>
+<script src="https://openlayers.org/en/v3.19.1/build/ol.js"></script>
 
 <dom-module id="gn-map">
   <template>
@@ -66,6 +66,8 @@
             </paper-listbox>
           </paper-dropdown-menu>
           <paper-toggle-button checked="{{traffic}}">Traffic</paper-toggle-button>
+          <paper-toggle-button checked="{{wind}}">Wind</paper-toggle-button>
+          <paper-toggle-button checked="{{temperature}}">Temperature</paper-toggle-button>
         </div>        
       </div>
     </div>
@@ -134,24 +136,25 @@
       },
 
       /**
-       * Shows weather in major cities within the map bounds if `true`.
+       * Shows wind in major cities within the map bounds if `true`.
        */
-      weather: {
+      wind: {
         type: Boolean,
         reflectToAttribute: true,
         notify: true,
         value: false,
-        observer: 'toggleWeather'
+        observer: 'toggleWind'
       },
 
       /**
-       * Shows a precipitation layer if `true`.
+       * Shows wind in major cities within the map bounds if `true`.
        */
-      precipitation: {
+      temperature: {
         type: Boolean,
         reflectToAttribute: true,
+        notify: true,
         value: false,
-        observer: 'togglePrecipitation'
+        observer: 'toggleTemperature'
       },
 
       /**
@@ -191,7 +194,7 @@
         })
       });
 
-      // Create OSM Layer
+      // Create OSM layer
       var osmLayer = new ol.layer.Tile({
         visible: false,
         type: 'base',
@@ -199,8 +202,10 @@
         source: new ol.source.OSM()
       })
       
+      // Routing layer
       var routeLayer = new ol.layer.Vector();
 
+      // Traffic layer
       var computeQuadKey = function(x, y, z) {
         var quadKeyDigits = [];
         for (var i = z; i > 0; i--) {
@@ -230,10 +235,36 @@
           })
       });
 
+      // Weather layer
+      var temperatureLayer =  new ol.layer.Tile({
+        opacity: 0.3,
+        visible: this.temperature,
+        source: new ol.source.OSM({
+          url: "http://{s}.tile.openweathermap.org/map/temp/{z}/{x}/{y}.png",
+          attribution: 'Map data © OpenWeatherMap',
+          crossOrigin: null,
+          maxZoom: 18
+        })
+      });
+
+      // Wind layer
+      var windLayer =  new ol.layer.Tile({
+        opacity: 0.3,
+        visible: this.wind,
+        source: new ol.source.OSM({
+          url: "http://{s}.tile.openweathermap.org/map/wind/{z}/{x}/{y}.png",
+          attribution: 'Map data © OpenWeatherMap',
+          crossOrigin: null,
+          maxZoom: 18
+        })
+      });
+
       this._layers.push(googleLayer);
       this._layers.push(osmLayer);
       this._layers.push(trafficLayer);
       this._layers.push(routeLayer);
+      this._layers.push(temperatureLayer);
+      this._layers.push(windLayer);
 
       this._map = new ol.Map({
         layers: this._layers,
@@ -247,21 +278,35 @@
     },
 
     /**
-     * Toggles the weather icons on the map.
+     * Toggles the wind overlay.
      *
-     * @method toggleWeather
+     * @method toggleWind
      */
-    toggleWeather: function() {
-
+    toggleWind: function() {
+      if(typeof this._layers != 'undefined') {
+        if(this.wind) {
+          this._layers[5].setVisible(true);
+        }
+        else {
+          this._layers[5].setVisible(false);
+        }
+      }
     },
 
     /**
-     * Toggles the precipitation layer on the map.
+     * Toggles the temperature layer on the map.
      *
-     * @method togglePrecipitation
+     * @method toggleTemperature
      */
-    togglePrecipitation: function() {
-
+    toggleTemperature: function() {
+      if(typeof this._layers != 'undefined') {
+        if(this.temperature) {
+          this._layers[4].setVisible(true);
+        }
+        else {
+          this._layers[4].setVisible(false);
+        }
+      }
     },
 
     /**
