@@ -2,7 +2,7 @@
 
 This project aims to provide a reference implementation for a GreenNav (Green Navigation) front end. It makes use of the different polymer elements created for GreenNav.
 
-![Screenshot](https://cloud.githubusercontent.com/assets/1525818/20455909/7b12d152-ae67-11e6-8249-71a2ab279f26.png)
+![Screenshot](https://cloud.githubusercontent.com/assets/1525818/20533581/59a74de4-b0de-11e6-99b6-b60918bd72a6.png)
 
 ## Getting Started 
 
