@@ -2,32 +2,28 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="application-name" content="Green Navigation">
-    
     <title>Green Navigation</title>
-    
     <link rel="manifest" href="/manifest.json">
-    <link rel="shortcut icon" sizes="32x32" href="/images/greennav-icon-32.png">
+    <link rel="shortcut icon" sizes="32x32" href="images/greennav-icon-32.png">
 
-    <script>
-      window.Polymer = {lazyRegister: true, dom: 'shady'};
-    </script>
-
-    <link rel="import" href="modules/gn-skeleton/gn-skeleton.html">
 
     <style>
       body {
-        margin: 0;
         font-family: 'Roboto', 'Noto', sans-serif;
-        line-height: 1.5;
-        min-height: 100vh;
         background-color: #eee;
       }
     </style>
   </head>
   <body>
-    <gn-skeleton />
+    <div id="root"></div>
+    <script type="text/babel">
+      import React from 'react';
+      import ReactDOM from 'react-dom';
+
+      ReactDOM.render(
+        <h1>Hello, world!</h1>,
+        document.getElementById('root')
+      );
+    </script>
   </body>
 </html>
