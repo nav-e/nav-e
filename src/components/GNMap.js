@@ -42,8 +42,59 @@ export default class GNMap extends Component {
       })
     });
 
+    // Traffic layer
+    var computeQuadKey = function(x, y, z) {
+      var quadKeyDigits = [];
+      for (var i = z; i > 0; i--) {
+          var digit = 0;
+          var mask = 1 << (i - 1);
+          if ((x & mask) != 0)
+              digit++;
+          if ((y & mask) != 0)
+              digit = digit + 2;
+          quadKeyDigits.push(digit);
+      }
+      return quadKeyDigits.join('');
+    };
+    var trafficLayer = new ol.layer.Tile({
+        visible: false,
+        source: new ol.source.XYZ({
+            maxZoom: 19,
+            tileUrlFunction(tileCoord, pixelRatio, projection) {
+                var z = tileCoord[0];
+                var x = tileCoord[1];
+                var y = -tileCoord[2] - 1;
+                return "http://t0.tiles.virtualearth.net/tiles/t" + computeQuadKey(x, y, z) + ".png";
+            }
+        })
+    });
+
+    // Temperature layer
+    var temperatureLayer =  new ol.layer.Tile({
+      opacity: 0.3,
+      visible: false,
+      source: new ol.source.OSM({
+        url: "http://{s}.tile.openweathermap.org/map/temp/{z}/{x}/{y}.png",
+        attribution: 'Map data © OpenWeatherMap',
+        crossOrigin: null,
+        maxZoom: 18
+      })
+    });
+
+    // Wind layer
+    var windLayer =  new ol.layer.Tile({
+      opacity: 0.3,
+      visible: false,
+      source: new ol.source.OSM({
+        url: "http://{s}.tile.openweathermap.org/map/wind/{z}/{x}/{y}.png",
+        attribution: 'Map data © OpenWeatherMap',
+        crossOrigin: null,
+        maxZoom: 18
+      })
+    });
+
     var map = new ol.Map({
-      layers: [osmLayer, googleLayer, routeLayer],
+      layers: [osmLayer, googleLayer, routeLayer, trafficLayer, temperatureLayer, windLayer],
       view: new ol.View({
         center: ol.proj.fromLonLat([this.props.longitude, this.props.latitude]),
         zoom: this.props.zoom
@@ -51,7 +102,10 @@ export default class GNMap extends Component {
     });
 
     this.state = {
-      map : map
+      map : map,
+      traffic: false,
+      temperature: false,
+      wind: false
     }
   }
 
@@ -77,6 +131,21 @@ export default class GNMap extends Component {
       this.state.map.getLayers().getArray()[1].setVisible(true); 
       this.state.map.getLayers().getArray()[0].setVisible(false);      
     }
+  }
+
+  toggleTraffic = () => {
+    this.setState({traffic: !this.state.traffic})
+    this.state.map.getLayers().getArray()[3].setVisible(!this.state.traffic);
+  }
+
+  toggleTemperature = () => {
+    this.setState({temperature: !this.state.temperature})
+    this.state.map.getLayers().getArray()[4].setVisible(!this.state.temperature);
+  }
+
+  toggleWind = () => {
+    this.setState({wind: !this.state.wind})
+    this.state.map.getLayers().getArray()[5].setVisible(!this.state.wind);
   }
 
   setRoute = route => {

@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
 import { Toolbar, ToolbarGroup, ToolbarSeparator, ToolbarTitle } from 'material-ui/Toolbar';
 import FlatButton from 'material-ui/FlatButton';
-import { green100, green700, green900 } from 'material-ui/styles/colors';
+import { green100, green300, green700, green900 } from 'material-ui/styles/colors';
 import FontIcon from 'material-ui/FontIcon';
 import Dialog from 'material-ui/Dialog';
+import Toggle from 'material-ui/Toggle';
 import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
 
@@ -15,6 +16,14 @@ const GreenNavServerAddress = 'http://localhost:6833/greennav/'
 const styles = {
   label: {
     color: 'white'
+  },
+
+  trackSwitched: {
+    backgroundColor: green700
+  },
+
+  thumbSwitched: {
+    backgroundColor: green300
   }
 }
 
@@ -26,7 +35,10 @@ export default class GreenNav extends Component {
       openInfoDialog: false,
       openContactDialog: false,
       openMapDialog: false,
-      mapType: 0
+      mapType: 0,
+      temperatureEnabled: false,
+      trafficEnabled: false,
+      windEnabled: false
     };
   }
 
@@ -72,6 +84,21 @@ export default class GreenNav extends Component {
     this.setState({mapType: value});
     this.refs.map.setMapType(value);
   }
+
+  toggleTraffic = () => {
+    this.setState({trafficEnabled: !this.state.trafficEnabled});
+    this.refs.map.toggleTraffic();
+  }
+
+  toggleWind = () => {
+    this.setState({windEnabled: !this.state.windEnabled});
+    this.refs.map.toggleWind();
+  }
+
+  toggleTemperature = () => {
+    this.setState({temperatureEnabled: !this.state.temperatureEnabled});
+    this.refs.map.toggleTemperature();
+  }  
 
   render() {
     const infoActions = [
@@ -166,6 +193,31 @@ export default class GreenNav extends Component {
             <MenuItem value={0} primaryText="OpenStreetMap" />
             <MenuItem value={1} primaryText="Google Map" />
           </SelectField>
+          <h2>Overlays</h2>
+          <Toggle
+            label="Traffic"
+            toggled={this.state.trafficEnabled}
+            onToggle={this.toggleTraffic}
+            labelPosition="right"
+            thumbSwitchedStyle={styles.thumbSwitched}
+            trackSwitchedStyle={styles.trackSwitched}
+          />
+          <Toggle
+            label="Temperature"
+            toggled={this.state.temperatureEnabled}
+            onToggle={this.toggleTemperature}
+            labelPosition="right"
+            thumbSwitchedStyle={styles.thumbSwitched}
+            trackSwitchedStyle={styles.trackSwitched}
+          />
+          <Toggle
+            label="Wind"
+            toggled={this.state.windEnabled}
+            onToggle={this.toggleWind}
+            labelPosition="right"
+            thumbSwitchedStyle={styles.thumbSwitched}
+            trackSwitchedStyle={styles.trackSwitched}
+          />
         </Dialog>        
       </div>
     );
