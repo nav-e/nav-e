@@ -48,10 +48,10 @@ export default class GNMap extends Component {
       for (var i = z; i > 0; i--) {
           var digit = 0;
           var mask = 1 << (i - 1);
-          if ((x & mask) != 0)
+          if ((x & mask) !== 0)
               digit++;
-          if ((y & mask) != 0)
-              digit = digit + 2;
+          if ((y & mask) !== 0)
+              digit +=  2;
           quadKeyDigits.push(digit);
       }
       return quadKeyDigits.join('');
@@ -119,12 +119,11 @@ export default class GNMap extends Component {
   }
 
   updateSize = () => {
-    console.log('update map size')
     this.state.map.updateSize()
   }
 
   setMapType = mapType => {
-    if(mapType == 0) {
+    if(mapType === 0) {
       this.state.map.getLayers().getArray()[0].setVisible(true); 
       this.state.map.getLayers().getArray()[1].setVisible(false);
     }

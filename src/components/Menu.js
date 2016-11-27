@@ -1,6 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 import {Tabs, Tab} from 'material-ui/Tabs';
-import TextField from 'material-ui/TextField';
+import AutoComplete from 'material-ui/AutoComplete';
 import Slider from 'material-ui/Slider';
 import RaisedButton from 'material-ui/RaisedButton';
 import FontIcon from 'material-ui/FontIcon';
@@ -52,8 +52,46 @@ export default class Menu extends Component {
     super(props);
     this.state = {
       vehicle: 0,
-      open: this.props.open
+      open: this.props.open,
+      xhrFrom: new XMLHttpRequest(),
+      xhrTo: new XMLHttpRequest(),
+      dataSourceFrom: [],
+      dataSourceTo: [],
     }
+  }
+
+  componentDidMount() {
+    this.state.xhrFrom.onreadystatechange = () => {
+      if (this.state.xhrFrom.readyState === 4 && this.state.xhrFrom.status === 200) {
+        let places = JSON.parse(this.state.xhrFrom.responseText).map(place => {
+          return {'text': place.display_name, 'data': {
+              osm_id: place.osm_id,
+              longitude: place.lon,
+              latitude: place.lat
+            }}
+        });
+        console.log(places)
+        this.setState({
+          dataSourceFrom: places
+        });      
+      }
+    };
+
+    this.state.xhrTo.onreadystatechange = () => {
+      if (this.state.xhrTo.readyState === 4 && this.state.xhrTo.status === 200) {
+        let places = JSON.parse(this.state.xhrTo.responseText).map(place => {
+          return {'text': place.display_name, 'data': {
+              osm_id: place.osm_id,
+              longitude: place.lon,
+              latitude: place.lat
+            }}
+        });
+        console.log(places)
+        this.setState({
+          dataSourceTo: places
+        });      
+      }
+    };
   }
 
   getVehicles = () => {
@@ -79,22 +117,54 @@ export default class Menu extends Component {
     this.setState({vehicle: value});
   }
 
+  handleUpdateFromInput = address => {
+    if(this.state.xhrFrom.readyState !== 0 || this.state.xhrFrom.readyState !== 4) {
+      this.state.xhrFrom.abort();
+    }
+    this.state.xhrFrom.open('GET', 'http://nominatim.openstreetmap.org/search?format=json&q='+address, true);
+    this.state.xhrFrom.send();
+  }
+
+  handleUpdateToInput = address => {
+    if(this.state.xhrTo.readyState !== 0 || this.state.xhrTo.readyState !== 4) {
+      this.state.xhrTo.abort();
+    }
+    this.state.xhrTo.open('GET', 'http://nominatim.openstreetmap.org/search?format=json&q='+address, true);
+    this.state.xhrTo.send();
+  }
+
   render() {
+    const dataSourceConfig = {
+      text: 'text',
+      value: 'data',
+    };
+
     return (
       <div style={this.state.open ? styles.container : {display: 'none'}}>
         <Tabs inkBarStyle={styles.active}>
           <Tab label="Route" style={styles.tab}>
             <div style={styles.menu}>
-              <TextField  floatingLabelText="From" 
-                          style={styles.textField}
-                          floatingLabelStyle={styles.floatingLabelStyle} 
-                          underlineStyle={styles.underlineStyle}
-                          underlineFocusStyle={styles.underlineFocusStyle} />
-              <TextField  floatingLabelText="To"
-                          style={styles.textField}
-                          floatingLabelStyle={styles.floatingLabelStyle} 
-                          underlineStyle={styles.underlineStyle}
-                          underlineFocusStyle={styles.underlineFocusStyle} />
+              <AutoComplete
+                floatingLabelText="From"
+                style={styles.textField}
+                dataSource={this.state.dataSourceFrom}
+                onUpdateInput={this.handleUpdateFromInput}
+                floatingLabelStyle={styles.floatingLabelStyle} 
+                underlineStyle={styles.underlineStyle}
+                underlineFocusStyle={styles.underlineFocusStyle}
+                dataSourceConfig={dataSourceConfig}
+                fullWidth={true} />
+
+              <AutoComplete
+                floatingLabelText="To"
+                style={styles.textField}
+                dataSource={this.state.dataSourceTo}
+                onUpdateInput={this.handleUpdateToInput}
+                floatingLabelStyle={styles.floatingLabelStyle} 
+                underlineStyle={styles.underlineStyle}
+                underlineFocusStyle={styles.underlineFocusStyle}
+                dataSourceConfig={dataSourceConfig}
+                fullWidth={true} />
 
               <SelectField
                 floatingLabelText="Vehicle"
