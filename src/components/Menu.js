@@ -10,13 +10,7 @@ import { grey800, green900, green700, lime600 } from 'material-ui/styles/colors'
 
 const styles = {
   container: {
-    width: '400px',
-    transition: 'width 0.1s ease-out-in'
-  },
-
-  containerHidden: {
-    width: '0px',
-    transition: 'width 0.1s ease-in-out'
+    width: '400px'
   },
 
   tab: {
@@ -57,7 +51,8 @@ export default class Menu extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      vehicle: 0
+      vehicle: 0,
+      open: this.props.open
     }
   }
 
@@ -76,13 +71,17 @@ export default class Menu extends Component {
     ];
   }
 
+  toggle = callback => {
+    this.setState({open: !this.state.open}, callback);
+  }
+
   vehicleChange = (event, index, value) => {
     this.setState({vehicle: value});
   }
 
   render() {
     return (
-      <div style={this.props.open ? styles.container : styles.containerHidden}>
+      <div style={this.state.open ? styles.container : {display: 'none'}}>
         <Tabs inkBarStyle={styles.active}>
           <Tab label="Route" style={styles.tab}>
             <div style={styles.menu}>
@@ -103,7 +102,7 @@ export default class Menu extends Component {
                 onChange={this.vehicleChange}
               >
                 {this.getVehicles().map((vehicle, index) => {
-                  return <MenuItem value={index} primaryText={vehicle} />
+                  return <MenuItem key={index} value={index} primaryText={vehicle} />
                 })}
               </SelectField>
 

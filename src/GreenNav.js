@@ -31,7 +31,6 @@ export default class GreenNav extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      openDrawer: true,
       openInfoDialog: false,
       openContactDialog: false,
       openMapDialog: false,
@@ -43,8 +42,11 @@ export default class GreenNav extends Component {
   }
 
   toggleDrawer = () => {
-    this.setState({openDrawer: !this.state.openDrawer})
-    setTimeout(() => this.refs.map.updateSize(), 100);
+    this.refs.drawer.toggle(this.updateMapSize);
+  }
+
+  updateMapSize = () => {
+    this.refs.map.updateSize();
   }
 
   getRoute = () => {
@@ -151,7 +153,7 @@ export default class GreenNav extends Component {
         </Toolbar>
 
         <div style={{display: 'flex'}}>
-          <Menu ref="menu" open={this.state.openDrawer} getRoute={this.getRoute}/>
+          <Menu ref="drawer" open={true} getRoute={this.getRoute}/>
           <GNMap ref="map" mapType={this.state.mapType}/>
         </div>
 

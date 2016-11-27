@@ -119,6 +119,7 @@ export default class GNMap extends Component {
   }
 
   updateSize = () => {
+    console.log('update map size')
     this.state.map.updateSize()
   }
 
