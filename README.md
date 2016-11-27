@@ -2,7 +2,7 @@
 
 This project aims to provide a reference implementation for a GreenNav (Green Navigation) front end. It makes use of the different react elements created for GreenNav.
 
-![Screenshot](https://cloud.githubusercontent.com/assets/1525818/20544808/0f49517e-b10c-11e6-916b-ac4a3354be6a.gif)
+![Screenshot](https://cloud.githubusercontent.com/assets/1525818/20647282/91a869c0-b490-11e6-9fda-ff542229dade.gif)
 
 ## Getting Started 
 
