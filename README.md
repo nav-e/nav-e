@@ -14,19 +14,19 @@ This project aims to provide a reference implementation for a GreenNav (Green Na
 sudo apt install nodejs npm
 
 # optional: 
-# we recommend you to set a symlink from nodejs to node 
+# we recommend to set a symlink from nodejs to node 
 # if you get a command not found error
 # 
 # sudo ln -s /usr/bin/nodejs /usr/bin/node
 
-➜  ~ npm --version
+npm --version
 3.10.8
-➜  ~ node --version
+node --version
 v7.0.0
 
 ```
 
-In some distributions Node.js and npm are a little bit outdated, but don't panik :wink:
+In some distributions Node.js and npm are a little bit outdated, but *don't panik* :wink: <br />
 you can use npm itself to update Node.js and npm to the latest versions.
 
 ```zsh
@@ -37,8 +37,6 @@ sudo n stable
 # or 
 # sudo n latest
 ```
-
-#### Install dependencies
 
 ### Setup
 
@@ -67,11 +65,11 @@ The web interface is now accessible at http://localhost:3000/ by default, see yo
 - Please fork the repository
 - Clone the webapp repository from your github account
 ```zsh
-git clone https://github.com/$(GITHUB_USER)/webapp.git
+git clone https://github.com/$(GITHUB_USER)/GreenNav.git
 ```
 - Create a new feature branch
 ```zsh
-cd webapp
+cd GreenNav
 git checkout -b your-feature
 ```
 - Make local changes and implement your feature 
