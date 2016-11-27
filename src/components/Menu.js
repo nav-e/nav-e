@@ -4,6 +4,8 @@ import TextField from 'material-ui/TextField';
 import Slider from 'material-ui/Slider';
 import RaisedButton from 'material-ui/RaisedButton';
 import FontIcon from 'material-ui/FontIcon';
+import SelectField from 'material-ui/SelectField';
+import MenuItem from 'material-ui/MenuItem';
 import { grey800, green900, green700, lime600 } from 'material-ui/styles/colors';
 
 const styles = {
@@ -52,6 +54,32 @@ const styles = {
 
 export default class Menu extends Component {
 
+  constructor(props) {
+    super(props);
+    this.state = {
+      vehicle: 0
+    }
+  }
+
+  getVehicles = () => {
+    return ["Fiat Fiorino",
+            "Smart Roadster", 
+            "Sam", 
+            "Citysax", 
+            "MUTE", 
+            "Spyder-S", 
+            "Think", 
+            "Luis", 
+            "STROMOS", 
+            "Karabag Fiat 500E", 
+            "Lupower Fiat 500E"
+    ];
+  }
+
+  vehicleChange = (event, index, value) => {
+    this.setState({vehicle: value});
+  }
+
   render() {
     return (
       <div style={this.props.open ? styles.container : styles.containerHidden}>
@@ -68,6 +96,17 @@ export default class Menu extends Component {
                           floatingLabelStyle={styles.floatingLabelStyle} 
                           underlineStyle={styles.underlineStyle}
                           underlineFocusStyle={styles.underlineFocusStyle} />
+
+              <SelectField
+                floatingLabelText="Vehicle"
+                value={this.state.vehicle}
+                onChange={this.vehicleChange}
+              >
+                {this.getVehicles().map((vehicle, index) => {
+                  return <MenuItem value={index} primaryText={vehicle} />
+                })}
+              </SelectField>
+
               <p>Battery Level</p>
               <Slider style={styles.slider} defaultValue={1} />
               <RaisedButton label="Get Route" onClick={this.props.getRoute}
