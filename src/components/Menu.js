@@ -70,7 +70,7 @@ export default class Menu extends Component {
               latitude: place.lat
             }}
         });
-        console.log(places)
+
         this.setState({
           dataSourceFrom: places
         });      
@@ -86,7 +86,7 @@ export default class Menu extends Component {
               latitude: place.lat
             }}
         });
-        console.log(places)
+
         this.setState({
           dataSourceTo: places
         });      

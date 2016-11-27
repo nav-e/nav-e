@@ -10,7 +10,7 @@ const styles = {
   }
 }
 
-export default class GNMap extends Component {
+export default class GreenNavMap extends Component {
 
   constructor(props) {
     super(props);
@@ -177,13 +177,13 @@ export default class GNMap extends Component {
   }
 }
 
-GNMap.propTypes = {
+GreenNavMap.propTypes = {
   longitude: PropTypes.number,
   latitude: PropTypes.number,
   zoom: PropTypes.number
 }
 
-GNMap.defaultProps = {
+GreenNavMap.defaultProps = {
   longitude: 11.566,
   latitude: 48.139,
   zoom: 11

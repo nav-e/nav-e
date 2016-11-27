@@ -9,7 +9,7 @@ import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
 
 import Menu from './components/Menu';
-import GNMap from './components/GNMap';
+import GreenNavMap from './components/GreenNavMap';
 
 const GreenNavServerAddress = 'http://localhost:6833/greennav/'
 
@@ -154,7 +154,7 @@ export default class GreenNav extends Component {
 
         <div style={{display: 'flex'}}>
           <Menu ref="drawer" open={true} getRoute={this.getRoute}/>
-          <GNMap ref="map" mapType={this.state.mapType}/>
+          <GreenNavMap ref="map" mapType={this.state.mapType}/>
         </div>
 
         <Dialog

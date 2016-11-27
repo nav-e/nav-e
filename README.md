@@ -10,24 +10,41 @@ This project aims to provide a reference implementation for a GreenNav (Green Na
 
 #### Install the latest version of Node.js and npm 
 
-  For Mac OS X or Windows you can download the pre-build installers from [nodejs.org](https://nodejs.org/en/download/) .
-  If you use Linux we recommend to add Node.js to your sources. Eg. for Ubuntu based distributions the most up-to-date ppa
-  is provided by `https://launchpad.net/~chris-lea/+archive/node.js/`
+```zsh
+sudo apt install nodejs npm
+
+# optional: 
+# we recommend you to set a symlink from nodejs to node 
+# if you get a command not found error
+# 
+# sudo ln -s /usr/bin/nodejs /usr/bin/node
+
+➜  ~ npm --version
+3.10.8
+➜  ~ node --version
+v7.0.0
+
+```
+
+In some distributions Node.js and npm are a little bit outdated, but don't panik :wink:
+you can use npm itself to update Node.js and npm to the latest versions.
 
 ```zsh
-sudo add-apt-repository ppa:chris-lea/node.js  
-sudo apt-get update  
-sudo apt-get install nodejs
+sudo npm install -g npm
+sudo npm install -g n
+
+sudo n stable
+# or 
+# sudo n latest
 ```
 
 #### Install dependencies
 
 ### Setup
 
-- Clone the repository
-- Install the dependencies
- 
 ```zsh
+git clone https://github.com/Greennav/GreenNav.git
+cd GreenNav
 npm install
 ```
 
@@ -38,7 +55,6 @@ README for instructions).
 ### Run
 
 ```zsh
-cd /path/to/GreenNav
 npm start
 ```
 
