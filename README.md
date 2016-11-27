@@ -65,11 +65,11 @@ The web interface is now accessible at http://localhost:3000/ by default, see yo
 - Please fork the repository
 - Clone the webapp repository from your github account
 ```zsh
-git clone https://github.com/$(GITHUB_USER)/webapp.git
+git clone https://github.com/$(GITHUB_USER)/GreenNav.git
 ```
 - Create a new feature branch
 ```zsh
-cd webapp
+cd GreenNav
 git checkout -b your-feature
 ```
 - Make local changes and implement your feature 
