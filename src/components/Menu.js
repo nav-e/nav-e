@@ -57,6 +57,8 @@ export default class Menu extends Component {
       xhrTo: new XMLHttpRequest(),
       dataSourceFrom: [],
       dataSourceTo: [],
+      start: '',
+      destination: ''
     }
   }
 
@@ -121,7 +123,7 @@ export default class Menu extends Component {
     if(this.state.xhrFrom.readyState !== 0 || this.state.xhrFrom.readyState !== 4) {
       this.state.xhrFrom.abort();
     }
-    this.state.xhrFrom.open('GET', 'http://nominatim.openstreetmap.org/search?format=json&q='+address, true);
+    this.state.xhrFrom.open('GET', this.props.autoCompleteAddress+'search/'+address, true);
     this.state.xhrFrom.send();
   }
 
@@ -129,8 +131,17 @@ export default class Menu extends Component {
     if(this.state.xhrTo.readyState !== 0 || this.state.xhrTo.readyState !== 4) {
       this.state.xhrTo.abort();
     }
-    this.state.xhrTo.open('GET', 'http://nominatim.openstreetmap.org/search?format=json&q='+address, true);
+    this.state.xhrTo.open('GET', this.props.autoCompleteAddress+'search/'+address, true);
     this.state.xhrTo.send();
+  }
+
+  getRoute = () => {
+    if(this.state.start === '' && this.state.destination === '') {
+      //TODO: implement notifications (Thomas GSoC Project - see polymer reference branch) 
+      alert('Please select a start and destination from the suggestions');
+      return;
+    }
+    this.props.getRoute(this.state.start, this.state.destination);
   }
 
   render() {
@@ -147,6 +158,11 @@ export default class Menu extends Component {
               <AutoComplete
                 floatingLabelText="From"
                 style={styles.textField}
+                onNewRequest={(req, index) => {
+                  this.setState({
+                    start: index === -1 ? '' : this.state.dataSourceFrom[index].data.osm_id
+                  });
+                }}
                 dataSource={this.state.dataSourceFrom}
                 onUpdateInput={this.handleUpdateFromInput}
                 floatingLabelStyle={styles.floatingLabelStyle} 
@@ -157,6 +173,11 @@ export default class Menu extends Component {
 
               <AutoComplete
                 floatingLabelText="To"
+                onNewRequest={(req, index) => {
+                  this.setState({
+                    destination: index === -1 ? '' : this.state.dataSourceTo[index].data.osm_id
+                  });
+                }}
                 style={styles.textField}
                 dataSource={this.state.dataSourceTo}
                 onUpdateInput={this.handleUpdateToInput}
@@ -178,7 +199,7 @@ export default class Menu extends Component {
 
               <p>Battery Level</p>
               <Slider style={styles.slider} defaultValue={1} />
-              <RaisedButton label="Get Route" onClick={this.props.getRoute}
+              <RaisedButton label="Get Route" onClick={this.getRoute}
                           icon={<FontIcon className="material-icons" color={grey800}>near_me</FontIcon>}/>
             </div>
           </Tab>
@@ -197,6 +218,7 @@ export default class Menu extends Component {
 
 Menu.propTypes = {
   open: PropTypes.bool,
+  autoCompleteAddress: PropTypes.string.isRequired,
   getRoute: PropTypes.func.isRequired
 }
 

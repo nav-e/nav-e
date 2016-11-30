@@ -11,7 +11,7 @@ import MenuItem from 'material-ui/MenuItem';
 import Menu from './components/Menu';
 import GreenNavMap from './components/GreenNavMap';
 
-const GreenNavServerAddress = 'http://localhost:6833/greennav/'
+const GreenNavServerAddress = 'http://localhost:6833/';
 
 const styles = {
   label: {
@@ -49,12 +49,12 @@ export default class GreenNav extends Component {
     this.refs.map.updateSize();
   }
 
-  getRoute = () => {
-    let url = GreenNavServerAddress + 'vehicles/0/routes/1234-4321/opt/energy?battery=100&algorithm=EnergyAStar';
+  getRoute = (start_osm_id, destination_osm_id) => {
+    let url = GreenNavServerAddress + 'from/' + start_osm_id + '/to/' + destination_osm_id;
     fetch(url)
       .then(response => response.json())
       .then(route => {
-        this.refs.map.setRoute(route.route);
+        this.refs.map.setRoute(route);
       });
   }
 
@@ -153,7 +153,7 @@ export default class GreenNav extends Component {
         </Toolbar>
 
         <div style={{display: 'flex'}}>
-          <Menu ref="drawer" open={true} getRoute={this.getRoute}/>
+          <Menu autoCompleteAddress={GreenNavServerAddress} ref="drawer" open={true} getRoute={this.getRoute}/>
           <GreenNavMap ref="map" mapType={this.state.mapType}/>
         </div>
 
