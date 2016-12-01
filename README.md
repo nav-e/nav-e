@@ -46,9 +46,17 @@ cd GreenNav
 npm install
 ```
 
-:heavy_exclamation_mark: To see an example route with a button click, fetch the routing service from
-[here](https://github.com/Greennav/service-routing) and run the local server (see corresponding 
-README for instructions).
+### :heavy_exclamation_mark: Don't forget the back-end
+
+You also need to clone [our routing library](https://github.com/Greennav/rt-library) and run the node server locally
+
+```zsh
+git clone https://github.com/Greennav/rt-library.git
+npm install
+node demo-ucs.js
+```
+
+P.S.: Currently we only support the routing in Monaco
 
 ### Run
 
