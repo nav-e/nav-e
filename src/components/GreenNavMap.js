@@ -151,7 +151,7 @@ export default class GreenNavMap extends Component {
   setRoute = route => {
     var coords = [];
     route.forEach(point => {
-      coords.push([point.longitude, point.latitude]);
+      coords.push([point.lon, point.lat]);
     });
     var lineString = new ol.geom.LineString(coords);
     lineString.transform('EPSG:4326', 'EPSG:3857');
