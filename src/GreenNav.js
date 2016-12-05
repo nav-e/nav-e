@@ -100,7 +100,7 @@ export default class GreenNav extends Component {
   toggleTemperature = () => {
     this.setState({temperatureEnabled: !this.state.temperatureEnabled});
     this.refs.map.toggleTemperature();
-  }  
+  }
 
   render() {
     const infoActions = [
@@ -116,7 +116,7 @@ export default class GreenNav extends Component {
         onTouchTap={this.handleContactClose}
       />,
     ];
-    
+
     const mapActions = [
       <FlatButton
         label="Finish"
@@ -128,8 +128,8 @@ export default class GreenNav extends Component {
       <div>
         <Toolbar style={{height: '64px', backgroundColor: green900}}>
           <ToolbarGroup firstChild={true}>
-            <FontIcon className="material-icons" 
-                      color='white' 
+            <FontIcon className="material-icons"
+                      color='white'
                       hoverColor={green100}
                       onClick={this.toggleDrawer}>
               menu</FontIcon>
@@ -138,7 +138,7 @@ export default class GreenNav extends Component {
 
           <ToolbarGroup>
             <ToolbarTitle style={{color: green100}} text="Map Options" />
-            <FontIcon className="material-icons" 
+            <FontIcon className="material-icons"
                       color='white'
                       onTouchTap={this.handleMapOpen}
                       hoverColor={green100}>
@@ -220,7 +220,7 @@ export default class GreenNav extends Component {
             thumbSwitchedStyle={styles.thumbSwitched}
             trackSwitchedStyle={styles.trackSwitched}
           />
-        </Dialog>        
+        </Dialog>
       </div>
     );
   }
