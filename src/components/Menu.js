@@ -3,6 +3,7 @@ import {Tabs, Tab} from 'material-ui/Tabs';
 import AutoComplete from 'material-ui/AutoComplete';
 import Slider from 'material-ui/Slider';
 import RaisedButton from 'material-ui/RaisedButton';
+import FlatButton from 'material-ui/FlatButton';
 import FontIcon from 'material-ui/FontIcon';
 import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
@@ -53,60 +54,24 @@ export default class Menu extends Component {
     this.state = {
       vehicle: 0,
       open: this.props.open,
-      xhrFrom: new XMLHttpRequest(),
-      xhrTo: new XMLHttpRequest(),
-      dataSourceFrom: [],
-      dataSourceTo: [],
-      start: '',
-      destination: ''
+      xhr: new XMLHttpRequest(),
+      dataSource: [],
+      route: [],
+      stopovers: 0
     }
-  }
-
-  componentDidMount() {
-    this.state.xhrFrom.onreadystatechange = () => {
-      if (this.state.xhrFrom.readyState === 4 && this.state.xhrFrom.status === 200) {
-        let places = JSON.parse(this.state.xhrFrom.responseText).map(place => {
-          return {'text': place.display_name, 'data': {
-              osm_id: place.osm_id,
-              longitude: place.lon,
-              latitude: place.lat
-            }}
-        });
-
-        this.setState({
-          dataSourceFrom: places
-        });      
-      }
-    };
-
-    this.state.xhrTo.onreadystatechange = () => {
-      if (this.state.xhrTo.readyState === 4 && this.state.xhrTo.status === 200) {
-        let places = JSON.parse(this.state.xhrTo.responseText).map(place => {
-          return {'text': place.display_name, 'data': {
-              osm_id: place.osm_id,
-              longitude: place.lon,
-              latitude: place.lat
-            }}
-        });
-
-        this.setState({
-          dataSourceTo: places
-        });      
-      }
-    };
   }
 
   getVehicles = () => {
     return ["Fiat Fiorino",
-            "Smart Roadster", 
-            "Sam", 
-            "Citysax", 
-            "MUTE", 
-            "Spyder-S", 
-            "Think", 
-            "Luis", 
-            "STROMOS", 
-            "Karabag Fiat 500E", 
+            "Smart Roadster",
+            "Sam",
+            "Citysax",
+            "MUTE",
+            "Spyder-S",
+            "Think",
+            "Luis",
+            "STROMOS",
+            "Karabag Fiat 500E",
             "Lupower Fiat 500E"
     ];
   }
@@ -119,29 +84,38 @@ export default class Menu extends Component {
     this.setState({vehicle: value});
   }
 
-  handleUpdateFromInput = address => {
-    if(this.state.xhrFrom.readyState !== 0 || this.state.xhrFrom.readyState !== 4) {
-      this.state.xhrFrom.abort();
+  handleUpdate = address => {
+    if(this.state.xhr.readyState !== 0 || this.state.xhr.readyState !== 4) {
+      this.state.xhr.abort();
     }
-    this.state.xhrFrom.open('GET', this.props.autoCompleteAddress+'search/'+address, true);
-    this.state.xhrFrom.send();
-  }
 
-  handleUpdateToInput = address => {
-    if(this.state.xhrTo.readyState !== 0 || this.state.xhrTo.readyState !== 4) {
-      this.state.xhrTo.abort();
-    }
-    this.state.xhrTo.open('GET', this.props.autoCompleteAddress+'search/'+address, true);
-    this.state.xhrTo.send();
+    this.state.xhr.onreadystatechange = () => {
+      if (this.state.xhr.readyState === 4 && this.state.xhr.status === 200) {
+        let places = JSON.parse(this.state.xhr.responseText).map(place => {
+          return {'text': place.display_name, 'data': {
+              osm_id: place.osm_id,
+              longitude: place.lon,
+              latitude: place.lat
+            }}
+        });
+        this.setState({
+          dataSource: places
+        });
+      }
+    };
+
+    this.state.xhr.open('GET', this.props.autoCompleteAddress+'search/'+address, true);
+    this.state.xhr.send();
   }
 
   getRoute = () => {
-    if(this.state.start === '' && this.state.destination === '') {
-      //TODO: implement notifications (Thomas GSoC Project - see polymer reference branch) 
-      alert('Please select a start and destination from the suggestions');
-      return;
+    if(this.state.route.every(waypoint => waypoint !== '')) {
+      this.props.getRoute(this.state.route);
     }
-    this.props.getRoute(this.state.start, this.state.destination);
+    else {
+      //TODO: implement notifications (Thomas GSoC Project - see polymer reference branch)
+      alert('Please select a start and destination from the suggestions');
+    }
   }
 
   render() {
@@ -159,13 +133,12 @@ export default class Menu extends Component {
                 floatingLabelText="From"
                 style={styles.textField}
                 onNewRequest={(req, index) => {
-                  this.setState({
-                    start: index === -1 ? '' : this.state.dataSourceFrom[index].data.osm_id
-                  });
+                  this.state.route[0] = index === -1 ? '' : this.state.dataSource[index].data.osm_id;
+                  console.log(this.state.route)
                 }}
-                dataSource={this.state.dataSourceFrom}
-                onUpdateInput={this.handleUpdateFromInput}
-                floatingLabelStyle={styles.floatingLabelStyle} 
+                dataSource={this.state.dataSource}
+                onUpdateInput={this.handleUpdate}
+                floatingLabelStyle={styles.floatingLabelStyle}
                 underlineStyle={styles.underlineStyle}
                 underlineFocusStyle={styles.underlineFocusStyle}
                 dataSourceConfig={dataSourceConfig}
@@ -174,18 +147,22 @@ export default class Menu extends Component {
               <AutoComplete
                 floatingLabelText="To"
                 onNewRequest={(req, index) => {
-                  this.setState({
-                    destination: index === -1 ? '' : this.state.dataSourceTo[index].data.osm_id
-                  });
+                  this.state.route[this.state.stopovers + 1] = index === -1 ? '' : this.state.dataSource[index].data.osm_id
+                  console.log(this.state.route)
                 }}
                 style={styles.textField}
-                dataSource={this.state.dataSourceTo}
-                onUpdateInput={this.handleUpdateToInput}
-                floatingLabelStyle={styles.floatingLabelStyle} 
+                dataSource={this.state.dataSource}
+                onUpdateInput={this.handleUpdate}
+                floatingLabelStyle={styles.floatingLabelStyle}
                 underlineStyle={styles.underlineStyle}
                 underlineFocusStyle={styles.underlineFocusStyle}
                 dataSourceConfig={dataSourceConfig}
                 fullWidth={true} />
+
+              <FlatButton
+                label="Add Stopover"
+                labelStyle={{textTransform : 'none'}}
+                icon={<FontIcon className="material-icons" color={grey800}>add_circle</FontIcon>} />
 
               <SelectField
                 floatingLabelText="Vehicle"

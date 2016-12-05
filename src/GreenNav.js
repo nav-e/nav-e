@@ -49,7 +49,9 @@ export default class GreenNav extends Component {
     this.refs.map.updateSize();
   }
 
-  getRoute = (start_osm_id, destination_osm_id) => {
+  getRoute = (waypoints) => {
+    let start_osm_id = waypoints[0];
+    let destination_osm_id = waypoints[waypoints.length - 1]
     let url = GreenNavServerAddress + 'from/' + start_osm_id + '/to/' + destination_osm_id;
     fetch(url)
       .then(response => response.json())
