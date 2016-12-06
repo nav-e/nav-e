@@ -134,7 +134,6 @@ export default class Menu extends Component {
                 style={styles.textField}
                 onNewRequest={(req, index) => {
                   this.state.route[0] = index === -1 ? '' : this.state.dataSource[index].data.osm_id;
-                  console.log(this.state.route)
                 }}
                 dataSource={this.state.dataSource}
                 onUpdateInput={this.handleUpdate}
@@ -144,11 +143,29 @@ export default class Menu extends Component {
                 dataSourceConfig={dataSourceConfig}
                 fullWidth={true} />
 
+              {
+                [...Array(this.state.stopovers)].map((stopover, i) => {
+                  return <AutoComplete
+                            key = {i}
+                            floatingLabelText="Over"
+                            style={styles.textField}
+                            onNewRequest={(req, index) => {
+                              this.state.route[stopover + 1] = index === -1 ? '' : this.state.dataSource[index].data.osm_id;
+                            }}
+                            dataSource={this.state.dataSource}
+                            onUpdateInput={this.handleUpdate}
+                            floatingLabelStyle={styles.floatingLabelStyle}
+                            underlineStyle={styles.underlineStyle}
+                            underlineFocusStyle={styles.underlineFocusStyle}
+                            dataSourceConfig={dataSourceConfig}
+                            fullWidth={true} />
+                })
+              }
+
               <AutoComplete
                 floatingLabelText="To"
                 onNewRequest={(req, index) => {
                   this.state.route[this.state.stopovers + 1] = index === -1 ? '' : this.state.dataSource[index].data.osm_id
-                  console.log(this.state.route)
                 }}
                 style={styles.textField}
                 dataSource={this.state.dataSource}
@@ -161,6 +178,7 @@ export default class Menu extends Component {
 
               <FlatButton
                 label="Add Stopover"
+                onClick={() => {this.setState({stopovers: this.state.stopovers + 1})}}
                 labelStyle={{textTransform : 'none'}}
                 icon={<FontIcon className="material-icons" color={grey800}>add_circle</FontIcon>} />
 
