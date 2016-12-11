@@ -11,7 +11,21 @@ import { grey800, green900, green700, lime600 } from 'material-ui/styles/colors'
 
 const styles = {
   container: {
-    width: '400px'
+    display: 'flex',
+    width: '400px',
+  },
+
+  tabs: {
+    flex: '1',
+    display: 'flex',
+    flexDirection: 'column'
+  },
+
+  tabsContainer: {
+    flex: '1',
+    display: 'flex',
+    flexDirection: 'column',
+    overflowY: 'auto'
   },
 
   tab: {
@@ -126,7 +140,7 @@ export default class Menu extends Component {
 
     return (
       <div style={this.state.open ? styles.container : {display: 'none'}}>
-        <Tabs inkBarStyle={styles.active}>
+        <Tabs contentContainerStyle={styles.tabsContainer} inkBarStyle={styles.active} style={styles.tabs}>
           <Tab label="Route" style={styles.tab}>
             <div style={styles.menu}>
               <AutoComplete

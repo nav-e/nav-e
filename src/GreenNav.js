@@ -127,7 +127,7 @@ export default class GreenNav extends Component {
     ];
 
     return (
-      <div>
+      <div style={{display: 'flex', flexDirection: 'column', height: '100vh'}}>
         <Toolbar style={{height: '64px', backgroundColor: green900}}>
           <ToolbarGroup firstChild={true}>
             <FontIcon className="material-icons"
@@ -154,7 +154,7 @@ export default class GreenNav extends Component {
           </ToolbarGroup>
         </Toolbar>
 
-        <div style={{display: 'flex'}}>
+        <div style={{display: 'flex', flex: '1 0'}}>
           <Menu autoCompleteAddress={GreenNavServerAddress} ref="drawer" open={true} getRoute={this.getRoute}/>
           <GreenNavMap ref="map" mapType={this.state.mapType}/>
         </div>
