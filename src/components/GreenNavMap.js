@@ -5,8 +5,8 @@ var ol = require('openlayers');
 
 const styles = {
   container: {
-    flex: 1,
-    height: '100vh'
+    height: '100%',
+    width: '100%'
   }
 }
 
@@ -124,12 +124,12 @@ export default class GreenNavMap extends Component {
 
   setMapType = mapType => {
     if(mapType === 0) {
-      this.state.map.getLayers().getArray()[0].setVisible(true); 
+      this.state.map.getLayers().getArray()[0].setVisible(true);
       this.state.map.getLayers().getArray()[1].setVisible(false);
     }
     else {
-      this.state.map.getLayers().getArray()[1].setVisible(true); 
-      this.state.map.getLayers().getArray()[0].setVisible(false);      
+      this.state.map.getLayers().getArray()[1].setVisible(true);
+      this.state.map.getLayers().getArray()[0].setVisible(false);
     }
   }
 
@@ -167,7 +167,7 @@ export default class GreenNavMap extends Component {
 
     this.state.map.getView().setCenter(ol.proj.transform([coords[0][0], coords[0][1]], 'EPSG:4326', 'EPSG:3857'));
     this.state.map.getView().setZoom(18);
-    this.state.map.getLayers().getArray()[2].setSource(source);   
+    this.state.map.getLayers().getArray()[2].setSource(source);
   }
 
   render() {
