@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Toolbar, ToolbarGroup, ToolbarSeparator, ToolbarTitle } from 'material-ui/Toolbar';
 import FlatButton from 'material-ui/FlatButton';
-import { green100, green300, green700, green900 } from 'material-ui/styles/colors';
+import { green50 } from 'material-ui/styles/colors';
 import FontIcon from 'material-ui/FontIcon';
 import Dialog from 'material-ui/Dialog';
 import Toggle from 'material-ui/Toggle';
@@ -15,16 +15,8 @@ const GreenNavServerAddress = 'http://localhost:6833/';
 
 const styles = {
   label: {
-    color: 'white'
+    color: green50
   },
-
-  trackSwitched: {
-    backgroundColor: green700
-  },
-
-  thumbSwitched: {
-    backgroundColor: green300
-  }
 }
 
 export default class GreenNav extends Component {
@@ -128,28 +120,22 @@ export default class GreenNav extends Component {
 
     return (
       <div style={{display: 'flex', flexDirection: 'column', height: '100vh'}}>
-        <Toolbar style={{height: '64px', backgroundColor: green900}}>
+        <Toolbar>
           <ToolbarGroup firstChild={true}>
-            <FontIcon className="material-icons"
-                      color='white'
-                      hoverColor={green100}
-                      onClick={this.toggleDrawer}>
+            <FontIcon className="material-icons" onClick={this.toggleDrawer}>
               menu</FontIcon>
             <img alt="GreenNav" src="/images/logo-64.png"/>
           </ToolbarGroup>
 
           <ToolbarGroup>
-            <ToolbarTitle style={{color: green100}} text="Map Options" />
-            <FontIcon className="material-icons"
-                      color='white'
-                      onTouchTap={this.handleMapOpen}
-                      hoverColor={green100}>
+            <ToolbarTitle text="Map Options" />
+            <FontIcon className="material-icons" onTouchTap={this.handleMapOpen}>
               map</FontIcon>
-            <ToolbarSeparator style={{backgroundColor: green700}}/>
+            <ToolbarSeparator />
             <FlatButton label="Info" labelStyle={styles.label} onTouchTap={this.handleInfoOpen}
-                          icon={<FontIcon className="material-icons" color='white'>info</FontIcon>}/>
+                          icon={<FontIcon className="material-icons" color={green50}>info</FontIcon>}/>
             <FlatButton label="Contact" labelStyle={styles.label} onTouchTap={this.handleContactOpen}
-                          icon={<FontIcon className="material-icons" color='white'>email</FontIcon>}/>
+                          icon={<FontIcon className="material-icons" color={green50}>email</FontIcon>}/>
 
           </ToolbarGroup>
         </Toolbar>

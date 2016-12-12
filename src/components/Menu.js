@@ -7,12 +7,13 @@ import FlatButton from 'material-ui/FlatButton';
 import FontIcon from 'material-ui/FontIcon';
 import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
-import { grey800, green900, green700, lime600 } from 'material-ui/styles/colors';
+import Paper from 'material-ui/Paper'
 
 const styles = {
   container: {
     display: 'flex',
     width: '400px',
+    zIndex: 1,
   },
 
   tabs: {
@@ -28,37 +29,13 @@ const styles = {
     overflowY: 'auto'
   },
 
-  tab: {
-    backgroundColor: green700
-  },
-
-  active: {
-    backgroundColor: lime600
-  },
-
   menu: {
     margin: '10px 25px'
-  },
-
-  floatingLabelStyle: {
-    color: green700
-  },
-
-  underlineStyle: {
-    borderColor: green900
-  },
-
-  underlineFocusStyle: {
-    borderColor: lime600
   },
 
   slider: {
     width: '300px'
   },
-
-  textField: {
-    width: '300px'
-  }
 }
 
 export default class Menu extends Component {
@@ -139,21 +116,17 @@ export default class Menu extends Component {
     };
 
     return (
-      <div style={this.state.open ? styles.container : {display: 'none'}}>
+      <Paper style={this.state.open ? styles.container : {display: 'none'}} zDepth={5}>
         <Tabs contentContainerStyle={styles.tabsContainer} inkBarStyle={styles.active} style={styles.tabs}>
           <Tab label="Route" style={styles.tab}>
             <div style={styles.menu}>
               <AutoComplete
                 floatingLabelText="From"
-                style={styles.textField}
                 onNewRequest={(req, index) => {
                   this.state.route[0] = index === -1 ? '' : this.state.dataSource[index].data.osm_id;
                 }}
                 dataSource={this.state.dataSource}
                 onUpdateInput={this.handleUpdate}
-                floatingLabelStyle={styles.floatingLabelStyle}
-                underlineStyle={styles.underlineStyle}
-                underlineFocusStyle={styles.underlineFocusStyle}
                 dataSourceConfig={dataSourceConfig}
                 fullWidth={true} />
 
@@ -162,15 +135,11 @@ export default class Menu extends Component {
                   return <AutoComplete
                             key = {i}
                             floatingLabelText="Over"
-                            style={styles.textField}
                             onNewRequest={(req, index) => {
                               this.state.route[stopover + 1] = index === -1 ? '' : this.state.dataSource[index].data.osm_id;
                             }}
                             dataSource={this.state.dataSource}
                             onUpdateInput={this.handleUpdate}
-                            floatingLabelStyle={styles.floatingLabelStyle}
-                            underlineStyle={styles.underlineStyle}
-                            underlineFocusStyle={styles.underlineFocusStyle}
                             dataSourceConfig={dataSourceConfig}
                             fullWidth={true} />
                 })
@@ -181,12 +150,8 @@ export default class Menu extends Component {
                 onNewRequest={(req, index) => {
                   this.state.route[this.state.stopovers + 1] = index === -1 ? '' : this.state.dataSource[index].data.osm_id
                 }}
-                style={styles.textField}
                 dataSource={this.state.dataSource}
                 onUpdateInput={this.handleUpdate}
-                floatingLabelStyle={styles.floatingLabelStyle}
-                underlineStyle={styles.underlineStyle}
-                underlineFocusStyle={styles.underlineFocusStyle}
                 dataSourceConfig={dataSourceConfig}
                 fullWidth={true} />
 
@@ -194,7 +159,7 @@ export default class Menu extends Component {
                 label="Add Stopover"
                 onClick={() => {this.setState({stopovers: this.state.stopovers + 1})}}
                 labelStyle={{textTransform : 'none'}}
-                icon={<FontIcon className="material-icons" color={grey800}>add_circle</FontIcon>} />
+                icon={<FontIcon className="material-icons">add_circle</FontIcon>} />
 
               <SelectField
                 floatingLabelText="Vehicle"
@@ -209,7 +174,7 @@ export default class Menu extends Component {
               <p>Battery Level</p>
               <Slider style={styles.slider} defaultValue={1} />
               <RaisedButton label="Get Route" onClick={this.getRoute}
-                          icon={<FontIcon className="material-icons" color={grey800}>near_me</FontIcon>}/>
+                          icon={<FontIcon className="material-icons">near_me</FontIcon>}/>
             </div>
           </Tab>
           <Tab label="Reachability" style={styles.tab}>
@@ -220,7 +185,7 @@ export default class Menu extends Component {
             </div>
           </Tab>
         </Tabs>
-      </div>
+      </Paper>
     );
   }
 }
