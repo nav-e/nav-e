@@ -3,7 +3,14 @@
   "version": "0.1.1",
   "private": true,
   "devDependencies": {
-    "react-scripts": "0.7.0"
+    "babel-eslint": "^7.1.1",
+    "eslint": "^3.15.0",
+    "eslint-config-airbnb": "^14.0.0",
+    "eslint-plugin-compat": "^1.0.1",
+    "eslint-plugin-import": "^2.2.0",
+    "eslint-plugin-jsx-a11y": "^4.0.0",
+    "eslint-plugin-react": "^6.9.0",
+    "react-scripts": "^0.7.0"
   },
   "dependencies": {
     "material-ui": "^0.16.4",
