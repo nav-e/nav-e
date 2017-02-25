@@ -1,0 +1,22 @@
+{
+  "parser": "babel-eslint",
+  "extends": "airbnb",
+  "env": {
+    "browser": true,
+    "mocha": true,
+    "node": true
+  },
+  "rules": {
+    "brace-style": [2, "stroustrup"],
+    "comma-dangle": "off",
+    "compat/compat": 1,
+    "jsx-a11y/no-marquee": 0,
+    "react/jsx-filename-extension": ["error", { "extensions": [".js", ".jsx"] }]
+  },
+  "plugins": [
+    "compat",
+    "import",
+    "jsx-a11y",
+    "react"
+  ]
+}

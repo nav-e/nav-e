@@ -4,19 +4,19 @@ This project aims to provide a reference implementation for a GreenNav (Green Na
 
 ![Screenshot](https://cloud.githubusercontent.com/assets/1525818/20647282/91a869c0-b490-11e6-9fda-ff542229dade.gif)
 
-## Getting Started 
+## Getting Started
 
 ### Prerequisites
 
-#### Install the latest version of Node.js and npm 
+#### Install the latest version of Node.js and npm
 
 ```zsh
 sudo apt install nodejs npm
 
-# optional: 
-# we recommend to set a symlink from nodejs to node 
+# optional:
+# we recommend to set a symlink from nodejs to node
 # if you get a command not found error
-# 
+#
 # sudo ln -s /usr/bin/nodejs /usr/bin/node
 
 npm --version
@@ -34,7 +34,7 @@ sudo npm install -g npm
 sudo npm install -g n
 
 sudo n stable
-# or 
+# or
 # sudo n latest
 ```
 
@@ -80,9 +80,14 @@ git clone https://github.com/$(GITHUB_USER)/GreenNav.git
 cd GreenNav
 git checkout -b your-feature
 ```
-- Make local changes and implement your feature 
+- Make local changes and implement your feature
 - Push your branch to GitHub
 - Open a pull request
+
+#### Code Quality
+
+Please use eslint before contributing to the project.
+Consider using an editor-plugin like [linter-eslint](https://atom.io/packages/linter-eslint) for Atom, [ESLint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint) for VS Code...
 
 
 ## Available Scripts

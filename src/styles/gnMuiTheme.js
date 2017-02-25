@@ -1,6 +1,6 @@
 import {
   green50, green200, green300, green700, green900,
-  grey100, grey300, grey400, grey500, grey800,
+  grey100, grey300, grey400, grey500,
   orange500,
   white, darkBlack, fullBlack,
 } from 'material-ui/styles/colors';
