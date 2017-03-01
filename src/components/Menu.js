@@ -36,6 +36,10 @@ const styles = {
   slider: {
     width: '300px'
   },
+
+  removeStopover: {
+    marginTop: '10px'
+  }
 };
 
 export default class Menu extends Component {
@@ -48,7 +52,7 @@ export default class Menu extends Component {
       dataSource: [],
       stopovers: [{ id: 1, label: 'From', route: '' }, { id: 2, label: 'To', route: '' }]
     };
-    this.stopoversCount = 2;
+    this.stopoversId = 2;
     this.xhr = new XMLHttpRequest();
   }
 
@@ -153,13 +157,13 @@ export default class Menu extends Component {
               <FlatButton
                 label="Add Stopover"
                 onClick={() => {
-                  this.stopoversCount += 1;
+                  this.stopoversId += 1;
                   const soLength = this.state.stopovers.length;
                   this.setState(
                     {
                       stopovers: [
                         ...this.state.stopovers.slice(0, soLength - 1),
-                        { id: this.stopoversCount, label: 'From', route: '' },
+                        { id: this.stopoversId, label: 'From', route: '' },
                         this.state.stopovers[soLength - 1]
                       ]
                     }
@@ -167,6 +171,25 @@ export default class Menu extends Component {
                 }}
                 labelStyle={{ textTransform: 'none' }}
                 icon={<FontIcon className="material-icons">add_circle</FontIcon>}
+              />
+
+              <FlatButton
+                style={styles.removeStopover}
+                disabled={this.state.stopovers.length < 3}
+                label="Remove Stopover"
+                onClick={() => {
+                  const soLength = this.state.stopovers.length;
+                  this.setState(
+                    {
+                      stopovers: [
+                        ...this.state.stopovers.slice(0, soLength - 2),
+                        this.state.stopovers[soLength - 1]
+                      ]
+                    }
+                  );
+                }}
+                labelStyle={{ textTransform: 'none' }}
+                icon={<FontIcon className="material-icons">remove_circle</FontIcon>}
               />
 
               <SelectField
