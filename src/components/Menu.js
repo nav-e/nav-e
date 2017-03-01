@@ -45,25 +45,25 @@ export default class Menu extends Component {
     this.state = {
       vehicle: 0,
       open: this.props.open,
-      xhr: new XMLHttpRequest(),
       dataSource: [],
-      route: [],
-      stopovers: 0
+      stopovers: [{ id: 1, label: 'From', route: '' }, { id: 2, label: 'To', route: '' }]
     };
+    this.stopoversCount = 2;
+    this.xhr = new XMLHttpRequest();
   }
 
   getVehicles = () => [
-    'Fiat Fiorino',
-    'Smart Roadster',
-    'Sam',
-    'Citysax',
-    'MUTE',
-    'Spyder-S',
-    'Think',
-    'Luis',
-    'STROMOS',
-    'Karabag Fiat 500E',
-    'Lupower Fiat 500E'
+    { name: 'Fiat Fiorino', id: 1 },
+    { name: 'Smart Roadster', id: 2 },
+    { name: 'Sam', id: 3 },
+    { name: 'Citysax', id: 4 },
+    { name: 'MUTE', id: 5 },
+    { name: 'Spyder-S', id: 6 },
+    { name: 'Think', id: 7 },
+    { name: 'Luis', id: 8 },
+    { name: 'STROMOS', id: 9 },
+    { name: 'Karabag Fiat 500E', id: 10 },
+    { name: 'Lupower Fiat 500E', id: 11 }
   ]
 
   getRoute = () => {
@@ -77,13 +77,13 @@ export default class Menu extends Component {
   }
 
   handleUpdate = (address) => {
-    if (this.state.xhr.readyState !== 0 || this.state.xhr.readyState !== 4) {
-      this.state.xhr.abort();
+    if (this.xhr.readyState !== 0 || this.xhr.readyState !== 4) {
+      this.xhr.abort();
     }
 
-    this.state.xhr.onreadystatechange = () => {
-      if (this.state.xhr.readyState === 4 && this.state.xhr.status === 200) {
-        const places = JSON.parse(this.state.xhr.responseText).map(place => (
+    this.xhr.onreadystatechange = () => {
+      if (this.xhr.readyState === 4 && this.xhr.status === 200) {
+        const places = JSON.parse(this.xhr.responseText).map(place => (
           {
             text: place.display_name,
             data: {
@@ -99,8 +99,8 @@ export default class Menu extends Component {
       }
     };
 
-    this.state.xhr.open('GET', `${this.props.autoCompleteAddress}search/${address}`, true);
-    this.state.xhr.send();
+    this.xhr.open('GET', `${this.props.autoCompleteAddress}search/${address}`, true);
+    this.xhr.send();
   }
 
   toggle = (callback) => {
@@ -126,24 +126,21 @@ export default class Menu extends Component {
         >
           <Tab label="Route" style={styles.tab}>
             <div style={styles.menu}>
-              <AutoComplete
-                floatingLabelText="From"
-                onNewRequest={(req, index) => {
-                  this.state.route[0] = index === -1 ? '' : this.state.dataSource[index].data.osm_id;
-                }}
-                dataSource={this.state.dataSource}
-                onUpdateInput={this.handleUpdate}
-                dataSourceConfig={dataSourceConfig}
-                fullWidth
-              />
-
               {
-                [...Array(this.state.stopovers)].map((stopover, i) => (
+                this.state.stopovers.map(stopover => (
                   <AutoComplete
-                    key={i}
-                    floatingLabelText="Over"
+                    key={stopover.id}
+                    floatingLabelText={stopover.label}
                     onNewRequest={(req, index) => {
-                      this.state.route[stopover + 1] = index === -1 ? '' : this.state.dataSource[index].data.osm_id;
+                      const route = index === -1 ? '' : this.state.dataSource[index].data.osm_id;
+                      const updatedStopovers =
+                        this.state.stopovers.map((stopoverElem) => {
+                          if (stopoverElem.id === stopover.id) {
+                            return Object.assign({}, stopoverElem, { route });
+                          }
+                          return stopoverElem;
+                        });
+                      this.setState({ stopovers: updatedStopovers });
                     }}
                     dataSource={this.state.dataSource}
                     onUpdateInput={this.handleUpdate}
@@ -153,20 +150,21 @@ export default class Menu extends Component {
                 ))
               }
 
-              <AutoComplete
-                floatingLabelText="To"
-                onNewRequest={(req, index) => {
-                  this.state.route[this.state.stopovers + 1] = index === -1 ? '' : this.state.dataSource[index].data.osm_id;
-                }}
-                dataSource={this.state.dataSource}
-                onUpdateInput={this.handleUpdate}
-                dataSourceConfig={dataSourceConfig}
-                fullWidth
-              />
-
               <FlatButton
                 label="Add Stopover"
-                onClick={() => this.setState({ stopovers: this.state.stopovers + 1 })}
+                onClick={() => {
+                  this.stopoversCount += 1;
+                  const soLength = this.state.stopovers.length;
+                  this.setState(
+                    {
+                      stopovers: [
+                        ...this.state.stopovers.slice(0, soLength - 1),
+                        { id: this.stopoversCount, label: 'From', route: '' },
+                        this.state.stopovers[soLength - 1]
+                      ]
+                    }
+                  );
+                }}
                 labelStyle={{ textTransform: 'none' }}
                 icon={<FontIcon className="material-icons">add_circle</FontIcon>}
               />
@@ -176,8 +174,8 @@ export default class Menu extends Component {
                 value={this.state.vehicle}
                 onChange={this.vehicleChange}
               >
-                {this.getVehicles().map((vehicle, index) => (
-                  <MenuItem key={index} value={index} primaryText={vehicle} />
+                {this.getVehicles().map(vehicle => (
+                  <MenuItem key={vehicle.id} value={vehicle.id} primaryText={vehicle.name} />
                 ))}
               </SelectField>
 
