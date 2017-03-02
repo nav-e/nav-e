@@ -4,6 +4,7 @@ import AutoComplete from 'material-ui/AutoComplete';
 import Slider from 'material-ui/Slider';
 import RaisedButton from 'material-ui/RaisedButton';
 import FlatButton from 'material-ui/FlatButton';
+import IconButton from 'material-ui/IconButton';
 import FontIcon from 'material-ui/FontIcon';
 import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
@@ -37,7 +38,20 @@ const styles = {
     width: '300px'
   },
 
-  removeStopover: {
+  stopoverWrapper: {
+    display: 'flex',
+    alignItems: 'center'
+  },
+
+  stopoverInput: {
+    flex: '0 1 250px'
+  },
+
+  removeStopoverBtn: {
+    marginTop: '14px'
+  },
+
+  addStopoverBtn: {
     marginTop: '10px'
   }
 };
@@ -121,6 +135,45 @@ export default class Menu extends Component {
       value: 'data',
     };
 
+    const allStopovers =
+      this.state.stopovers.map(stopover => (
+        <div style={styles.stopoverWrapper} key={`wrapper-${stopover.id}`}>
+          <AutoComplete
+            key={stopover.id}
+            floatingLabelText={stopover.label}
+            onNewRequest={(req, index) => {
+              const route = index === -1 ? '' : this.state.dataSource[index].data.osm_id;
+              const updatedStopovers =
+                this.state.stopovers.map((stopoverElem) => {
+                  if (stopoverElem.id === stopover.id) {
+                    return Object.assign({}, stopoverElem, { route });
+                  }
+                  return stopoverElem;
+                });
+              this.setState({ stopovers: updatedStopovers });
+            }}
+            dataSource={this.state.dataSource}
+            onUpdateInput={this.handleUpdate}
+            dataSourceConfig={dataSourceConfig}
+          />
+          { (stopover.id !== 2 && stopover.id !== 1) ?
+            <IconButton
+              style={styles.removeStopoverBtn}
+              onClick={() => {
+                this.setState(
+                  {
+                    stopovers: this.state.stopovers.filter(elem => elem.id !== stopover.id)
+                  }
+                );
+              }}
+            >
+              <FontIcon className="material-icons">remove_circle</FontIcon>
+            </IconButton>
+            : ''
+        }
+        </div>
+      ));
+
     return (
       <Paper style={this.state.open ? styles.container : { display: 'none' }} zDepth={5}>
         <Tabs
@@ -130,31 +183,9 @@ export default class Menu extends Component {
         >
           <Tab label="Route" style={styles.tab}>
             <div style={styles.menu}>
-              {
-                this.state.stopovers.map(stopover => (
-                  <AutoComplete
-                    key={stopover.id}
-                    floatingLabelText={stopover.label}
-                    onNewRequest={(req, index) => {
-                      const route = index === -1 ? '' : this.state.dataSource[index].data.osm_id;
-                      const updatedStopovers =
-                        this.state.stopovers.map((stopoverElem) => {
-                          if (stopoverElem.id === stopover.id) {
-                            return Object.assign({}, stopoverElem, { route });
-                          }
-                          return stopoverElem;
-                        });
-                      this.setState({ stopovers: updatedStopovers });
-                    }}
-                    dataSource={this.state.dataSource}
-                    onUpdateInput={this.handleUpdate}
-                    dataSourceConfig={dataSourceConfig}
-                    fullWidth
-                  />
-                ))
-              }
-
+              {allStopovers}
               <FlatButton
+                style={styles.addStopoverBtn}
                 label="Add Stopover"
                 onClick={() => {
                   this.stopoversId += 1;
@@ -163,7 +194,7 @@ export default class Menu extends Component {
                     {
                       stopovers: [
                         ...this.state.stopovers.slice(0, soLength - 1),
-                        { id: this.stopoversId, label: 'From', route: '' },
+                        { id: this.stopoversId, label: 'To', route: '' },
                         this.state.stopovers[soLength - 1]
                       ]
                     }
@@ -173,27 +204,9 @@ export default class Menu extends Component {
                 icon={<FontIcon className="material-icons">add_circle</FontIcon>}
               />
 
-              <FlatButton
-                style={styles.removeStopover}
-                disabled={this.state.stopovers.length < 3}
-                label="Remove Stopover"
-                onClick={() => {
-                  const soLength = this.state.stopovers.length;
-                  this.setState(
-                    {
-                      stopovers: [
-                        ...this.state.stopovers.slice(0, soLength - 2),
-                        this.state.stopovers[soLength - 1]
-                      ]
-                    }
-                  );
-                }}
-                labelStyle={{ textTransform: 'none' }}
-                icon={<FontIcon className="material-icons">remove_circle</FontIcon>}
-              />
-
               <SelectField
                 floatingLabelText="Vehicle"
+                maxHeight={250}
                 value={this.state.vehicle}
                 onChange={this.vehicleChange}
               >
