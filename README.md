@@ -48,7 +48,7 @@ npm install
 
 ### :heavy_exclamation_mark: Don't forget the back-end
 
-You also need to clone [our routing library](https://github.com/Greennav/rt-library) and run the node server locally
+We are currently working on new back-end in Java. Until then, there is a working [demo](https://github.com/Greennav/rt-library) that offers address search and routing functionality using Node.js.
 
 ```zsh
 git clone https://github.com/Greennav/rt-library.git
