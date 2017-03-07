@@ -13,8 +13,8 @@ import Paper from 'material-ui/Paper';
 const styles = {
   container: {
     display: 'flex',
-    width: '400px',
     zIndex: 1,
+    minWidth: 350
   },
 
   tabs: {
@@ -31,16 +31,17 @@ const styles = {
   },
 
   menu: {
-    margin: '10px 25px'
+    margin: '10px 25px 30px'
   },
 
   slider: {
-    width: '300px'
+    marginBottom: '30px'
   },
 
   stopoverWrapper: {
     display: 'flex',
-    alignItems: 'center'
+    alignItems: 'center',
+    position: 'relative'
   },
 
   stopoverInput: {
@@ -48,11 +49,12 @@ const styles = {
   },
 
   removeStopoverBtn: {
-    marginTop: '14px'
+    position: 'absolute',
+    right: 0
   },
 
   addStopoverBtn: {
-    marginTop: '10px'
+    margin: '10px 0'
   }
 };
 
@@ -71,17 +73,17 @@ export default class Menu extends Component {
   }
 
   getVehicles = () => [
-    { name: 'Fiat Fiorino', id: 1 },
-    { name: 'Smart Roadster', id: 2 },
-    { name: 'Sam', id: 3 },
-    { name: 'Citysax', id: 4 },
-    { name: 'MUTE', id: 5 },
-    { name: 'Spyder-S', id: 6 },
-    { name: 'Think', id: 7 },
-    { name: 'Luis', id: 8 },
-    { name: 'STROMOS', id: 9 },
-    { name: 'Karabag Fiat 500E', id: 10 },
-    { name: 'Lupower Fiat 500E', id: 11 }
+    'Fiat Fiorino',
+    'Smart Roadster',
+    'Sam',
+    'Citysax',
+    'MUTE',
+    'Spyder-S',
+    'Think',
+    'Luis',
+    'STROMOS',
+    'Karabag Fiat 500E',
+    'Lupower Fiat 500E'
   ]
 
   getRoute = () => {
@@ -155,8 +157,9 @@ export default class Menu extends Component {
             dataSource={this.state.dataSource}
             onUpdateInput={this.handleUpdate}
             dataSourceConfig={dataSourceConfig}
+            fullWidth
           />
-          { (stopover.id !== 2 && stopover.id !== 1) ?
+          {(stopover.id !== 2 && stopover.id !== 1) ?
             <IconButton
               style={styles.removeStopoverBtn}
               onClick={() => {
@@ -170,12 +173,12 @@ export default class Menu extends Component {
               <FontIcon className="material-icons">remove_circle</FontIcon>
             </IconButton>
             : ''
-        }
+          }
         </div>
       ));
 
     return (
-      <Paper style={this.state.open ? styles.container : { display: 'none' }} zDepth={5}>
+      <Paper style={this.state.open ? styles.container : { display: 'none' }} zDepth={5} rounded={false}>
         <Tabs
           contentContainerStyle={styles.tabsContainer}
           inkBarStyle={styles.active}
@@ -184,39 +187,43 @@ export default class Menu extends Component {
           <Tab label="Route" style={styles.tab}>
             <div style={styles.menu}>
               {allStopovers}
-              <FlatButton
-                style={styles.addStopoverBtn}
-                label="Add Stopover"
-                onClick={() => {
-                  this.stopoversId += 1;
-                  const soLength = this.state.stopovers.length;
-                  this.setState(
-                    {
-                      stopovers: [
-                        ...this.state.stopovers.slice(0, soLength - 1),
-                        { id: this.stopoversId, label: 'To', route: '' },
-                        this.state.stopovers[soLength - 1]
-                      ]
-                    }
-                  );
-                }}
-                labelStyle={{ textTransform: 'none' }}
-                icon={<FontIcon className="material-icons">add_circle</FontIcon>}
-              />
+
+              <div>
+                <FlatButton
+                  style={styles.addStopoverBtn}
+                  label="Add Stopover"
+                  onClick={() => {
+                    this.stopoversId += 1;
+                    const soLength = this.state.stopovers.length;
+                    this.setState(
+                      {
+                        stopovers: [
+                          ...this.state.stopovers.slice(0, soLength - 1),
+                          { id: this.stopoversId, label: 'To', route: '' },
+                          this.state.stopovers[soLength - 1]
+                        ]
+                      }
+                    );
+                  }}
+                  labelStyle={{ textTransform: 'none' }}
+                  icon={<FontIcon className="material-icons">add_circle</FontIcon>}
+                />
+              </div>
 
               <SelectField
                 floatingLabelText="Vehicle"
-                maxHeight={250}
                 value={this.state.vehicle}
                 onChange={this.vehicleChange}
+                maxHeight={210}
+                fullWidth
               >
-                {this.getVehicles().map(vehicle => (
-                  <MenuItem key={vehicle.id} value={vehicle.id} primaryText={vehicle.name} />
+                {this.getVehicles().map((vehicle, index) => (
+                  <MenuItem key={index} value={index} primaryText={vehicle} />
                 ))}
               </SelectField>
 
               <p>Battery Level</p>
-              <Slider style={styles.slider} defaultValue={1} />
+              <Slider sliderStyle={styles.slider} defaultValue={1} />
               <RaisedButton
                 label="Get Route"
                 onClick={this.getRoute}
