@@ -9,6 +9,7 @@ import FontIcon from 'material-ui/FontIcon';
 import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
 import Paper from 'material-ui/Paper';
+import { green700 } from 'material-ui/styles/colors';
 
 const styles = {
   container: {
@@ -55,6 +56,17 @@ const styles = {
 
   addStopoverBtn: {
     margin: '10px 0'
+  },
+
+  batteryLevel: {
+    display: 'flex',
+    justifyContent: 'space-between'
+  },
+
+  batteryLevelValue: {
+    fontWeight: 'bold',
+    color: green700,
+    fontSize: '14px'
   }
 };
 
@@ -233,8 +245,22 @@ export default class Menu extends Component {
                 ))}
               </SelectField>
 
-              <p>Battery Level</p>
-              <Slider sliderStyle={styles.slider} defaultValue={1} />
+              <p style={styles.batteryLevel}>
+                <span>Battery Level</span>
+                <span
+                  style={styles.batteryLevelValue}
+                  ref={node => (this.batteryLevel = node)}
+                >
+                  100%
+                </span>
+              </p>
+              <Slider
+                onChange={(e, val) => {
+                  this.batteryLevel.innerText = `${parseInt(val * 100, 10)}%`;
+                }}
+                sliderStyle={styles.slider}
+                defaultValue={1}
+              />
               <RaisedButton
                 label="Get Route"
                 onClick={this.getRoute}
