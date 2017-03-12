@@ -4,16 +4,18 @@ import AutoComplete from 'material-ui/AutoComplete';
 import Slider from 'material-ui/Slider';
 import RaisedButton from 'material-ui/RaisedButton';
 import FlatButton from 'material-ui/FlatButton';
+import IconButton from 'material-ui/IconButton';
 import FontIcon from 'material-ui/FontIcon';
 import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
 import Paper from 'material-ui/Paper';
+import { green700 } from 'material-ui/styles/colors';
 
 const styles = {
   container: {
     display: 'flex',
-    width: '400px',
     zIndex: 1,
+    minWidth: '300px'
   },
 
   tabs: {
@@ -30,12 +32,42 @@ const styles = {
   },
 
   menu: {
-    margin: '10px 25px'
+    margin: '10px 25px 30px'
   },
 
   slider: {
-    width: '300px'
+    marginBottom: '25px'
   },
+
+  autoCompleteWrapper: {
+    position: 'relative',
+    display: 'flex'
+  },
+
+  stopoversInput: {
+    paddingRight: '45px',
+  },
+
+  removeStopoverBtn: {
+    position: 'absolute',
+    right: 0,
+    bottom: '5px'
+  },
+
+  addStopoverBtn: {
+    margin: '10px 0'
+  },
+
+  batteryLevel: {
+    display: 'flex',
+    justifyContent: 'space-between'
+  },
+
+  batteryLevelValue: {
+    fontWeight: 'bold',
+    color: green700,
+    fontSize: '14px'
+  }
 };
 
 export default class Menu extends Component {
@@ -45,11 +77,11 @@ export default class Menu extends Component {
     this.state = {
       vehicle: 0,
       open: this.props.open,
-      xhr: new XMLHttpRequest(),
       dataSource: [],
-      route: [],
-      stopovers: 0
+      autoCompletes: [{ id: 1, label: 'From', route: '' }, { id: 2, label: 'To', route: '' }]
     };
+    this.autoCompleteId = 3;
+    this.xhr = new XMLHttpRequest();
   }
 
   getVehicles = () => [
@@ -76,14 +108,69 @@ export default class Menu extends Component {
     }
   }
 
+  getAllAutoCompletes = () => {
+    const dataSourceConfig = {
+      text: 'text',
+      value: 'data',
+    };
+    const allAutoCompletes =
+      this.state.autoCompletes.map(autoComplete => (
+        <div style={styles.autoCompleteWrapper} key={`wrapper-${autoComplete.id}`}>
+          <AutoComplete
+            inputStyle={
+              this.isStopover(autoComplete.id) ? styles.stopoversInput : {}
+            }
+            key={autoComplete.id}
+            floatingLabelText={autoComplete.label}
+            onNewRequest={(req, index) => {
+              const route = index === -1 ? '' : this.state.dataSource[index].data.osm_id;
+              const updatedStopovers =
+                this.state.autoCompletes.map((autoCompleteElem) => {
+                  if (autoCompleteElem.id === autoComplete.id) {
+                    return Object.assign({}, autoCompleteElem, { route });
+                  }
+                  return autoCompleteElem;
+                });
+              this.setState({ stopovers: updatedStopovers });
+            }}
+            dataSource={this.state.dataSource}
+            onUpdateInput={this.handleUpdate}
+            dataSourceConfig={dataSourceConfig}
+            fullWidth
+          />
+          {this.isStopover(autoComplete.id) ?
+            <IconButton
+              style={styles.removeStopoverBtn}
+              onClick={() => {
+                setTimeout(() => {
+                  this.setState(
+                    {
+                      autoCompletes:
+                        this.state.autoCompletes.filter(elem => elem.id !== autoComplete.id)
+                    }
+                  );
+                }, 200);
+              }}
+            >
+              <FontIcon className="material-icons">remove_circle</FontIcon>
+            </IconButton>
+            : ''
+          }
+        </div>
+      ));
+    return allAutoCompletes;
+  }
+
+  isStopover = id => (id !== 1 && id !== 2)
+
   handleUpdate = (address) => {
-    if (this.state.xhr.readyState !== 0 || this.state.xhr.readyState !== 4) {
-      this.state.xhr.abort();
+    if (this.xhr.readyState !== 0 || this.xhr.readyState !== 4) {
+      this.xhr.abort();
     }
 
-    this.state.xhr.onreadystatechange = () => {
-      if (this.state.xhr.readyState === 4 && this.state.xhr.status === 200) {
-        const places = JSON.parse(this.state.xhr.responseText).map(place => (
+    this.xhr.onreadystatechange = () => {
+      if (this.xhr.readyState === 4 && this.xhr.status === 200) {
+        const places = JSON.parse(this.xhr.responseText).map(place => (
           {
             text: place.display_name,
             data: {
@@ -99,8 +186,8 @@ export default class Menu extends Component {
       }
     };
 
-    this.state.xhr.open('GET', `${this.props.autoCompleteAddress}search/${address}`, true);
-    this.state.xhr.send();
+    this.xhr.open('GET', `${this.props.autoCompleteAddress}search/${address}`, true);
+    this.xhr.send();
   }
 
   toggle = (callback) => {
@@ -112,13 +199,8 @@ export default class Menu extends Component {
   }
 
   render() {
-    const dataSourceConfig = {
-      text: 'text',
-      value: 'data',
-    };
-
     return (
-      <Paper style={this.state.open ? styles.container : { display: 'none' }} zDepth={5}>
+      <Paper style={this.state.open ? styles.container : { display: 'none' }} zDepth={5} rounded={false}>
         <Tabs
           contentContainerStyle={styles.tabsContainer}
           inkBarStyle={styles.active}
@@ -126,63 +208,59 @@ export default class Menu extends Component {
         >
           <Tab label="Route" style={styles.tab}>
             <div style={styles.menu}>
-              <AutoComplete
-                floatingLabelText="From"
-                onNewRequest={(req, index) => {
-                  this.state.route[0] = index === -1 ? '' : this.state.dataSource[index].data.osm_id;
-                }}
-                dataSource={this.state.dataSource}
-                onUpdateInput={this.handleUpdate}
-                dataSourceConfig={dataSourceConfig}
-                fullWidth
-              />
-
-              {
-                [...Array(this.state.stopovers)].map((stopover, i) => (
-                  <AutoComplete
-                    key={i}
-                    floatingLabelText="Over"
-                    onNewRequest={(req, index) => {
-                      this.state.route[stopover + 1] = index === -1 ? '' : this.state.dataSource[index].data.osm_id;
-                    }}
-                    dataSource={this.state.dataSource}
-                    onUpdateInput={this.handleUpdate}
-                    dataSourceConfig={dataSourceConfig}
-                    fullWidth
-                  />
-                ))
-              }
-
-              <AutoComplete
-                floatingLabelText="To"
-                onNewRequest={(req, index) => {
-                  this.state.route[this.state.stopovers + 1] = index === -1 ? '' : this.state.dataSource[index].data.osm_id;
-                }}
-                dataSource={this.state.dataSource}
-                onUpdateInput={this.handleUpdate}
-                dataSourceConfig={dataSourceConfig}
-                fullWidth
-              />
-
-              <FlatButton
-                label="Add Stopover"
-                onClick={() => this.setState({ stopovers: this.state.stopovers + 1 })}
-                labelStyle={{ textTransform: 'none' }}
-                icon={<FontIcon className="material-icons">add_circle</FontIcon>}
-              />
+              {this.getAllAutoCompletes()}
+              <div>
+                <FlatButton
+                  style={styles.addStopoverBtn}
+                  label="Add Stopover"
+                  onClick={() => {
+                    const soLength = this.state.autoCompletes.length;
+                    this.setState(
+                      {
+                        autoCompletes: [
+                          ...this.state.autoCompletes.slice(0, soLength - 1),
+                          { id: this.autoCompleteId, label: 'Over', route: '' },
+                          this.state.autoCompletes[soLength - 1]
+                        ]
+                      },
+                      () => {
+                        this.autoCompleteId += 1;
+                      }
+                    );
+                  }}
+                  labelStyle={{ textTransform: 'none' }}
+                  icon={<FontIcon className="material-icons">add_circle</FontIcon>}
+                />
+              </div>
 
               <SelectField
                 floatingLabelText="Vehicle"
                 value={this.state.vehicle}
                 onChange={this.vehicleChange}
+                maxHeight={210}
+                fullWidth
               >
                 {this.getVehicles().map((vehicle, index) => (
                   <MenuItem key={index} value={index} primaryText={vehicle} />
                 ))}
               </SelectField>
 
-              <p>Battery Level</p>
-              <Slider style={styles.slider} defaultValue={1} />
+              <p style={styles.batteryLevel}>
+                <span>Battery Level</span>
+                <span
+                  style={styles.batteryLevelValue}
+                  ref={node => (this.batteryLevel = node)}
+                >
+                  100%
+                </span>
+              </p>
+              <Slider
+                onChange={(e, val) => {
+                  this.batteryLevel.innerText = `${parseInt(val * 100, 10)}%`;
+                }}
+                sliderStyle={styles.slider}
+                defaultValue={1}
+              />
               <RaisedButton
                 label="Get Route"
                 onClick={this.getRoute}
