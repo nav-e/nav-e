@@ -52,8 +52,9 @@ We are currently working on new back-end in Java. Until then, there is a working
 
 ```zsh
 git clone https://github.com/Greennav/rt-library.git
+cd rt-library
 npm install
-node demo-ucs.js
+node index.js
 ```
 
 P.S.: Currently we only support the routing in Monaco
