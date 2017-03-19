@@ -54,7 +54,7 @@ We are currently working on new back-end in Java. Until then, there is a working
 git clone https://github.com/Greennav/rt-library.git
 cd rt-library
 npm install
-node index.js
+npm run server
 ```
 
 P.S.: Currently we only support the routing in Monaco
