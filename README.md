@@ -4,6 +4,13 @@ This project aims to provide a reference implementation for a GreenNav (Green Na
 
 ![Screenshot](https://cloud.githubusercontent.com/assets/1525818/20647282/91a869c0-b490-11e6-9fda-ff542229dade.gif)
 
+## TL;DR
+
+- Clone `GreenNav` and `rt-library`
+- `npm install` and `npm start` for both
+- Enter `h` into From/To textfield -> pick one -> `GET ROUTE`
+- Contribute :wink:
+
 ## Getting Started
 
 ### Prerequisites
@@ -54,10 +61,10 @@ We are currently working on new back-end in Java. Until then, there is a working
 git clone https://github.com/Greennav/rt-library.git
 cd rt-library
 npm install
-npm run server
+npm start
 ```
 
-P.S.: Currently we only support the routing in Monaco
+To show a route, you have to pick a suggestion. Try inserting the letter 'h' into the From/To textfields and pick one.
 
 ### Run
 
