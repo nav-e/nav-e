@@ -17,7 +17,8 @@
     "openlayers": "^3.19.1",
     "react": "^15.4.1",
     "react-dom": "^15.4.1",
-    "react-tap-event-plugin": "^2.0.1"
+    "react-tap-event-plugin": "^2.0.1",
+    "unfetch": "^2.1.2"
   },
   "scripts": {
     "start": "react-scripts start",

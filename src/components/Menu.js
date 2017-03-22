@@ -78,7 +78,6 @@ export default class Menu extends Component {
       vehicle: 0,
       open: this.props.open,
       dataSource: [],
-      route: [],
       autoCompletes: [{ id: 1, label: 'From', route: '' }, { id: 2, label: 'To', route: '' }]
     };
     this.autoCompleteId = 3;
@@ -102,7 +101,8 @@ export default class Menu extends Component {
   getRoute = () => {
     const autoCompletes = this.state.autoCompletes;
     if (autoCompletes.every(elem => elem.route !== '')) {
-      this.props.getRoute(this.state.route);
+      const routes = autoCompletes.map(elem => elem.route);
+      this.props.getRoute(routes);
     }
     else {
       // TODO: implement notifications (Thomas GSoC Project - see polymer reference branch)
@@ -126,14 +126,14 @@ export default class Menu extends Component {
             floatingLabelText={autoComplete.label}
             onNewRequest={(req, index) => {
               const route = index === -1 ? '' : this.state.dataSource[index].data.osm_id;
-              const updatedStopovers =
+              const updatedAutoCompletes =
                 this.state.autoCompletes.map((autoCompleteElem) => {
                   if (autoCompleteElem.id === autoComplete.id) {
                     return Object.assign({}, autoCompleteElem, { route });
                   }
                   return autoCompleteElem;
                 });
-              this.setState({ stopovers: updatedStopovers });
+              this.setState({ autoCompletes: updatedAutoCompletes });
             }}
             dataSource={this.state.dataSource}
             onUpdateInput={this.handleUpdate}
