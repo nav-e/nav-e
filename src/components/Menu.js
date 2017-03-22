@@ -100,8 +100,8 @@ export default class Menu extends Component {
   ]
 
   getRoute = () => {
-    const route = this.state.route;
-    if (route.length && route.every(waypoint => waypoint !== '')) {
+    const autoCompletes = this.state.autoCompletes;
+    if (autoCompletes.every(elem => elem.route !== '')) {
       this.props.getRoute(this.state.route);
     }
     else {
