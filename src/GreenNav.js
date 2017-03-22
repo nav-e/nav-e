@@ -7,6 +7,7 @@ import Dialog from 'material-ui/Dialog';
 import Toggle from 'material-ui/Toggle';
 import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
+import fetch from 'unfetch';
 
 import Menu from './components/Menu';
 import GreenNavMap from './components/GreenNavMap';
@@ -38,9 +39,19 @@ export default class GreenNav extends Component {
     const destinationOsmId = waypoints[waypoints.length - 1];
     const url = `${GreenNavServerAddress}from/${startOsmId}/to/${destinationOsmId}`;
     fetch(url)
-      .then(response => response.json())
+      .then((response) => {
+        if (response.status > 400) {
+          throw new Error('Failed to load route data!');
+        }
+        else {
+          return response.json();
+        }
+      })
       .then((route) => {
         this.map.setRoute(route);
+      })
+      .catch((err) => {
+        console.error(`Error: ${err}`);
       });
   }
 
