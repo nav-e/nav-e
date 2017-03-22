@@ -78,6 +78,7 @@ export default class Menu extends Component {
       vehicle: 0,
       open: this.props.open,
       dataSource: [],
+      route: [],
       autoCompletes: [{ id: 1, label: 'From', route: '' }, { id: 2, label: 'To', route: '' }]
     };
     this.autoCompleteId = 3;
