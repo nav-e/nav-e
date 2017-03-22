@@ -8,7 +8,7 @@ This project aims to provide a reference implementation for a GreenNav (Green Na
 
 - Clone `GreenNav` and `rt-library`
 - `npm install` and `npm start` for both
-- Enter `h` into From/To textfield -> pick one -> `GET ROUTE`
+- Chose `Hector-Otto` to `Parc Princesse Antoinette` from suggestions -> `GET ROUTE`
 - Contribute :wink:
 
 ## Getting Started
@@ -64,7 +64,7 @@ npm install
 npm start
 ```
 
-To show a route, you have to pick a suggestion. Try inserting the letter 'h' into the From/To textfields and pick one.
+To show a route, you have to pick a suggestion. `Hector-Otto` to `Parc Princesse Antoinette` is one example.
 
 ### Run
 
