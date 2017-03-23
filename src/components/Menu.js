@@ -99,8 +99,10 @@ export default class Menu extends Component {
   ]
 
   getRoute = () => {
-    if (this.state.route.every(waypoint => waypoint !== '')) {
-      this.props.getRoute(this.state.route);
+    const autoCompletes = this.state.autoCompletes;
+    if (autoCompletes.every(elem => elem.route !== '')) {
+      const routes = autoCompletes.map(elem => elem.route);
+      this.props.getRoute(routes);
     }
     else {
       // TODO: implement notifications (Thomas GSoC Project - see polymer reference branch)
@@ -124,14 +126,14 @@ export default class Menu extends Component {
             floatingLabelText={autoComplete.label}
             onNewRequest={(req, index) => {
               const route = index === -1 ? '' : this.state.dataSource[index].data.osm_id;
-              const updatedStopovers =
+              const updatedAutoCompletes =
                 this.state.autoCompletes.map((autoCompleteElem) => {
                   if (autoCompleteElem.id === autoComplete.id) {
                     return Object.assign({}, autoCompleteElem, { route });
                   }
                   return autoCompleteElem;
                 });
-              this.setState({ stopovers: updatedStopovers });
+              this.setState({ autoCompletes: updatedAutoCompletes });
             }}
             dataSource={this.state.dataSource}
             onUpdateInput={this.handleUpdate}
