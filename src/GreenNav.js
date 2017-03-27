@@ -37,7 +37,7 @@ export default class GreenNav extends Component {
   getRoute = (waypoints) => {
     const startOsmId = waypoints[0];
     const destinationOsmId = waypoints[waypoints.length - 1];
-    const url = `${GreenNavServerAddress}dijkstra/from/${startOsmId}/to/${destinationOsmId}`;
+    const url = `${GreenNavServerAddress}astar/from/${startOsmId}/to/${destinationOsmId}`;
     fetch(url)
       .then((response) => {
         if (response.status > 400) {
