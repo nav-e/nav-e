@@ -30,7 +30,8 @@ export default class GreenNav extends Component {
       mapType: 0,
       temperatureEnabled: false,
       trafficEnabled: false,
-      windEnabled: false
+      windEnabled: false,
+      findingRoute: false
     };
   }
 
@@ -38,6 +39,7 @@ export default class GreenNav extends Component {
     const startOsmId = waypoints[0];
     const destinationOsmId = waypoints[waypoints.length - 1];
     const url = `${GreenNavServerAddress}dijkstra/from/${startOsmId}/to/${destinationOsmId}`;
+    this.showLoader();
     fetch(url)
       .then((response) => {
         if (response.status > 400) {
@@ -49,8 +51,10 @@ export default class GreenNav extends Component {
       })
       .then((route) => {
         this.map.setRoute(route);
+        this.hideLoader();
       })
       .catch((err) => {
+        this.hideLoader();
         console.error(`Error: ${err}`);
       });
   }
@@ -105,6 +109,18 @@ export default class GreenNav extends Component {
   toggleTemperature = () => {
     this.setState({ temperatureEnabled: !this.state.temperatureEnabled });
     this.map.toggleTemperature();
+  }
+
+  showLoader = () => {
+    // show loader for requests that take more than 400ms to complete
+    this.searchTimeout = setTimeout(() => {
+      this.setState({ findingRoute: true });
+    }, 400);
+  }
+
+  hideLoader = () => {
+    clearTimeout(this.searchTimeout);
+    this.setState({ findingRoute: false });
   }
 
   render() {
@@ -166,7 +182,11 @@ export default class GreenNav extends Component {
             open
             getRoute={this.getRoute}
           />
-          <GreenNavMap ref={c => (this.map = c)} mapType={this.state.mapType} />
+          <GreenNavMap
+            ref={c => (this.map = c)}
+            mapType={this.state.mapType}
+            findingRoute={this.state.findingRoute}
+          />
         </div>
 
         <Dialog
