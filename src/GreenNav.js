@@ -33,26 +33,40 @@ export default class GreenNav extends Component {
       windEnabled: false
     };
   }
-
-  getRoute = (waypoints) => {
-    const startOsmId = waypoints[0];
-    const destinationOsmId = waypoints[waypoints.length - 1];
-    const url = `${GreenNavServerAddress}dijkstra/from/${startOsmId}/to/${destinationOsmId}`;
-    fetch(url)
-      .then((response) => {
-        if (response.status > 400) {
-          throw new Error('Failed to load route data!');
-        }
-        else {
-          return response.json();
-        }
-      })
-      .then((route) => {
-        this.map.setRoute(route);
-      })
-      .catch((err) => {
-        console.error(`Error: ${err}`);
-      });
+  
+  getRoutes = (waypoints) => {
+    var routes = [[]];
+    let counterRoutes = 0;
+    for(let i = 0; i < waypoints.length-1; i++) {
+      const startOsmId = waypoints[i];
+      const destinationOsmId = waypoints[i+1];
+      const url = `${GreenNavServerAddress}dijkstra/from/${startOsmId}/to/${destinationOsmId}`;
+      fetch(url)
+        .then((response) => {
+          if (response.status > 400) {
+            throw new Error('Failed to load route data!');
+          }
+          else {
+            return response.json();
+          }
+        })
+        .then((routeReceived) => {
+          //The array received from rt-library is actually from dest to orig, so we gotta reverse for now.
+          routes[i] = routeReceived.reverse();
+          counterRoutes++;
+          //We use counterRoutes instead of "i" because we don't know the order that routes will be received.
+          if(counterRoutes == waypoints.length-1) {
+              let finalRoute = [];
+              routes.forEach(function (el, i) { 
+                finalRoute = finalRoute.concat(el);
+              })
+              this.map.setRoute(finalRoute);
+          }
+        })
+        .catch((err) => {
+          console.error(`Error: ${err}`);
+        });
+      }
   }
 
   toggleDrawer = () => {
@@ -164,7 +178,7 @@ export default class GreenNav extends Component {
             autoCompleteAddress={GreenNavServerAddress}
             ref={c => (this.drawer = c)}
             open
-            getRoute={this.getRoute}
+            getRoutes={this.getRoutes}
           />
           <GreenNavMap ref={c => (this.map = c)} mapType={this.state.mapType} />
         </div>
