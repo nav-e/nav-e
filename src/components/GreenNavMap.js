@@ -1,12 +1,42 @@
 import React, { Component, PropTypes } from 'react';
 import { red600 } from 'material-ui/styles/colors';
+import CircularProgress from 'material-ui/CircularProgress';
 
 const ol = require('openlayers');
 
 const styles = {
   container: {
     height: '100%',
+    width: '100%',
+    position: 'relative'
+  },
+
+  map: {
+    height: '100%',
+    width: '100%',
+    zIndex: 99
+  },
+
+  loaderWrapper: {
+    zIndex: 999,
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    position: 'absolute',
+    left: '50%',
+    top: '50%',
+    transform: 'translate(-50%, -50%)',
+    height: '100%',
     width: '100%'
+  },
+
+  hider: {
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    height: '100%',
+    width: '100%',
+    background: 'rgba(254, 254, 254, .5)'
   }
 };
 
@@ -153,6 +183,13 @@ export default class GreenNavMap extends Component {
     this.state.map.getLayers().getArray()[2].setSource(source);
   }
 
+  getLoader = () => (
+    <div style={styles.loaderWrapper}>
+      <div style={styles.hider} />
+      <CircularProgress style={styles.loader} />
+    </div>
+  )
+
   toggleTraffic = () => {
     this.setState({ traffic: !this.state.traffic });
     this.state.map.getLayers().getArray()[3].setVisible(!this.state.traffic);
@@ -174,7 +211,10 @@ export default class GreenNavMap extends Component {
 
   render() {
     return (
-      <div style={styles.container} ref={c => (this.map = c)} />
+      <div style={styles.container}>
+        {this.props.findingRoute ? this.getLoader() : ''}
+        <div style={styles.map} ref={c => (this.map = c)} />
+      </div>
     );
   }
 }
@@ -182,11 +222,13 @@ export default class GreenNavMap extends Component {
 GreenNavMap.propTypes = {
   longitude: PropTypes.number,
   latitude: PropTypes.number,
-  zoom: PropTypes.number
+  zoom: PropTypes.number,
+  findingRoute: PropTypes.bool
 };
 
 GreenNavMap.defaultProps = {
   longitude: 11.566,
   latitude: 48.139,
-  zoom: 11
+  zoom: 11,
+  findingRoute: false
 };
