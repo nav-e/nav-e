@@ -125,7 +125,9 @@ export default class Menu extends Component {
             key={autoComplete.id}
             floatingLabelText={autoComplete.label}
             onNewRequest={(req, index) => {
-              const route = index === -1 ? '' : this.state.dataSource[index].data.osm_id;
+              // if index is not -1 and multiple suggestions with same value exits
+              // then select the first one
+              const route = index === -1 ? '' : this.state.dataSource[0].data.osm_id;
               const updatedAutoCompletes =
                 this.state.autoCompletes.map((autoCompleteElem) => {
                   if (autoCompleteElem.id === autoComplete.id) {
@@ -166,6 +168,11 @@ export default class Menu extends Component {
   isStopover = id => (id !== 1 && id !== 2)
 
   handleUpdate = (address) => {
+    // dont make any req if autocomplete is empty
+    if (!address.length) {
+      return;
+    }
+
     if (this.xhr.readyState !== 0 || this.xhr.readyState !== 4) {
       this.xhr.abort();
     }

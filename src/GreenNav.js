@@ -30,19 +30,25 @@ export default class GreenNav extends Component {
       mapType: 0,
       temperatureEnabled: false,
       trafficEnabled: false,
-      windEnabled: false
+      windEnabled: false,
+      findingRoute: false
     };
   }
-  
-  getRoutes = (waypoints) => {
-    var routes = [[]];
+ 
+  getRoutes = waypoints => {
+    var routes = [];
     let counterRoutes = 0;
+    
+    if (waypoints.length > 0) {
+      this.showLoader();
+    }
+    
     for(let i = 0; i < waypoints.length-1; i++) {
       const startOsmId = waypoints[i];
       const destinationOsmId = waypoints[i+1];
-      const url = `${GreenNavServerAddress}dijkstra/from/${startOsmId}/to/${destinationOsmId}`;
+      const url = `${GreenNavServerAddress}astar/from/${startOsmId}/to/${destinationOsmId}`;
       fetch(url)
-        .then((response) => {
+        .then(response => {
           if (response.status > 400) {
             throw new Error('Failed to load route data!');
           }
@@ -50,20 +56,20 @@ export default class GreenNav extends Component {
             return response.json();
           }
         })
-        .then((routeReceived) => {
+        .then(routeReceived => {
           //The array received from rt-library is actually from dest to orig, so we gotta reverse for now.
           routes[i] = routeReceived.reverse();
           counterRoutes++;
           //We use counterRoutes instead of "i" because we don't know the order that routes will be received.
           if(counterRoutes == waypoints.length-1) {
               let finalRoute = [];
-              routes.forEach(function (el, i) { 
-                finalRoute = finalRoute.concat(el);
-              })
+              routes.forEach(route => finalRoute = finalRoute.concat(route));
+              this.hideLoader();
               this.map.setRoute(finalRoute);
           }
         })
-        .catch((err) => {
+        .catch(err => {
+          this.hideLoader();
           console.error(`Error: ${err}`);
         });
       }
@@ -119,6 +125,18 @@ export default class GreenNav extends Component {
   toggleTemperature = () => {
     this.setState({ temperatureEnabled: !this.state.temperatureEnabled });
     this.map.toggleTemperature();
+  }
+
+  showLoader = () => {
+    // show loader for requests that take more than 400ms to complete
+    this.searchTimeout = setTimeout(() => {
+      this.setState({ findingRoute: true });
+    }, 400);
+  }
+
+  hideLoader = () => {
+    clearTimeout(this.searchTimeout);
+    this.setState({ findingRoute: false });
   }
 
   render() {
@@ -180,7 +198,11 @@ export default class GreenNav extends Component {
             open
             getRoutes={this.getRoutes}
           />
-          <GreenNavMap ref={c => (this.map = c)} mapType={this.state.mapType} />
+          <GreenNavMap
+            ref={c => (this.map = c)}
+            mapType={this.state.mapType}
+            findingRoute={this.state.findingRoute}
+          />
         </div>
 
         <Dialog
