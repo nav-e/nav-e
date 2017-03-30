@@ -179,7 +179,7 @@ export default class GreenNavMap extends Component {
     });
 
     this.state.map.getView().setCenter(ol.proj.transform([coords[0][0], coords[0][1]], 'EPSG:4326', 'EPSG:3857'));
-    this.state.map.getView().setZoom(18);
+    this.state.map.getView().fit(lineString, this.state.map.getSize());
     this.state.map.getLayers().getArray()[2].setSource(source);
   }
 
