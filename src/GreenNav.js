@@ -50,6 +50,7 @@ export default class GreenNav extends Component {
         }
       })
       .then((route) => {
+        this.drawer.setResults(630, 5, 3);
         this.map.setRoute(route);
         this.hideLoader();
       })

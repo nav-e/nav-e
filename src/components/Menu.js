@@ -8,8 +8,9 @@ import IconButton from 'material-ui/IconButton';
 import FontIcon from 'material-ui/FontIcon';
 import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
+import {List, ListItem} from 'material-ui/List';
 import Paper from 'material-ui/Paper';
-import { green700 } from 'material-ui/styles/colors';
+import { green700, green800 } from 'material-ui/styles/colors';
 
 const styles = {
   container: {
@@ -67,6 +68,23 @@ const styles = {
     fontWeight: 'bold',
     color: green700,
     fontSize: '14px'
+  },
+
+  routeResultsDiv: {
+    border:'1px solid',
+    borderColor: green800,
+    borderRadius: '15px',
+    marginTop: '30px'
+  },
+
+  routeResultsList: {
+    pointerEvents: 'none',
+  },
+
+  resultsTitle: {
+     fontWeight: 600,
+     marginLeft: '5px',
+     color: green700
   }
 };
 
@@ -78,7 +96,13 @@ export default class Menu extends Component {
       vehicle: 0,
       open: this.props.open,
       dataSource: [],
-      autoCompletes: [{ id: 1, label: 'From', route: '' }, { id: 2, label: 'To', route: '' }]
+      autoCompletes: [{ id: 1, label: 'From', route: '' }, { id: 2, label: 'To', route: '' }],
+      showResults: false,
+      routeResults: {
+        Distance: { nameDisplayed: 'Distance', value: 0, unit:'m'},
+        Duration: { nameDisplayed: 'Travel duration', value: 0, unit:' min'},
+        BatteryConsumption: { nameDisplayed: 'Battery Consumption', value: 0, unit:'%'}
+      }
     };
     this.autoCompleteId = 3;
     this.xhr = new XMLHttpRequest();
@@ -97,11 +121,12 @@ export default class Menu extends Component {
     'Karabag Fiat 500E',
     'Lupower Fiat 500E'
   ]
-
+  
   getRoute = () => {
     const autoCompletes = this.state.autoCompletes;
     if (autoCompletes.every(elem => elem.route !== '')) {
       const routes = autoCompletes.map(elem => elem.route);
+      this.setState({ showResults: true });
       this.props.getRoute(routes);
     }
     else {
@@ -207,6 +232,14 @@ export default class Menu extends Component {
     this.setState({ vehicle: value });
   }
 
+  setResults = (distance, duration, batteryConsumption)=> {
+    const routeResultsTemp = this.state.routeResults;
+    routeResultsTemp.Distance.value = distance;
+    routeResultsTemp.Duration.value = duration;
+    routeResultsTemp.BatteryConsumption.value = batteryConsumption;
+    this.setState({ routeResults: routeResultsTemp})
+  }
+
   render() {
     return (
       <Paper style={this.state.open ? styles.container : { display: 'none' }} zDepth={5} rounded={false}>
@@ -275,6 +308,18 @@ export default class Menu extends Component {
                 onClick={this.getRoute}
                 icon={<FontIcon className="material-icons">near_me</FontIcon>}
               />
+              <div style={{visibility: this.state.showResults?"visible":"hidden"}}>
+                <List style={styles.routeResultsDiv}>
+                <span style = {styles.resultsTitle}>Travel info</span>
+                  {Object.keys(this.state.routeResults).map((key, index) => (
+                       <ListItem style={styles.routeResultsList} 
+                      key={index}
+                      primaryText={this.state.routeResults[key].nameDisplayed + ": " +
+                      this.state.routeResults[key].value +
+                      this.state.routeResults[key].unit} />
+                  ))}
+                </List>
+              </div>
             </div>
           </Tab>
           <Tab label="Reachability" style={styles.tab}>
