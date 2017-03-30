@@ -34,29 +34,45 @@ export default class GreenNav extends Component {
       findingRoute: false
     };
   }
-
-  getRoute = (waypoints) => {
-    const startOsmId = waypoints[0];
-    const destinationOsmId = waypoints[waypoints.length - 1];
-    const url = `${GreenNavServerAddress}astar/from/${startOsmId}/to/${destinationOsmId}`;
-    this.showLoader();
-    fetch(url)
-      .then((response) => {
-        if (response.status > 400) {
-          throw new Error('Failed to load route data!');
-        }
-        else {
-          return response.json();
-        }
-      })
-      .then((route) => {
-        this.map.setRoute(route);
-        this.hideLoader();
-      })
-      .catch((err) => {
-        this.hideLoader();
-        console.error(`Error: ${err}`);
-      });
+ 
+  getRoutes = waypoints => {
+    var routes = [];
+    let counterRoutes = 0;
+    
+    if (waypoints.length > 0) {
+      this.showLoader();
+    }
+    
+    for(let i = 0; i < waypoints.length-1; i++) {
+      const startOsmId = waypoints[i];
+      const destinationOsmId = waypoints[i+1];
+      const url = `${GreenNavServerAddress}astar/from/${startOsmId}/to/${destinationOsmId}`;
+      fetch(url)
+        .then(response => {
+          if (response.status > 400) {
+            throw new Error('Failed to load route data!');
+          }
+          else {
+            return response.json();
+          }
+        })
+        .then(routeReceived => {
+          //The array received from rt-library is actually from dest to orig, so we gotta reverse for now.
+          routes[i] = routeReceived.reverse();
+          counterRoutes++;
+          //We use counterRoutes instead of "i" because we don't know the order that routes will be received.
+          if(counterRoutes == waypoints.length-1) {
+              let finalRoute = [];
+              routes.forEach(route => finalRoute = finalRoute.concat(route));
+              this.hideLoader();
+              this.map.setRoute(finalRoute);
+          }
+        })
+        .catch(err => {
+          this.hideLoader();
+          console.error(`Error: ${err}`);
+        });
+      }
   }
 
   toggleDrawer = () => {
@@ -180,7 +196,7 @@ export default class GreenNav extends Component {
             autoCompleteAddress={GreenNavServerAddress}
             ref={c => (this.drawer = c)}
             open
-            getRoute={this.getRoute}
+            getRoutes={this.getRoutes}
           />
           <GreenNavMap
             ref={c => (this.map = c)}

@@ -102,7 +102,7 @@ export default class Menu extends Component {
     const autoCompletes = this.state.autoCompletes;
     if (autoCompletes.every(elem => elem.route !== '')) {
       const routes = autoCompletes.map(elem => elem.route);
-      this.props.getRoute(routes);
+      this.props.getRoutes(routes);
     }
     else {
       // TODO: implement notifications (Thomas GSoC Project - see polymer reference branch)
