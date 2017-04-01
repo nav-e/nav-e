@@ -42,7 +42,7 @@ export default class GreenNav extends Component {
     if (waypoints.length > 0) {
       this.showLoader();
     }
-    
+    const markerCoordinates = [];
     for(let i = 0; i < waypoints.length-1; i++) {
       const startOsmId = waypoints[i];
       const destinationOsmId = waypoints[i+1];
@@ -59,13 +59,16 @@ export default class GreenNav extends Component {
         .then(routeReceived => {
           //The array received from rt-library is actually from dest to orig, so we gotta reverse for now.
           routes[i] = routeReceived.reverse();
-          counterRoutes++;
+          markerCoordinates[i] = routeReceived[0];
+
           //We use counterRoutes instead of "i" because we don't know the order that routes will be received.
-          if(counterRoutes == waypoints.length-1) {
+          counterRoutes++;
+          if(counterRoutes === waypoints.length-1) {
               let finalRoute = [];
               routes.forEach(route => finalRoute = finalRoute.concat(route));
+              markerCoordinates[waypoints.length-1] = finalRoute[finalRoute.length-1];
               this.hideLoader();
-              this.map.setRoute(finalRoute);
+              this.map.setRoute(finalRoute, markerCoordinates);
           }
         })
         .catch(err => {

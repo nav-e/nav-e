@@ -1,5 +1,5 @@
 import React, { Component, PropTypes } from 'react';
-import { red600, green600, blue600 } from 'material-ui/styles/colors';
+import { red600 } from 'material-ui/styles/colors';
 import CircularProgress from 'material-ui/CircularProgress';
 
 const ol = require('openlayers');
@@ -54,21 +54,24 @@ export default class GreenNavMap extends Component {
         })
       }),
       'markerStart' : new ol.style.Style({
-          stroke: new ol.style.Stroke({
-            color: green600,
-            width: 4
-          })
+        image:  new ol.style.Icon({
+          opacity: 0.9,
+          anchor: [0.5, 0.9],
+          src: '/images/greennav-icon-waypoint-start.svg'
+        })
       }),
       'markerEnd' : new ol.style.Style({
-        stroke: new ol.style.Stroke({
-          color: red600,
-          width: 4
+        image:  new ol.style.Icon({
+          opacity: 0.9,
+          anchor: [0.5, 0.9],
+          src: '/images/greennav-icon-waypoint-end.svg'
         })
       }),
       'markerStopOver' : new ol.style.Style({
-        stroke: new ol.style.Stroke({
-          color: blue600,
-          width: 4
+        image:  new ol.style.Icon({
+          opacity: 0.9,
+          anchor: [0.5, 0.9],
+          src: '/images/greennav-icon-waypoint-stopover.svg'
         })
       })
     };
@@ -184,31 +187,28 @@ export default class GreenNavMap extends Component {
     }
   }
 
-  getFeaturesMarkers = (markersCoordinate) => {
+  getMarkerFeatures = (markerCoordinates) => {
     const features = [];
-    markersCoordinate.forEach(function(el, i) {
+    markerCoordinates.forEach((markerCoordinate, index) => {
       let featureName = 'markerStopOver';
-      if (i == 0) {
+      if (index === 0) {
          featureName = 'markerStart';
-      } else if (i == markersCoordinate.length-1) {
+      } else if (index === markerCoordinates.length-1) {
           featureName = 'markerEnd';
       }
 
-      const circle = new ol.geom.Circle(el, 0.0001);
-      circle.transform('EPSG:4326', 'EPSG:3857');
-      const feature = new ol.Feature({
-        geometry: circle,
+     var iconFeature = new ol.Feature({
+        geometry: new ol.geom.Point(ol.proj.transform([markerCoordinate.lon, markerCoordinate.lat], 'EPSG:4326',     
+        'EPSG:3857')),
         name: featureName
       });
-      
-      features.push(feature);
-
+     features.push(iconFeature);
     });
 
     return features;
   }
 
-  setRoute = (route) => {
+  setRoute = (route, markerCoordinates) => {
     const coords = [];
     route.forEach((point) => {
       coords.push([point.lon, point.lat]);
@@ -220,7 +220,7 @@ export default class GreenNavMap extends Component {
       geometry: lineString,
       name: 'route'
     });
-    const features = this.getFeaturesMarkers([coords[coords.length-1], coords[0]]);
+    const features = this.getMarkerFeatures(markerCoordinates);
     features.push(featureRoute);
     const source = new ol.source.Vector({
       features: features
