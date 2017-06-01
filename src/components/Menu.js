@@ -9,6 +9,7 @@ import FontIcon from 'material-ui/FontIcon';
 import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
 import Paper from 'material-ui/Paper';
+import TextField from 'material-ui/TextField';
 import { green700 } from 'material-ui/styles/colors';
 
 const styles = {
@@ -39,6 +40,10 @@ const styles = {
     marginBottom: '25px'
   },
 
+  reachabilitySlider: {
+    marginBottom: '0px'
+  },
+
   autoCompleteWrapper: {
     position: 'relative',
     display: 'flex'
@@ -67,6 +72,12 @@ const styles = {
     fontWeight: 'bold',
     color: green700,
     fontSize: '14px'
+  },
+
+  textField: {
+    display: 'inherit',
+    position: 'relative',
+    marginBottom: '25px'
   }
 };
 
@@ -79,9 +90,9 @@ export default class Menu extends Component {
       open: this.props.open,
       dataSource: [],
       autoCompletes: [{ id: 1, label: 'From', route: '' }, { id: 2, label: 'To', route: '' }],
-      reachability: [{ id: 1, label: 'From', route: '' }],
       batteryPecentage: 100,
       batteryLevel: 1.0,
+      remainingRange: undefined,
     };
     this.autoCompleteId = 3;
     this.xhr = new XMLHttpRequest();
@@ -115,7 +126,7 @@ export default class Menu extends Component {
 
   getRangeVisualisation = () => {
     // TODO: Implement polygon drawing here
-    console.log("Getting Range Visualisation");
+    console.log('Getting Range Visualisation');
   }
 
   getAllAutoCompletes = () => {
@@ -215,6 +226,13 @@ export default class Menu extends Component {
     this.setState({ vehicle: value });
   }
 
+  updateRange = (event, value) => {
+    this.setState({
+      batteryPecentage: parseInt(value * 100, 10),
+      batteryLevel: value
+    });
+  }
+
   render() {
     return (
       <Paper style={this.state.open ? styles.container : { display: 'none' }} zDepth={5} rounded={false}>
@@ -271,12 +289,7 @@ export default class Menu extends Component {
                 </span>
               </p>
               <Slider
-                onChange={(e, val) => {
-                  this.setState({
-                    batteryPecentage: parseInt(val * 100, 10),
-                    batteryLevel: val
-                  });
-                }}
+                onChange={this.updateRange}
                 value={this.state.batteryLevel}
                 sliderStyle={styles.slider}
               />
@@ -311,19 +324,22 @@ export default class Menu extends Component {
                   </span>
                 </p>
                 <Slider
-                  onChange={(e, val) => {
-                    this.setState({
-                      batteryPecentage: parseInt(val * 100, 10),
-                      batteryLevel: val
-                    });
-                  }}
+                  onChange={this.updateRange}
                   value={this.state.batteryLevel}
-                  sliderStyle={styles.slider}
+                  sliderStyle={styles.reachabilitySlider}
+                />
+                <TextField
+                  onChange={(e, val) => {
+                    this.setState({ remainingRange: val })
+                  }}
+                  style={styles.textField}
+                  floatingLabelText="Remaining Range"
+                  value={this.state.remainingRange}
                 />
                 <RaisedButton
                   label="Visualise Range"
                   onClick={this.getRangeVisualisation}
-                  icon={<FontIcon className="material-icons">near_me</FontIcon>}
+                  icon={<FontIcon className="material-icons">map</FontIcon>}
                 />
               </p>
             </div>
