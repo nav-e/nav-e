@@ -227,9 +227,11 @@ export default class Menu extends Component {
   }
 
   updateRange = (event, value) => {
+    // TODO: Set remainingRange to distance in km/miles based on batteryLevel and car model
     this.setState({
       batteryPecentage: parseInt(value * 100, 10),
-      batteryLevel: value
+      batteryLevel: value,
+      remainingRange: parseInt(value * 100, 10),
     });
   }
 
@@ -353,8 +355,7 @@ export default class Menu extends Component {
 Menu.propTypes = {
   open: PropTypes.bool,
   autoCompleteAddress: PropTypes.string.isRequired,
-  getRoutes: PropTypes.func.isRequired,
-  getRangeVisualisation: PropTypes.func.isRequired
+  getRoutes: PropTypes.func.isRequired
 };
 
 Menu.defaultProps = {
