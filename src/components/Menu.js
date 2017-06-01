@@ -78,7 +78,10 @@ export default class Menu extends Component {
       vehicle: 0,
       open: this.props.open,
       dataSource: [],
-      autoCompletes: [{ id: 1, label: 'From', route: '' }, { id: 2, label: 'To', route: '' }]
+      autoCompletes: [{ id: 1, label: 'From', route: '' }, { id: 2, label: 'To', route: '' }],
+      reachability: [{ id: 1, label: 'From', route: '' }],
+      batteryPecentage: 100,
+      batteryLevel: 1.0,
     };
     this.autoCompleteId = 3;
     this.xhr = new XMLHttpRequest();
@@ -108,6 +111,11 @@ export default class Menu extends Component {
       // TODO: implement notifications (Thomas GSoC Project - see polymer reference branch)
       alert('Please select a start and destination from the suggestions');
     }
+  }
+
+  getRangeVisualisation = () => {
+    // TODO: Implement polygon drawing here
+    console.log("Getting Range Visualisation");
   }
 
   getAllAutoCompletes = () => {
@@ -253,22 +261,24 @@ export default class Menu extends Component {
                   <MenuItem key={index} value={index} primaryText={vehicle} />
                 ))}
               </SelectField>
-
               <p style={styles.batteryLevel}>
                 <span>Battery Level</span>
                 <span
                   style={styles.batteryLevelValue}
                   ref={node => (this.batteryLevel = node)}
                 >
-                  100%
+                  {`${this.state.batteryPecentage}%`}
                 </span>
               </p>
               <Slider
                 onChange={(e, val) => {
-                  this.batteryLevel.innerText = `${parseInt(val * 100, 10)}%`;
+                  this.setState({
+                    batteryPecentage: parseInt(val * 100, 10),
+                    batteryLevel: val
+                  });
                 }}
+                value={this.state.batteryLevel}
                 sliderStyle={styles.slider}
-                defaultValue={1}
               />
               <RaisedButton
                 label="Get Route"
@@ -280,7 +290,41 @@ export default class Menu extends Component {
           <Tab label="Reachability" style={styles.tab}>
             <div style={styles.menu}>
               <p>
-                This feature is currently disabled
+                <SelectField
+                  floatingLabelText="Vehicle"
+                  value={this.state.vehicle}
+                  onChange={this.vehicleChange}
+                  maxHeight={210}
+                  fullWidth
+                >
+                  {this.getVehicles().map((vehicle, index) => (
+                    <MenuItem key={index} value={index} primaryText={vehicle} />
+                  ))}
+                </SelectField>
+                <p style={styles.batteryLevel}>
+                  <span>Battery Level</span>
+                  <span
+                    style={styles.batteryLevelValue}
+                    ref={node => (this.batteryLevel = node)}
+                  >
+                    {`${this.state.batteryPecentage}%`}
+                  </span>
+                </p>
+                <Slider
+                  onChange={(e, val) => {
+                    this.setState({
+                      batteryPecentage: parseInt(val * 100, 10),
+                      batteryLevel: val
+                    });
+                  }}
+                  value={this.state.batteryLevel}
+                  sliderStyle={styles.slider}
+                />
+                <RaisedButton
+                  label="Visualise Range"
+                  onClick={this.getRangeVisualisation}
+                  icon={<FontIcon className="material-icons">near_me</FontIcon>}
+                />
               </p>
             </div>
           </Tab>
@@ -293,7 +337,8 @@ export default class Menu extends Component {
 Menu.propTypes = {
   open: PropTypes.bool,
   autoCompleteAddress: PropTypes.string.isRequired,
-  getRoute: PropTypes.func.isRequired
+  getRoutes: PropTypes.func.isRequired,
+  getRangeVisualisation: PropTypes.func.isRequired
 };
 
 Menu.defaultProps = {
