@@ -33,7 +33,7 @@ const styles = {
   },
 
   menu: {
-    margin: '10px 25px 30px'
+    margin: '10px 20px 30px'
   },
 
   slider: {
