@@ -1,3 +1,4 @@
+import GeographicLib from 'geographiclib'; // For geodesic calculations
 import React, { Component } from 'react';
 import { Toolbar, ToolbarGroup, ToolbarSeparator, ToolbarTitle } from 'material-ui/Toolbar';
 import FlatButton from 'material-ui/FlatButton';
@@ -37,24 +38,23 @@ export default class GreenNav extends Component {
 
 
   getRangeVisualisation = (range) => {
-    // console.log(`Range: ${range}`);
+    const geod = GeographicLib.Geodesic.WGS84;
 
     // Placeholder Central Coordinates
     const longitude = 11.566;
     const latitude = 48.139;
-    const vertices = [
-      // Long Lat
-      [11.412721, 48.191202],
-      [11.469026, 48.242444],
-      [11.577516, 48.249760],
-      [11.716047, 48.205848],
-      [11.720170, 48.146404],
-      [11.707105, 48.101346],
-      [11.646768, 48.075436],
-      [11.562726, 48.083354],
-      [11.470064, 48.096309],
-      [11.397874, 48.117893]
-    ];
+
+    // in metres
+    const vertices = [];
+    let angle = 0;
+
+    for (let i = 0; i < 20; i += 1) {
+      const r = geod.Direct(latitude, longitude, angle, range * 1000);
+      angle += 18;
+      const coords = [r.lon2, r.lat2]; // in long lat
+      vertices.push(coords);
+    }
+
     this.map.setRangePolygon(vertices);
   }
 
