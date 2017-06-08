@@ -125,8 +125,12 @@ export default class Menu extends Component {
   }
 
   getRangeVisualisation = () => {
-    // TODO: Implement polygon drawing here
-    console.log('Getting Range Visualisation');
+    if (this.state.remainingRange > 0) {
+      this.props.getRangeVisualisation(this.state.remainingRange);
+    }
+    else {
+      alert('Please indicate the remaining range of your vehicle.');
+    }
   }
 
   getAllAutoCompletes = () => {
@@ -355,7 +359,8 @@ export default class Menu extends Component {
 Menu.propTypes = {
   open: PropTypes.bool,
   autoCompleteAddress: PropTypes.string.isRequired,
-  getRoutes: PropTypes.func.isRequired
+  getRoutes: PropTypes.func.isRequired,
+  getRangeVisualisation: PropTypes.func.isRequired
 };
 
 Menu.defaultProps = {

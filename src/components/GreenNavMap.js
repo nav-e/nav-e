@@ -72,31 +72,8 @@ export default class GreenNavMap extends Component {
       })
     });
 
-
-    const feature = new ol.Feature({
-      geometry: new ol.geom.Polygon([
-        [
-          // Long Lat
-          [11.412721, 48.191202],
-          [11.469026, 48.242444],
-          [11.577516, 48.249760],
-          [11.716047, 48.205848],
-          [11.720170, 48.146404],
-          [11.707105, 48.101346],
-          [11.646768, 48.075436],
-          [11.562726, 48.083354],
-          [11.470064, 48.096309],
-          [11.397874, 48.117893]
-        ]
-      ])
-    });
-
-    feature.getGeometry().transform('EPSG:4326', 'EPSG:3857');
-
     const rangePolygonLayer = new ol.layer.Vector({
-      source: new ol.source.Vector({
-        features: [feature]
-      }),
+      visible: true,
     });
 
     // Traffic layer
@@ -187,6 +164,22 @@ export default class GreenNavMap extends Component {
       this.state.map.getLayers().getArray()[1].setVisible(true);
       this.state.map.getLayers().getArray()[0].setVisible(false);
     }
+  }
+
+  setRangePolygon = (vertices) => {
+    const feature = new ol.Feature({
+      geometry: new ol.geom.Polygon([
+        vertices
+      ])
+    });
+
+    feature.getGeometry().transform('EPSG:4326', 'EPSG:3857');
+
+    const source = new ol.source.Vector({
+      features: [feature]
+    });
+
+    this.state.map.getLayers().getArray()[6].setSource(source);
   }
 
   setRoute = (route) => {

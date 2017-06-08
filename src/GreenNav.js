@@ -34,15 +34,38 @@ export default class GreenNav extends Component {
       findingRoute: false
     };
   }
- 
-  getRoutes = waypoints => {
+
+
+  getRangeVisualisation = (range) => {
+    // console.log(`Range: ${range}`);
+
+    // Placeholder Central Coordinates
+    const longitude = 11.566;
+    const latitude = 48.139;
+    const vertices = [
+      // Long Lat
+      [11.412721, 48.191202],
+      [11.469026, 48.242444],
+      [11.577516, 48.249760],
+      [11.716047, 48.205848],
+      [11.720170, 48.146404],
+      [11.707105, 48.101346],
+      [11.646768, 48.075436],
+      [11.562726, 48.083354],
+      [11.470064, 48.096309],
+      [11.397874, 48.117893]
+    ];
+    this.map.setRangePolygon(vertices);
+  }
+
+  getRoutes = (waypoints) => {
     var routes = [];
     let counterRoutes = 0;
-    
+
     if (waypoints.length > 0) {
       this.showLoader();
     }
-    
+
     for(let i = 0; i < waypoints.length-1; i++) {
       const startOsmId = waypoints[i];
       const destinationOsmId = waypoints[i+1];
@@ -197,6 +220,7 @@ export default class GreenNav extends Component {
             ref={c => (this.drawer = c)}
             open
             getRoutes={this.getRoutes}
+            getRangeVisualisation={this.getRangeVisualisation}
           />
           <GreenNavMap
             ref={c => (this.map = c)}
