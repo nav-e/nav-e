@@ -44,13 +44,12 @@ export default class GreenNav extends Component {
     const longitude = 11.566;
     const latitude = 48.139;
 
-    // in metres
     const vertices = [];
-    let angle = 0;
+    let angle = 0; // in degrees
 
-    for (let i = 0; i < 20; i += 1) {
+    for (let i = 0; i < 14; i += 1) {
       const r = geod.Direct(latitude, longitude, angle, range * 1000);
-      angle += 18;
+      angle += 25;
       const coords = [r.lon2, r.lat2]; // in long lat
       vertices.push(coords);
     }

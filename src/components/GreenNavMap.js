@@ -52,6 +52,16 @@ export default class GreenNavMap extends Component {
       })
     });
 
+    const polygonStyle = new ol.style.Style({
+      stroke: new ol.style.Stroke({
+        color: 'rgba(138, 159, 220, 0.9)',
+        width: 2
+      }),
+      fill: new ol.style.Fill({
+        color: 'rgba(199, 216, 240, 0.28)'
+      })
+    });
+
     const routeLayer = new ol.layer.Vector({
       style: lineStyle
     });
@@ -73,6 +83,7 @@ export default class GreenNavMap extends Component {
     });
 
     const rangePolygonLayer = new ol.layer.Vector({
+      style: polygonStyle,
       visible: true,
     });
 
