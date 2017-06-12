@@ -157,12 +157,18 @@ export default class GreenNavMap extends Component {
       zoom: this.props.zoom
     });
 
+    const userLocationMarker = new ol.Overlay({
+      id: 'userLocation',
+      positioning: 'center-center',
+      stopEvent: false
+    });
+
     const map = new ol.Map({
       layers: [osmLayer, googleLayer, routeLayer, trafficLayer,
         temperatureLayer, windLayer, rangePolygonLayer],
+      overlays: [userLocationMarker],
       view
     });
-
 
     const geolocation = new ol.Geolocation({
       tracking: true,
@@ -174,11 +180,10 @@ export default class GreenNavMap extends Component {
 
     geolocation.on('change', () => {
       const p = geolocation.getPosition();
-      console.log(p[0] + ' : ' + p[1]);
       this.setState({ geoLocation: p });
-      view.setCenter([parseFloat(p[0]), parseFloat(p[1])]); // centers view to position
+      userLocationMarker.setPosition([p[0], p[1]]);
+      view.setCenter([p[0], p[1]]); // centers view to position
     });
-
 
     this.state = {
       map,
@@ -193,14 +198,8 @@ export default class GreenNavMap extends Component {
   componentDidMount() {
     this.state.map.setTarget(this.map);
     window.addEventListener('resize', this.updateSize);
-    // Add user location marker to map
-    const userLocationMarker = new ol.Overlay({
-      element: document.getElementById('userLocationMarker'),
-      positioning: 'center-center',
-      position: [parseFloat(this.state.geoLocation[0]),
-        parseFloat(this.state.geoLocation[1])],
-    });
-    this.state.map.addOverlay(userLocationMarker);
+    this.state.map.getOverlayById('userLocation')
+    .setElement(document.getElementById('userLocationMarker'));
   }
 
   componentWillUnmount() {
@@ -286,8 +285,8 @@ export default class GreenNavMap extends Component {
     return (
       <div style={styles.container}>
         {this.props.findingRoute ? this.getLoader() : ''}
-        <div style={styles.userLocationMarker} id="userLocationMarker" />
         <div style={styles.map} ref={c => (this.map = c)} />
+        <div style={styles.userLocationMarker} id="userLocationMarker" />
       </div>
     );
   }
