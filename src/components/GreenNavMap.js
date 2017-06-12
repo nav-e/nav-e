@@ -4,6 +4,12 @@ import CircularProgress from 'material-ui/CircularProgress';
 
 const ol = require('openlayers');
 
+// Placeholder coordinates
+const sgLat = 1.339670;
+const sgLng = 103.805093;
+const munichLat = 48.139;
+const munichLng = 11.566;
+
 const styles = {
   container: {
     height: '100%',
@@ -37,11 +43,17 @@ const styles = {
     height: '100%',
     width: '100%',
     background: 'rgba(254, 254, 254, .5)'
+  },
+
+  userLocationMarker: {
+    width: '20px',
+    height: '20px',
+    backgroundColor: '#0FF',
+    opacity: 0.5,
   }
 };
 
 export default class GreenNavMap extends Component {
-
   constructor(props) {
     super(props);
 
@@ -140,26 +152,55 @@ export default class GreenNavMap extends Component {
       })
     });
 
+    const view = new ol.View({
+      center: ol.proj.fromLonLat([this.props.longitude, this.props.latitude]),
+      zoom: this.props.zoom
+    });
+
     const map = new ol.Map({
       layers: [osmLayer, googleLayer, routeLayer, trafficLayer,
         temperatureLayer, windLayer, rangePolygonLayer],
-      view: new ol.View({
-        center: ol.proj.fromLonLat([this.props.longitude, this.props.latitude]),
-        zoom: this.props.zoom
-      })
+      view
     });
+
+
+    const geolocation = new ol.Geolocation({
+      tracking: true,
+      trackingOptions: {
+        enableHighAccuracy: true
+      },
+      projection: view.getProjection()
+    });
+
+    geolocation.on('change', () => {
+      const p = geolocation.getPosition();
+      console.log(p[0] + ' : ' + p[1]);
+      this.setState({ geoLocation: p });
+      view.setCenter([parseFloat(p[0]), parseFloat(p[1])]); // centers view to position
+    });
+
 
     this.state = {
       map,
       traffic: false,
       temperature: false,
-      wind: false
+      wind: false,
+      // TODO: change coords to munich's
+      geoLocation: [11554204.824838564, 149032.00800687293] // sg Placeholder
     };
   }
 
   componentDidMount() {
     this.state.map.setTarget(this.map);
     window.addEventListener('resize', this.updateSize);
+    // Add user location marker to map
+    const userLocationMarker = new ol.Overlay({
+      element: document.getElementById('userLocationMarker'),
+      positioning: 'center-center',
+      position: [parseFloat(this.state.geoLocation[0]),
+        parseFloat(this.state.geoLocation[1])],
+    });
+    this.state.map.addOverlay(userLocationMarker);
   }
 
   componentWillUnmount() {
@@ -245,6 +286,7 @@ export default class GreenNavMap extends Component {
     return (
       <div style={styles.container}>
         {this.props.findingRoute ? this.getLoader() : ''}
+        <div style={styles.userLocationMarker} id="userLocationMarker" />
         <div style={styles.map} ref={c => (this.map = c)} />
       </div>
     );
@@ -259,8 +301,8 @@ GreenNavMap.propTypes = {
 };
 
 GreenNavMap.defaultProps = {
-  longitude: 11.566,
-  latitude: 48.139,
+  longitude: munichLng,
+  latitude: munichLat,
   zoom: 11,
   findingRoute: false
 };

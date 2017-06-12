@@ -16,4 +16,11 @@ const calculateRangePolygon = (range, lat, long) => {
   return vertices;
 };
 
+const calculateRangePolygonWithDestination = (range, clat, clong,
+                                              dlat, dlong) => {
+  const geod = GeographicLib.Geodesic.WGS84;
+  const vertices = [];
+  let angle = 0; // in degrees
+  // TODO: to be completed
+}
 export default calculateRangePolygon;
