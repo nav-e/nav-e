@@ -1,6 +1,7 @@
 import React, { Component, PropTypes } from 'react';
-import { red600 } from 'material-ui/styles/colors';
+import { red600, green900 } from 'material-ui/styles/colors';
 import CircularProgress from 'material-ui/CircularProgress';
+import FontIcon from 'material-ui/FontIcon';
 
 const ol = require('openlayers');
 
@@ -46,10 +47,7 @@ const styles = {
   },
 
   userLocationMarker: {
-    width: '20px',
-    height: '20px',
-    backgroundColor: '#0FF',
-    opacity: 0.5,
+    color: 'rgba(254, 254, 254, .5)'
   }
 };
 
@@ -286,7 +284,13 @@ export default class GreenNavMap extends Component {
       <div style={styles.container}>
         {this.props.findingRoute ? this.getLoader() : ''}
         <div style={styles.map} ref={c => (this.map = c)} />
-        <div style={styles.userLocationMarker} id="userLocationMarker" />
+        <FontIcon
+          className="material-icons"
+          id="userLocationMarker"
+          color={green900}
+        >
+          directions_car
+        </FontIcon>
       </div>
     );
   }
