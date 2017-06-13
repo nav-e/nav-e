@@ -179,6 +179,7 @@ export default class GreenNavMap extends Component {
     geolocation.on('change', () => {
       const p = geolocation.getPosition();
       this.setState({ geoLocation: p });
+      this.props.setRangePolygonCoordinates(p);
       userLocationMarker.setPosition([p[0], p[1]]);
       view.setCenter([p[0], p[1]]); // centers view to position
     });
@@ -300,7 +301,8 @@ GreenNavMap.propTypes = {
   longitude: PropTypes.number,
   latitude: PropTypes.number,
   zoom: PropTypes.number,
-  findingRoute: PropTypes.bool
+  findingRoute: PropTypes.bool,
+  setRangePolygonCoordinates: PropTypes.func.isRequired
 };
 
 GreenNavMap.defaultProps = {

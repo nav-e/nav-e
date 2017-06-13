@@ -33,24 +33,30 @@ export default class GreenNav extends Component {
       temperatureEnabled: false,
       trafficEnabled: false,
       windEnabled: false,
-      findingRoute: false
+      findingRoute: false,
+      rangePolygonCoordinates: undefined
     };
+
+    this.setRangePolygonCoordinates = this.setRangePolygonCoordinates.bind(this);
   }
 
+  setRangePolygonCoordinates(coord) {
+    this.setState({ rangePolygonCoordinates: coord });
+  }
 
   getRangeVisualisation = (range) => {
     // Placeholder Central Coordinates
     const long = 11.566;
     const lat = 48.139;
-
-    const vertices = calculateRangePolygon(range, lat, long);
+    const coord = this.state.rangePolygonCoordinates;
+    const vertices = calculateRangePolygon(range, coord);
     this.map.setRangePolygon(vertices);
   }
 
   getRoutes = (waypoints) => {
     var routes = [];
     let counterRoutes = 0;
-
+    console.log(waypoints);
     if (waypoints.length > 0) {
       this.showLoader();
     }
@@ -215,6 +221,7 @@ export default class GreenNav extends Component {
             ref={c => (this.map = c)}
             mapType={this.state.mapType}
             findingRoute={this.state.findingRoute}
+            setRangePolygonCoordinates={this.setRangePolygonCoordinates}
           />
         </div>
 
