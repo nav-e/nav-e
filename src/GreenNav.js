@@ -12,7 +12,7 @@ import fetch from 'unfetch';
 import Menu from './components/Menu';
 import GreenNavMap from './components/GreenNavMap';
 
-import calculateRangePolygon from './reachability';
+import { testCoordinatesValidity, calculateRangePolygonEPSG3857 } from './reachability';
 
 const GreenNavServerAddress = 'http://localhost:6833/';
 
@@ -49,8 +49,18 @@ export default class GreenNav extends Component {
     const long = 11.566;
     const lat = 48.139;
     const coord = this.state.rangePolygonCoordinates;
-    const vertices = calculateRangePolygon(range, coord);
-    this.map.setRangePolygon(vertices);
+    // TODO: check if coord is present, if not alert
+
+    testCoordinatesValidity(coord)
+      .then((res) => {
+        if (res) {
+          const vertices = calculateRangePolygonEPSG3857(range, coord);
+          this.map.setRangePolygon(vertices);
+        }
+        else {
+          // TODO: Handle invalid starting location
+        }
+      });
   }
 
   getRoutes = (waypoints) => {
