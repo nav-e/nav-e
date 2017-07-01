@@ -2,7 +2,7 @@ import ol from 'openlayers';
 import GeographicLib from 'geographiclib'; // For geodesic calculations
 
 export const testCoordinatesValidity = (coord) => {
-  const boundRange = 0.01;
+  const boundRange = 0.005;
   const nCoord = ol.proj.transform(coord, 'EPSG:3857', 'EPSG:4326');
 
   // Create bounding box
@@ -18,6 +18,7 @@ export const testCoordinatesValidity = (coord) => {
      road|motorway_link|trunk_link|motorway"]["access"!~"no|private"]
      (${swBound[0]},${swBound[1]},${neBound[0]},${neBound[1]}); out count;`
   };
+  console.log(reqOptions);
 
   // make api requests
   const overpassEndpoint = 'http://overpass-api.de/api/interpreter';
