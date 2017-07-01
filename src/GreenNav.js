@@ -49,16 +49,22 @@ export default class GreenNav extends Component {
     const long = 11.566;
     const lat = 48.139;
     const coord = this.state.rangePolygonCoordinates;
-    // TODO: check if coord is present, if not alert
 
+    if (!coord) {
+      alert('Please allow access to your current location or pick a starting location');
+    }
+
+    this.showLoader();
     testCoordinatesValidity(coord)
       .then((res) => {
         if (res) {
           const vertices = calculateRangePolygonEPSG3857(range, coord);
+          this.hideLoader();
           this.map.setRangePolygon(vertices);
         }
         else {
-          // TODO: Handle invalid starting location
+          this.hideLoader();
+          alert('No valid routes were found from your starting location.');
         }
       });
   }
