@@ -52,21 +52,21 @@ export default class GreenNav extends Component {
 
     if (!coord) {
       alert('Please allow access to your current location or pick a starting location');
+    } else {
+      this.showLoader();
+      testCoordinatesValidity(coord)
+        .then((res) => {
+          if (res) {
+            const vertices = calculateRangePolygonEPSG3857(range, coord);
+            this.hideLoader();
+            this.map.setRangePolygon(vertices);
+          }
+          else {
+            this.hideLoader();
+            alert('No valid routes were found from your starting location.');
+          }
+        });
     }
-
-    this.showLoader();
-    testCoordinatesValidity(coord)
-      .then((res) => {
-        if (res) {
-          const vertices = calculateRangePolygonEPSG3857(range, coord);
-          this.hideLoader();
-          this.map.setRangePolygon(vertices);
-        }
-        else {
-          this.hideLoader();
-          alert('No valid routes were found from your starting location.');
-        }
-      });
   }
 
   getRoutes = (waypoints) => {
