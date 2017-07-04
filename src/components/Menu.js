@@ -9,8 +9,8 @@ import FontIcon from 'material-ui/FontIcon';
 import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
 import Paper from 'material-ui/Paper';
-import TextField from 'material-ui/TextField';
 import { green700 } from 'material-ui/styles/colors';
+import ReachabilityTab from './ReachabilityTab';
 
 const styles = {
   container: {
@@ -247,7 +247,7 @@ export default class Menu extends Component {
           inkBarStyle={styles.active}
           style={styles.tabs}
         >
-          <Tab label="Route" style={styles.tab}>
+          <Tab label="Route">
             <div style={styles.menu}>
               {this.getAllAutoCompletes()}
               <div>
@@ -306,49 +306,21 @@ export default class Menu extends Component {
               />
             </div>
           </Tab>
-          <Tab label="Reachability" style={styles.tab}>
-            <div style={styles.menu}>
-              <p>
-                <SelectField
-                  floatingLabelText="Vehicle"
-                  value={this.state.vehicle}
-                  onChange={this.vehicleChange}
-                  maxHeight={210}
-                  fullWidth
-                >
-                  {this.getVehicles().map((vehicle, index) => (
-                    <MenuItem key={index} value={index} primaryText={vehicle} />
-                  ))}
-                </SelectField>
-                <p style={styles.batteryLevel}>
-                  <span>Battery Level</span>
-                  <span
-                    style={styles.batteryLevelValue}
-                    ref={node => (this.batteryLevel = node)}
-                  >
-                    {`${this.state.batteryPecentage}%`}
-                  </span>
-                </p>
-                <Slider
-                  onChange={this.updateRange}
-                  value={this.state.batteryLevel}
-                  sliderStyle={styles.reachabilitySlider}
-                />
-                <TextField
-                  onChange={(e, val) => {
-                    this.setState({ remainingRange: val })
-                  }}
-                  style={styles.textField}
-                  floatingLabelText="Remaining Range"
-                  value={this.state.remainingRange}
-                />
-                <RaisedButton
-                  label="Visualise Range"
-                  onClick={this.getRangeVisualisation}
-                  icon={<FontIcon className="material-icons">map</FontIcon>}
-                />
-              </p>
-            </div>
+          <Tab
+            label="Reachability"
+            style={styles.tab}
+          >
+            <ReachabilityTab
+              batteryLevel={this.state.batteryLevel}
+              batteryPecentage={this.state.batteryPecentage}
+              remainingRange={this.state.remainingRange}
+              updateRange={this.updateRange}
+              getRangeVisualisation={this.getRangeVisualisation}
+              getVehicles={this.getVehicles}
+              vehicle={this.state.vehicle}
+              vehicleChange={this.vehicleChange}
+
+            />
           </Tab>
         </Tabs>
       </Paper>
