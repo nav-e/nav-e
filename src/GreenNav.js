@@ -34,25 +34,29 @@ export default class GreenNav extends Component {
       trafficEnabled: false,
       windEnabled: false,
       findingRoute: false,
-      rangePolygonCoordinates: undefined
+      rangePolygonCoordinates: undefined,
+      locationPickerCoordinates: undefined
     };
 
     this.setRangePolygonCoordinates = this.setRangePolygonCoordinates.bind(this);
+    this.setLocationPickerCoordinates = this.setLocationPickerCoordinates.bind(this);
   }
 
   setRangePolygonCoordinates(coord) {
     this.setState({ rangePolygonCoordinates: coord });
   }
 
+  setLocationPickerCoordinates(coord) {
+    this.setState({ locationPickerCoordinates: coord });
+  }
+
   getRangeVisualisation = (range) => {
-    // Placeholder Central Coordinates
-    const long = 11.566;
-    const lat = 48.139;
     const coord = this.state.rangePolygonCoordinates;
 
     if (!coord) {
       alert('Please allow access to your current location or pick a starting location');
-    } else {
+    }
+    else {
       this.showLoader();
       testCoordinatesValidity(coord)
         .then((res) => {
@@ -238,6 +242,7 @@ export default class GreenNav extends Component {
             mapType={this.state.mapType}
             findingRoute={this.state.findingRoute}
             setRangePolygonCoordinates={this.setRangePolygonCoordinates}
+            setLocationPickerCoordinates={this.setLocationPickerCoordinates}
           />
         </div>
 

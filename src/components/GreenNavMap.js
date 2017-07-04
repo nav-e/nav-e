@@ -45,10 +45,6 @@ const styles = {
     width: '100%',
     background: 'rgba(254, 254, 254, .5)'
   },
-
-  userLocationMarker: {
-    color: 'rgba(254, 254, 254, .5)'
-  }
 };
 
 export default class GreenNavMap extends Component {
@@ -161,11 +157,23 @@ export default class GreenNavMap extends Component {
       stopEvent: false
     });
 
+    const locationPickerMarker = new ol.Overlay({
+      id: 'locationPicker',
+      positioning: 'center-center',
+      stopEvent: false
+    });
+
     const map = new ol.Map({
       layers: [osmLayer, googleLayer, routeLayer, trafficLayer,
         temperatureLayer, windLayer, rangePolygonLayer],
-      overlays: [userLocationMarker],
+      overlays: [userLocationMarker, locationPickerMarker],
       view
+    });
+
+    map.on('singleclick', (evt) => {
+      const p = evt.coordinate;
+      locationPickerMarker.setPosition(p);
+      this.props.setLocationPickerCoordinates(p);
     });
 
     const geolocation = new ol.Geolocation({
@@ -178,9 +186,8 @@ export default class GreenNavMap extends Component {
 
     geolocation.on('change', () => {
       const p = geolocation.getPosition();
-      this.setState({ geoLocation: p });
+      userLocationMarker.setPosition(p);
       this.props.setRangePolygonCoordinates(p);
-      userLocationMarker.setPosition([p[0], p[1]]);
       view.setCenter([p[0], p[1]]); // centers view to position
     });
 
@@ -188,9 +195,7 @@ export default class GreenNavMap extends Component {
       map,
       traffic: false,
       temperature: false,
-      wind: false,
-      // TODO: change coords to munich's
-      geoLocation: [11554204.824838564, 149032.00800687293] // sg Placeholder
+      wind: false
     };
   }
 
@@ -198,7 +203,9 @@ export default class GreenNavMap extends Component {
     this.state.map.setTarget(this.map);
     window.addEventListener('resize', this.updateSize);
     this.state.map.getOverlayById('userLocation')
-    .setElement(document.getElementById('userLocationMarker'));
+      .setElement(document.getElementById('userLocationMarker'));
+    this.state.map.getOverlayById('locationPicker')
+      .setElement(document.getElementById('locationPickerMarker'));
   }
 
   componentWillUnmount() {
@@ -290,7 +297,14 @@ export default class GreenNavMap extends Component {
           id="userLocationMarker"
           color={green900}
         >
-          directions_car
+          my_location
+        </FontIcon>
+        <FontIcon
+          className="material-icons"
+          id="locationPickerMarker"
+          color={green900}
+        >
+          place
         </FontIcon>
       </div>
     );
@@ -302,7 +316,8 @@ GreenNavMap.propTypes = {
   latitude: PropTypes.number,
   zoom: PropTypes.number,
   findingRoute: PropTypes.bool,
-  setRangePolygonCoordinates: PropTypes.func.isRequired
+  setRangePolygonCoordinates: PropTypes.func.isRequired,
+  setLocationPickerCoordinates: PropTypes.func.isRequired
 };
 
 GreenNavMap.defaultProps = {
