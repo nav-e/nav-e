@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import ol from 'openlayers';
 import { Toolbar, ToolbarGroup, ToolbarSeparator, ToolbarTitle } from 'material-ui/Toolbar';
 import FlatButton from 'material-ui/FlatButton';
 import { green50 } from 'material-ui/styles/colors';
@@ -51,12 +52,13 @@ export default class GreenNav extends Component {
   }
 
   setLocationPickerCoordinates(coord) {
-    this.setState({ locationPickerCoordinates: coord });
+    const nCoord = ol.proj.transform(coord, 'EPSG:3857', 'EPSG:4326');
+    this.setState({ locationPickerCoordinates: nCoord });
     if (this.state.rangeFromFieldSelected) {
-      this.setState({ rangeFromField: coord });
+      this.setState({ rangeFromField: nCoord.map(i => i.toFixed(6)).join(', ') });
     }
     else if (this.state.rangeToFieldSelected) {
-      this.setState({ rangeToField: coord });
+      this.setState({ rangeToField: nCoord.map(i => i.toFixed(6)).join(', ') });
     }
   }
 
