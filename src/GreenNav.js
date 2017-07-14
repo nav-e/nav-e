@@ -35,7 +35,11 @@ export default class GreenNav extends Component {
       windEnabled: false,
       findingRoute: false,
       rangePolygonCoordinates: undefined,
-      locationPickerCoordinates: undefined
+      locationPickerCoordinates: undefined,
+      rangeFromField: '',
+      rangeFromFieldSelected: false,
+      rangeToField: '',
+      rangeToFieldSelected: false,
     };
 
     this.setRangePolygonCoordinates = this.setRangePolygonCoordinates.bind(this);
@@ -48,6 +52,12 @@ export default class GreenNav extends Component {
 
   setLocationPickerCoordinates(coord) {
     this.setState({ locationPickerCoordinates: coord });
+    if (this.state.rangeFromFieldSelected) {
+      this.setState({ rangeFromField: coord });
+    }
+    else if (this.state.rangeToFieldSelected) {
+      this.setState({ rangeToField: coord });
+    }
   }
 
   getRangeVisualisation = (range) => {
@@ -177,6 +187,20 @@ export default class GreenNav extends Component {
     this.setState({ findingRoute: false });
   }
 
+  updateRangeFromSelected = (e) => {
+    this.setState({
+      rangeFromFieldSelected: e,
+      rangeToFieldSelected: !e
+    });
+  }
+
+  updateRangeToSelected = (e) => {
+    this.setState({
+      rangeFromFieldSelected: !e,
+      rangeToFieldSelected: e
+    });
+  }
+
   render() {
     const infoActions = [
       <FlatButton
@@ -232,10 +256,17 @@ export default class GreenNav extends Component {
         <div style={{ display: 'flex', flex: '1 0' }}>
           <Menu
             autoCompleteAddress={GreenNavServerAddress}
+            locationPickerCoordinates={this.state.locationPickerCoordinates}
             ref={c => (this.drawer = c)}
             open
             getRoutes={this.getRoutes}
             getRangeVisualisation={this.getRangeVisualisation}
+            updateRangeFromField={val => this.setState({ rangeFromField: val })}
+            updateRangeFromSelected={this.updateRangeFromSelected}
+            rangeFromField={this.state.rangeFromField}
+            updateRangeToField={val => this.setState({ rangeToField: val })}
+            updateRangeToSelected={this.updateRangeToSelected}
+            rangeToField={this.state.rangeToField}
           />
           <GreenNavMap
             ref={c => (this.map = c)}

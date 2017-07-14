@@ -319,7 +319,12 @@ export default class Menu extends Component {
               getVehicles={this.getVehicles}
               vehicle={this.state.vehicle}
               vehicleChange={this.vehicleChange}
-
+              updateRangeFromField={val => this.props.updateRangeFromField(val)}
+              updateRangeFromSelected={e => this.props.updateRangeFromSelected(e)}
+              rangeFromField={this.props.rangeFromField}
+              updateRangeToField={val => this.props.updateRangeToField(val)}
+              updateRangeToSelected={e => this.props.updateRangeToSelected(e)}
+              rangeToField={this.props.rangeToField}
             />
           </Tab>
         </Tabs>
@@ -332,7 +337,13 @@ Menu.propTypes = {
   open: PropTypes.bool,
   autoCompleteAddress: PropTypes.string.isRequired,
   getRoutes: PropTypes.func.isRequired,
-  getRangeVisualisation: PropTypes.func.isRequired
+  getRangeVisualisation: PropTypes.func.isRequired,
+  rangeFromField: PropTypes.string.isRequired,
+  updateRangeFromField: PropTypes.func.isRequired,
+  updateRangeFromSelected: PropTypes.func.isRequired,
+  rangeToField: PropTypes.string.isRequired,
+  updateRangeToField: PropTypes.func.isRequired,
+  updateRangeToSelected: PropTypes.func.isRequired,
 };
 
 Menu.defaultProps = {

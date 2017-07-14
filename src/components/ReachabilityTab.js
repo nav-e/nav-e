@@ -30,6 +30,11 @@ const styles = {
   textField: {
     display: 'inherit',
     position: 'relative',
+  },
+
+  rangeTextField: {
+    display: 'inherit',
+    position: 'relative',
     marginBottom: '25px'
   }
 };
@@ -38,6 +43,20 @@ export default class ReachabilityTab extends Component {
   render() {
     return (
       <div style={styles.menu}>
+        <TextField
+          onClick={() => this.props.updateRangeFromSelected(true)}
+          onChange={(e, val) => this.props.updateRangeFromField(val)}
+          style={styles.textField}
+          floatingLabelText="From"
+          value={this.props.rangeFromField}
+        />
+        <TextField
+          onClick={() => this.props.updateRangeToSelected(true)}
+          onChange={(e, val) => this.props.updateRangeToField(val)}
+          style={styles.textField}
+          floatingLabelText="To"
+          value={this.props.rangeToField}
+        />
         <SelectField
           floatingLabelText="Vehicle"
           value={this.props.vehicle}
@@ -67,7 +86,7 @@ export default class ReachabilityTab extends Component {
           onChange={(e, val) => {
             this.setState({ remainingRange: val });
           }}
-          style={styles.textField}
+          style={styles.rangeTextField}
           floatingLabelText="Remaining Range"
           value={this.props.remainingRange}
         />
@@ -89,7 +108,13 @@ ReachabilityTab.propTypes = {
   getVehicles: PropTypes.func.isRequired,
   vehicleChange: PropTypes.func.isRequired,
   updateRange: PropTypes.func.isRequired,
-  getRangeVisualisation: PropTypes.func.isRequired
+  getRangeVisualisation: PropTypes.func.isRequired,
+  rangeFromField: PropTypes.string.isRequired,
+  updateRangeFromField: PropTypes.func.isRequired,
+  updateRangeFromSelected: PropTypes.func.isRequired,
+  rangeToField: PropTypes.string.isRequired,
+  updateRangeToField: PropTypes.func.isRequired,
+  updateRangeToSelected: PropTypes.func.isRequired,
 };
 
 ReachabilityTab.defaultProps = {
