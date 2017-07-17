@@ -36,6 +36,14 @@ const styles = {
     display: 'inherit',
     position: 'relative',
     marginBottom: '25px'
+  },
+
+  buttonDiv: {
+    display: 'flex',
+  },
+
+  showButton: {
+    marginRight: '18'
   }
 };
 
@@ -90,11 +98,22 @@ export default class ReachabilityTab extends Component {
           floatingLabelText="Remaining Range"
           value={this.props.remainingRange}
         />
-        <RaisedButton
-          label="Visualise Range"
-          onClick={this.props.getRangeVisualisation}
-          icon={<FontIcon className="material-icons">map</FontIcon>}
-        />
+        <div
+          style={styles.buttonDiv}
+        >
+          <RaisedButton
+            label="Display"
+            onClick={this.props.getRangeVisualisation}
+            icon={<FontIcon className="material-icons">map</FontIcon>}
+            style={styles.showButton}
+          />
+          {this.props.rangePolygonShowing ?
+            <RaisedButton
+              label="Hide"
+              onClick={this.props.hideRangeVisualisation}
+              icon={<FontIcon className="material-icons">map</FontIcon>}
+            /> : null}
+        </div>
       </div>
     );
   }
@@ -104,11 +123,13 @@ ReachabilityTab.propTypes = {
   vehicle: PropTypes.number.isRequired,
   batteryLevel: PropTypes.number.isRequired,
   batteryPecentage: PropTypes.number.isRequired,
+  rangePolygonShowing: PropTypes.bool.isRequired,
   remainingRange: PropTypes.number,
   getVehicles: PropTypes.func.isRequired,
   vehicleChange: PropTypes.func.isRequired,
   updateRange: PropTypes.func.isRequired,
   getRangeVisualisation: PropTypes.func.isRequired,
+  hideRangeVisualisation: PropTypes.func.isRequired,
   rangeFromField: PropTypes.string.isRequired,
   updateRangeFromField: PropTypes.func.isRequired,
   updateRangeFromSelected: PropTypes.func.isRequired,

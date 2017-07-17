@@ -187,7 +187,7 @@ export default class GreenNavMap extends Component {
     geolocation.on('change', () => {
       const p = geolocation.getPosition();
       userLocationMarker.setPosition(p);
-      this.props.setRangePolygonCoordinates(p);
+      this.props.setRangePolygonOrigin(p);
       view.setCenter([p[0], p[1]]); // centers view to position
     });
 
@@ -225,17 +225,10 @@ export default class GreenNavMap extends Component {
 
   setRangePolygon = (vertices) => {
     const feature = new ol.Feature({
-      geometry: new ol.geom.Polygon([
-        vertices
-      ])
+      geometry: new ol.geom.Polygon([vertices])
     });
-
     feature.getGeometry().transform('EPSG:4326', 'EPSG:3857');
-
-    const source = new ol.source.Vector({
-      features: [feature]
-    });
-
+    const source = new ol.source.Vector({ features: [feature] });
     this.state.map.getLayers().getArray()[6].setSource(source);
   }
 
@@ -267,6 +260,10 @@ export default class GreenNavMap extends Component {
       <CircularProgress style={styles.loader} />
     </div>
   )
+
+  hideRangePolygon = () => {
+    this.state.map.getLayers().getArray()[6].setSource(undefined);
+  }
 
   toggleTraffic = () => {
     this.setState({ traffic: !this.state.traffic });
@@ -316,7 +313,7 @@ GreenNavMap.propTypes = {
   latitude: PropTypes.number,
   zoom: PropTypes.number,
   findingRoute: PropTypes.bool,
-  setRangePolygonCoordinates: PropTypes.func.isRequired,
+  setRangePolygonOrigin: PropTypes.func.isRequired,
   setLocationPickerCoordinates: PropTypes.func.isRequired
 };
 

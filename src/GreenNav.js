@@ -35,7 +35,8 @@ export default class GreenNav extends Component {
       trafficEnabled: false,
       windEnabled: false,
       findingRoute: false,
-      rangePolygonCoordinates: undefined,
+      rangePolygonOriginCoordinates: undefined,
+      rangePolygonShowing: false,
       locationPickerCoordinates: undefined,
       rangeFromField: '',
       rangeFromFieldSelected: false,
@@ -43,12 +44,12 @@ export default class GreenNav extends Component {
       rangeToFieldSelected: false,
     };
 
-    this.setRangePolygonCoordinates = this.setRangePolygonCoordinates.bind(this);
+    this.setRangePolygonOrigin = this.setRangePolygonOrigin.bind(this);
     this.setLocationPickerCoordinates = this.setLocationPickerCoordinates.bind(this);
   }
 
-  setRangePolygonCoordinates(coord) {
-    this.setState({ rangePolygonCoordinates: coord });
+  setRangePolygonOrigin(coord) {
+    this.setState({ rangePolygonOriginCoordinates: coord });
   }
 
   setLocationPickerCoordinates(coord) {
@@ -59,29 +60,6 @@ export default class GreenNav extends Component {
     }
     else if (this.state.rangeToFieldSelected) {
       this.setState({ rangeToField: nCoord.map(i => i.toFixed(6)).join(', ') });
-    }
-  }
-
-  getRangeVisualisation = (range) => {
-    const coord = this.state.rangePolygonCoordinates;
-
-    if (!coord) {
-      alert('Please allow access to your current location or pick a starting location');
-    }
-    else {
-      this.showLoader();
-      testCoordinatesValidity(coord)
-        .then((res) => {
-          if (res) {
-            const vertices = calculateRangePolygonEPSG3857(range, coord);
-            this.hideLoader();
-            this.map.setRangePolygon(vertices);
-          }
-          else {
-            this.hideLoader();
-            alert('No valid routes were found from your starting location.');
-          }
-        });
     }
   }
 
@@ -123,6 +101,35 @@ export default class GreenNav extends Component {
           console.error(`Error: ${err}`);
         });
       }
+  }
+
+  getRangeVisualisation = (range) => {
+    const coord = this.state.rangePolygonOriginCoordinates;
+
+    if (!coord) {
+      alert('Please allow access to your current location or pick a starting location');
+    }
+    else {
+      this.showLoader();
+      testCoordinatesValidity(coord)
+        .then((res) => {
+          if (res) {
+            const vertices = calculateRangePolygonEPSG3857(range, coord);
+            this.hideLoader();
+            this.map.setRangePolygon(vertices);
+            this.setState({ rangePolygonShowing: true });
+          }
+          else {
+            this.hideLoader();
+            alert('No valid routes were found from your starting location.');
+          }
+        });
+    }
+  }
+
+  hideRangeVisualisation = () => {
+    this.map.hideRangePolygon();
+    this.setState({ rangePolygonShowing: false });
   }
 
   toggleDrawer = () => {
@@ -262,7 +269,9 @@ export default class GreenNav extends Component {
             ref={c => (this.drawer = c)}
             open
             getRoutes={this.getRoutes}
+            rangePolygonShowing={this.state.rangePolygonShowing}
             getRangeVisualisation={this.getRangeVisualisation}
+            hideRangeVisualisation={this.hideRangeVisualisation}
             updateRangeFromField={val => this.setState({ rangeFromField: val })}
             updateRangeFromSelected={this.updateRangeFromSelected}
             rangeFromField={this.state.rangeFromField}
@@ -274,7 +283,7 @@ export default class GreenNav extends Component {
             ref={c => (this.map = c)}
             mapType={this.state.mapType}
             findingRoute={this.state.findingRoute}
-            setRangePolygonCoordinates={this.setRangePolygonCoordinates}
+            setRangePolygonOrigin={this.setRangePolygonOrigin}
             setLocationPickerCoordinates={this.setLocationPickerCoordinates}
           />
         </div>

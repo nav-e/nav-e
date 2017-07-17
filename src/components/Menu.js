@@ -315,7 +315,9 @@ export default class Menu extends Component {
               batteryPecentage={this.state.batteryPecentage}
               remainingRange={this.state.remainingRange}
               updateRange={this.updateRange}
+              rangePolygonShowing={this.props.rangePolygonShowing}
               getRangeVisualisation={this.getRangeVisualisation}
+              hideRangeVisualisation={this.props.hideRangeVisualisation}
               getVehicles={this.getVehicles}
               vehicle={this.state.vehicle}
               vehicleChange={this.vehicleChange}
@@ -336,8 +338,10 @@ export default class Menu extends Component {
 Menu.propTypes = {
   open: PropTypes.bool,
   autoCompleteAddress: PropTypes.string.isRequired,
+  rangePolygonShowing: PropTypes.bool.isRequired,
   getRoutes: PropTypes.func.isRequired,
   getRangeVisualisation: PropTypes.func.isRequired,
+  hideRangeVisualisation: PropTypes.func.isRequired,
   rangeFromField: PropTypes.string.isRequired,
   updateRangeFromField: PropTypes.func.isRequired,
   updateRangeFromSelected: PropTypes.func.isRequired,
