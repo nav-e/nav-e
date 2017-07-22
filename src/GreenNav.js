@@ -38,6 +38,7 @@ export default class GreenNav extends Component {
       rangePolygonOriginCoordinates: undefined,
       rangePolygonShowing: false,
       locationPickerCoordinates: undefined,
+      locationPickerCoordinatesTransformed: undefined,
       rangeFromField: '',
       rangeFromFieldSelected: false,
       rangeToField: '',
@@ -53,8 +54,10 @@ export default class GreenNav extends Component {
   }
 
   setLocationPickerCoordinates(coord) {
+    this.setState({ locationPickerCoordinates: coord });
+
     const nCoord = ol.proj.transform(coord, 'EPSG:3857', 'EPSG:4326');
-    this.setState({ locationPickerCoordinates: nCoord });
+    this.setState({ locationPickerCoordinatesTransformed: nCoord });
     if (this.state.rangeFromFieldSelected) {
       this.setState({ rangeFromField: nCoord.map(i => i.toFixed(6)).join(', ') });
     }
@@ -265,7 +268,7 @@ export default class GreenNav extends Component {
         <div style={{ display: 'flex', flex: '1 0' }}>
           <Menu
             autoCompleteAddress={GreenNavServerAddress}
-            locationPickerCoordinates={this.state.locationPickerCoordinates}
+            locationPickerCoordinates={this.state.locationPickerCoordinatesTransformed}
             ref={c => (this.drawer = c)}
             open
             getRoutes={this.getRoutes}
@@ -282,6 +285,8 @@ export default class GreenNav extends Component {
           <GreenNavMap
             ref={c => (this.map = c)}
             mapType={this.state.mapType}
+            locationPickerCoordinates={this.state.locationPickerCoordinates}
+            locationPickerCoordinatesTransformed={this.state.locationPickerCoordinatesTransformed}
             findingRoute={this.state.findingRoute}
             setRangePolygonOrigin={this.setRangePolygonOrigin}
             setLocationPickerCoordinates={this.setLocationPickerCoordinates}

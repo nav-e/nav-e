@@ -45,6 +45,12 @@ const styles = {
     width: '100%',
     background: 'rgba(254, 254, 254, .5)'
   },
+
+  locationDisplay: {
+    position: 'absolute',
+    bottom: 5,
+    left: 10,
+  }
 };
 
 export default class GreenNavMap extends Component {
@@ -172,8 +178,8 @@ export default class GreenNavMap extends Component {
 
     map.on('singleclick', (evt) => {
       const p = evt.coordinate;
-      locationPickerMarker.setPosition(p);
       this.props.setLocationPickerCoordinates(p);
+      locationPickerMarker.setPosition(this.props.locationPickerCoordinates);
     });
 
     const geolocation = new ol.Geolocation({
@@ -193,6 +199,7 @@ export default class GreenNavMap extends Component {
 
     this.state = {
       map,
+      pickerPosition: undefined,
       traffic: false,
       temperature: false,
       wind: false
@@ -200,12 +207,18 @@ export default class GreenNavMap extends Component {
   }
 
   componentDidMount() {
+    const locationDisplayControl = new ol.control.Control({
+      id: 'locationDisplayControl',
+      element: document.getElementById('locationDisplay')
+    });
+
     this.state.map.setTarget(this.map);
     window.addEventListener('resize', this.updateSize);
     this.state.map.getOverlayById('userLocation')
       .setElement(document.getElementById('userLocationMarker'));
     this.state.map.getOverlayById('locationPicker')
       .setElement(document.getElementById('locationPickerMarker'));
+    this.state.map.addControl(locationDisplayControl);
   }
 
   componentWillUnmount() {
@@ -303,6 +316,14 @@ export default class GreenNavMap extends Component {
         >
           place
         </FontIcon>
+        <div
+          style={styles.locationDisplay}
+          id="locationDisplay"
+        >
+          {this.props.locationPickerCoordinatesTransformed ?
+            this.props.locationPickerCoordinatesTransformed.map(i => i.toFixed(6))
+            .join(', ') : null}
+        </div>
       </div>
     );
   }
@@ -313,6 +334,8 @@ GreenNavMap.propTypes = {
   latitude: PropTypes.number,
   zoom: PropTypes.number,
   findingRoute: PropTypes.bool,
+  locationPickerCoordinates: PropTypes.array,
+  locationPickerCoordinatesTransformed: PropTypes.array,
   setRangePolygonOrigin: PropTypes.func.isRequired,
   setLocationPickerCoordinates: PropTypes.func.isRequired
 };
