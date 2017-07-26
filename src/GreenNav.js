@@ -125,7 +125,7 @@ export default class GreenNav extends Component {
           if (res) {
             const vertices = calculateRangePolygonEPSG3857(range, coord);
             this.hideLoader();
-            this.map.setRangePolygon(vertices);
+            this.map.setRangePolygon(vertices, coord);
             this.setState({ rangePolygonShowing: true });
           }
           else {

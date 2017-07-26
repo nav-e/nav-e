@@ -205,7 +205,6 @@ export default class GreenNavMap extends Component {
       const p = geolocation.getPosition();
       userLocationMarker.setPosition(p);
       this.props.setRangePolygonOrigin(p);
-      console.log(p);
       view.setCenter([p[0], p[1]]); // centers view to position
     });
 
@@ -248,13 +247,19 @@ export default class GreenNavMap extends Component {
     }
   }
 
-  setRangePolygon = (vertices) => {
+  setRangePolygon = (vertices, center) => {
+    const polygon = new ol.geom.Polygon([vertices]);
     const feature = new ol.Feature({
-      geometry: new ol.geom.Polygon([vertices])
+      geometry: polygon
     });
     feature.getGeometry().transform('EPSG:4326', 'EPSG:3857');
     const source = new ol.source.Vector({ features: [feature] });
     this.state.map.getLayers().getArray()[6].setSource(source);
+    this.state.map.getView().fit(
+      polygon,
+      this.state.map.getSize(),
+      { padding: [20, 20, 20, 40], });
+    this.state.map.getView().setCenter(center);
   }
 
   setRoute = (route) => {
@@ -338,7 +343,8 @@ export default class GreenNavMap extends Component {
             >
               {this.props.locationPickerCoordinatesTransformed.map(i => i.toFixed(6))
               .join(', ')}
-            </div> : null }
+            </div> : null
+          }
         </div>
       </div>
     );
