@@ -59,10 +59,16 @@ export default class GreenNav extends Component {
     const nCoord = ol.proj.transform(coord, 'EPSG:3857', 'EPSG:4326');
     this.setState({ locationPickerCoordinatesTransformed: nCoord });
     if (this.state.rangeFromFieldSelected) {
-      this.setState({ rangeFromField: nCoord.map(i => i.toFixed(6)).join(', ') });
+      this.setState({
+        rangeFromField: nCoord.map(i => i.toFixed(6)).join(', '),
+        rangePolygonOriginCoordinates: coord
+      });
     }
     else if (this.state.rangeToFieldSelected) {
-      this.setState({ rangeToField: nCoord.map(i => i.toFixed(6)).join(', ') });
+      this.setState({
+        rangeToField: nCoord.map(i => i.toFixed(6)).join(', '),
+        rangePolygonOriginCoordinates: coord
+      });
     }
   }
 

@@ -18,7 +18,6 @@ export const testCoordinatesValidity = (coord) => {
      road|motorway_link|trunk_link|motorway"]["access"!~"no|private"]
      (${swBound[0]},${swBound[1]},${neBound[0]},${neBound[1]}); out count;`
   };
-  console.log(reqOptions);
 
   // make api requests
   const overpassEndpoint = 'http://overpass-api.de/api/interpreter';
@@ -34,7 +33,6 @@ export const testCoordinatesValidity = (coord) => {
           }).then((data) => {
             const wayCount = data.elements[0].tags.ways;
             if (wayCount > 0) {
-              console.log('Coordinate Valid');
               return true;
             }
             return false;

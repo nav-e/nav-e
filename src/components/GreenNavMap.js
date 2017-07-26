@@ -46,10 +46,21 @@ const styles = {
     background: 'rgba(254, 254, 254, .5)'
   },
 
-  locationDisplay: {
+  locationDisplayContainer: {
     position: 'absolute',
-    bottom: 5,
-    left: 10,
+    display: 'flex',
+    justifyContent: 'center',
+    bottom: 15,
+    left: 0,
+    right: 0,
+  },
+
+  locationDisplayView: {
+    width: 'fit-content',
+    padding: '12px 20px 12px 20px',
+    backgroundColor: 'white',
+    boxShadow: '0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24)',
+    fontSize: 15,
   }
 };
 
@@ -194,6 +205,7 @@ export default class GreenNavMap extends Component {
       const p = geolocation.getPosition();
       userLocationMarker.setPosition(p);
       this.props.setRangePolygonOrigin(p);
+      console.log(p);
       view.setCenter([p[0], p[1]]); // centers view to position
     });
 
@@ -317,12 +329,16 @@ export default class GreenNavMap extends Component {
           place
         </FontIcon>
         <div
-          style={styles.locationDisplay}
+          style={styles.locationDisplayContainer}
           id="locationDisplay"
         >
           {this.props.locationPickerCoordinatesTransformed ?
-            this.props.locationPickerCoordinatesTransformed.map(i => i.toFixed(6))
-            .join(', ') : null}
+            <div
+              style={styles.locationDisplayView}
+            >
+              {this.props.locationPickerCoordinatesTransformed.map(i => i.toFixed(6))
+              .join(', ')}
+            </div> : null }
         </div>
       </div>
     );
