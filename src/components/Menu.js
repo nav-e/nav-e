@@ -119,8 +119,7 @@ export default class Menu extends Component {
       this.props.getRoutes(routes);
     }
     else {
-      // TODO: implement notifications (Thomas GSoC Project - see polymer reference branch)
-      alert('Please select a start and destination from the suggestions');
+      this.props.handleIndicateStartSnackbarOpen();
     }
   }
 
@@ -129,7 +128,7 @@ export default class Menu extends Component {
       this.props.getRangeVisualisation(this.state.remainingRange);
     }
     else {
-      alert('Please indicate the remaining range of your vehicle.');
+      this.props.handleRemainingRangeSnackbarOpen();
     }
   }
 

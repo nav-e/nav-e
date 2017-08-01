@@ -33,12 +33,15 @@ export default class GreenNav extends Component {
       openMapDialog: false,
       openInvalidRouteSnackbar: false,
       openAllowAccessSnackbar: false,
+      openIndicateStartSnackbar: false,
+      openRemainingRangeSnackbar: false,
       mapType: 0,
       temperatureEnabled: false,
       trafficEnabled: false,
       windEnabled: false,
       findingRoute: false,
       rangePolygonOriginCoordinates: undefined,
+      rangePolygonDestinationCoordinates: undefined,
       rangePolygonShowing: false,
       locationPickerCoordinates: undefined,
       locationPickerCoordinatesTransformed: undefined,
@@ -70,7 +73,7 @@ export default class GreenNav extends Component {
     else if (this.state.rangeToFieldSelected) {
       this.setState({
         rangeToField: nCoord.map(i => i.toFixed(6)).join(', '),
-        rangePolygonOriginCoordinates: coord
+        rangePolygonDestinationCoordinates: coord
       });
     }
   }
@@ -149,6 +152,22 @@ export default class GreenNav extends Component {
 
   updateMapSize = () => {
     this.map.updateSize();
+  }
+
+  handleIndicateStartSnackbarOpen = () => {
+    this.setState({ openIndicateStartSnackbar: true });
+  }
+
+  handleIndicateStartSnackbarClose= () => {
+    this.setState({ openIndicateStartSnackbar: false });
+  }
+
+  handleRemainingRangeSnackbarOpen = () => {
+    this.setState({ openRemainingRangeSnackbar: true });
+  }
+
+  handleRemainingRangeSnackbarClose= () => {
+    this.setState({ openRemainingRangeSnackbar: false });
   }
 
   handleInvalidRouteSnackbarOpen = () => {
@@ -305,6 +324,8 @@ export default class GreenNav extends Component {
             updateRangeToField={val => this.setState({ rangeToField: val })}
             updateRangeToSelected={this.updateRangeToSelected}
             rangeToField={this.state.rangeToField}
+            handleIndicateStartSnackbarOpen={this.handleIndicateStartSnackbarOpen}
+            handleRemainingRangeSnackbarOpen={this.handleRemainingRangeSnackbarOpen}
           />
           <GreenNavMap
             ref={c => (this.map = c)}
@@ -316,6 +337,20 @@ export default class GreenNav extends Component {
             setLocationPickerCoordinates={this.setLocationPickerCoordinates}
           />
         </div>
+
+        <Snackbar
+          open={this.state.openIndicateStartSnackbar}
+          message="Please select a start and destination from the suggestions"
+          autoHideDuration={4000}
+          onRequestClose={this.handleIndicateStartSnackbarClose}
+        />
+
+        <Snackbar
+          open={this.state.openRemainingRangeSnackbar}
+          message="Please indicate the remaining range of your vehicle"
+          autoHideDuration={4000}
+          onRequestClose={this.handleRemainingRangeSnackbarClose}
+        />
 
         <Snackbar
           open={this.state.openInvalidRouteSnackbar}
