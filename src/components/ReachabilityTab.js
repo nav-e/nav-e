@@ -86,14 +86,12 @@ export default class ReachabilityTab extends Component {
           </span>
         </p>
         <Slider
-          onChange={this.props.updateRange}
+          onChange={this.props.updateBatterySlider}
           value={this.props.batteryLevel}
           sliderStyle={styles.reachabilitySlider}
         />
         <TextField
-          onChange={(e, val) => {
-            this.setState({ remainingRange: val });
-          }}
+          onChange={this.props.updateRemainingRange}
           style={styles.rangeTextField}
           floatingLabelText="Remaining Range"
           value={this.props.remainingRange}
@@ -123,11 +121,12 @@ ReachabilityTab.propTypes = {
   vehicle: PropTypes.number.isRequired,
   batteryLevel: PropTypes.number.isRequired,
   batteryPecentage: PropTypes.number.isRequired,
+  updateBatterySlider: PropTypes.func.isRequired,
   rangePolygonShowing: PropTypes.bool.isRequired,
   remainingRange: PropTypes.number,
+  updateRemainingRange: PropTypes.func.isRequired,
   getVehicles: PropTypes.func.isRequired,
   vehicleChange: PropTypes.func.isRequired,
-  updateRange: PropTypes.func.isRequired,
   getRangeVisualisation: PropTypes.func.isRequired,
   hideRangeVisualisation: PropTypes.func.isRequired,
   rangeFromField: PropTypes.string.isRequired,

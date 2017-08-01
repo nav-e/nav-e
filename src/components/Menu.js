@@ -229,12 +229,19 @@ export default class Menu extends Component {
     this.setState({ vehicle: value });
   }
 
-  updateRange = (event, value) => {
+  updateBatterySlider = (event, value) => {
     // TODO: Set remainingRange to distance in km/miles based on batteryLevel and car model
     this.setState({
       batteryPecentage: parseInt(value * 100, 10),
       batteryLevel: value,
       remainingRange: parseInt(value * 100, 10),
+    });
+  }
+
+  updateRemainingRange = (event, value) => {
+    // TODO: Set remainingRange to distance in km/miles based on batteryLevel and car model
+    this.setState({
+      remainingRange: parseInt(value),
     });
   }
 
@@ -294,7 +301,7 @@ export default class Menu extends Component {
                 </span>
               </p>
               <Slider
-                onChange={this.updateRange}
+                onChange={this.updateBatterySlider}
                 value={this.state.batteryLevel}
                 sliderStyle={styles.slider}
               />
@@ -313,7 +320,8 @@ export default class Menu extends Component {
               batteryLevel={this.state.batteryLevel}
               batteryPecentage={this.state.batteryPecentage}
               remainingRange={this.state.remainingRange}
-              updateRange={this.updateRange}
+              updateRemainingRange={this.updateRemainingRange}
+              updateBatterySlider={this.updateBatterySlider}
               rangePolygonShowing={this.props.rangePolygonShowing}
               getRangeVisualisation={this.getRangeVisualisation}
               hideRangeVisualisation={this.props.hideRangeVisualisation}
@@ -347,6 +355,8 @@ Menu.propTypes = {
   rangeToField: PropTypes.string.isRequired,
   updateRangeToField: PropTypes.func.isRequired,
   updateRangeToSelected: PropTypes.func.isRequired,
+  handleIndicateStartSnackbarOpen: PropTypes.func.isRequired,
+  handleRemainingRangeSnackbarOpen: PropTypes.func.isRequired,
 };
 
 Menu.defaultProps = {
