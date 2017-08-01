@@ -94,7 +94,7 @@ export default class ReachabilityTab extends Component {
           onChange={this.props.updateRemainingRange}
           style={styles.rangeTextField}
           floatingLabelText="Remaining Range"
-          value={this.props.remainingRange}
+          value={this.props.remainingRange || ''}
         />
         <div
           style={styles.buttonDiv}
@@ -138,5 +138,5 @@ ReachabilityTab.propTypes = {
 };
 
 ReachabilityTab.defaultProps = {
-  remainingRange: undefined
+  remainingRange: 0
 };
