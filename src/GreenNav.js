@@ -5,6 +5,7 @@ import FlatButton from 'material-ui/FlatButton';
 import { green50 } from 'material-ui/styles/colors';
 import FontIcon from 'material-ui/FontIcon';
 import Dialog from 'material-ui/Dialog';
+import Snackbar from 'material-ui/Snackbar';
 import Toggle from 'material-ui/Toggle';
 import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
@@ -30,6 +31,8 @@ export default class GreenNav extends Component {
       openInfoDialog: false,
       openContactDialog: false,
       openMapDialog: false,
+      openInvalidRouteSnackbar: false,
+      openAllowAccessSnackbar: false,
       mapType: 0,
       temperatureEnabled: false,
       trafficEnabled: false,
@@ -75,7 +78,6 @@ export default class GreenNav extends Component {
   getRoutes = (waypoints) => {
     var routes = [];
     let counterRoutes = 0;
-    console.log(waypoints);
     if (waypoints.length > 0) {
       this.showLoader();
     }
@@ -107,7 +109,7 @@ export default class GreenNav extends Component {
         })
         .catch(err => {
           this.hideLoader();
-          console.error(`Error: ${err}`);
+          // console.error(`Error: ${err}`);
         });
       }
   }
@@ -116,7 +118,7 @@ export default class GreenNav extends Component {
     const coord = this.state.rangePolygonOriginCoordinates;
 
     if (!coord) {
-      alert('Please allow access to your current location or pick a starting location');
+      this.handleAllowAccessSnackbarOpen();
     }
     else {
       this.showLoader();
@@ -130,7 +132,7 @@ export default class GreenNav extends Component {
           }
           else {
             this.hideLoader();
-            alert('No valid routes were found from your starting location.');
+            this.handleInvalidRouteSnackbarOpen();
           }
         });
     }
@@ -147,6 +149,22 @@ export default class GreenNav extends Component {
 
   updateMapSize = () => {
     this.map.updateSize();
+  }
+
+  handleInvalidRouteSnackbarOpen = () => {
+    this.setState({ openInvalidRouteSnackbar: true });
+  }
+
+  handleInvalidRouteSnackbarClose = () => {
+    this.setState({ openInvalidRouteSnackbar: false });
+  }
+
+  handleAllowAccessSnackbarOpen = () => {
+    this.setState({ openAllowAccessSnackbar: true });
+  }
+
+  handleAllowAccessSnackbarClose = () => {
+    this.setState({ openAllowAccessSnackbar: false });
   }
 
   handleInfoOpen = () => {
@@ -298,6 +316,20 @@ export default class GreenNav extends Component {
             setLocationPickerCoordinates={this.setLocationPickerCoordinates}
           />
         </div>
+
+        <Snackbar
+          open={this.state.openInvalidRouteSnackbar}
+          message="No valid routes were found from your starting location"
+          autoHideDuration={4000}
+          onRequestClose={this.handleInvalidRouteSnackbarClose}
+        />
+
+        <Snackbar
+          open={this.state.openAllowAccessSnackbar}
+          message="Please allow access to your current location or pick a starting location"
+          autoHideDuration={4000}
+          onRequestClose={this.handleAllowAccessSnackbarClose}
+        />
 
         <Dialog
           title=""
