@@ -94,7 +94,7 @@ export default class ReachabilityTab extends Component {
           onChange={this.props.updateRemainingRange}
           style={styles.rangeTextField}
           floatingLabelText="Remaining Range"
-          value={this.props.remainingRange || ''}
+          value={Math.round(this.props.remainingRange) || ''}
         />
         <div
           style={styles.buttonDiv}
@@ -123,7 +123,7 @@ ReachabilityTab.propTypes = {
   batteryPecentage: PropTypes.number.isRequired,
   updateBatterySlider: PropTypes.func.isRequired,
   rangePolygonShowing: PropTypes.bool.isRequired,
-  remainingRange: PropTypes.number,
+  remainingRange: PropTypes.number.isRequired,
   updateRemainingRange: PropTypes.func.isRequired,
   getVehicles: PropTypes.func.isRequired,
   vehicleChange: PropTypes.func.isRequired,
@@ -135,8 +135,4 @@ ReachabilityTab.propTypes = {
   rangeToField: PropTypes.string.isRequired,
   updateRangeToField: PropTypes.func.isRequired,
   updateRangeToSelected: PropTypes.func.isRequired,
-};
-
-ReachabilityTab.defaultProps = {
-  remainingRange: 0
 };

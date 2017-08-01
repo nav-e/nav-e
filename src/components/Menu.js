@@ -92,7 +92,7 @@ export default class Menu extends Component {
       autoCompletes: [{ id: 1, label: 'From', route: '' }, { id: 2, label: 'To', route: '' }],
       batteryPecentage: 100,
       batteryLevel: 1.0,
-      remainingRange: undefined,
+      remainingRange: 0,
     };
     this.autoCompleteId = 3;
     this.xhr = new XMLHttpRequest();
@@ -229,6 +229,21 @@ export default class Menu extends Component {
     this.setState({ vehicle: value });
   }
 
+  convertUnits = (newUnitsType) => {
+    if (newUnitsType !== this.props.unitsType && this.state.remainingRange > 0) {
+      if (newUnitsType === 0) {
+        this.setState(prevState => ({
+          remainingRange: prevState.remainingRange * 1.609344
+        }));
+      }
+      else {
+        this.setState(prevState => ({
+          remainingRange: prevState.remainingRange / 1.609344
+        }));
+      }
+    }
+  }
+
   updateBatterySlider = (event, value) => {
     // TODO: Set remainingRange to distance in km/miles based on batteryLevel and car model
     this.setState({
@@ -240,9 +255,7 @@ export default class Menu extends Component {
 
   updateRemainingRange = (event, value) => {
     // TODO: Set remainingRange to distance in km/miles based on batteryLevel and car model
-    this.setState({
-      remainingRange: parseInt(value, 10),
-    });
+    this.setState({ remainingRange: parseInt(value, 10) });
   }
 
   render() {
@@ -344,6 +357,7 @@ export default class Menu extends Component {
 
 Menu.propTypes = {
   open: PropTypes.bool,
+  unitsType: PropTypes.number.isRequired,
   autoCompleteAddress: PropTypes.string.isRequired,
   rangePolygonShowing: PropTypes.bool.isRequired,
   getRoutes: PropTypes.func.isRequired,

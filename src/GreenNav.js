@@ -36,6 +36,7 @@ export default class GreenNav extends Component {
       openIndicateStartSnackbar: false,
       openRemainingRangeSnackbar: false,
       mapType: 0,
+      unitsType: 0,
       temperatureEnabled: false,
       trafficEnabled: false,
       windEnabled: false,
@@ -215,6 +216,11 @@ export default class GreenNav extends Component {
     this.map.setMapType(value);
   }
 
+  unitsTypeChange = (event, index, value) => {
+    this.drawer.convertUnits(value);
+    this.setState({ unitsType: value });
+  }
+
   toggleTraffic = () => {
     this.setState({ trafficEnabled: !this.state.trafficEnabled });
     this.map.toggleTraffic();
@@ -315,6 +321,7 @@ export default class GreenNav extends Component {
             ref={c => (this.drawer = c)}
             open
             getRoutes={this.getRoutes}
+            unitsType={this.state.unitsType}
             rangePolygonShowing={this.state.rangePolygonShowing}
             getRangeVisualisation={this.getRangeVisualisation}
             hideRangeVisualisation={this.hideRangeVisualisation}
@@ -416,6 +423,14 @@ export default class GreenNav extends Component {
           >
             <MenuItem value={0} primaryText="OpenStreetMap" />
             <MenuItem value={1} primaryText="Google Map" />
+          </SelectField>
+          <SelectField
+            floatingLabelText="Units"
+            value={this.state.unitsType}
+            onChange={this.unitsTypeChange}
+          >
+            <MenuItem value={0} primaryText="Kilometres" />
+            <MenuItem value={1} primaryText="Miles" />
           </SelectField>
           <h2>Overlays</h2>
           <Toggle
