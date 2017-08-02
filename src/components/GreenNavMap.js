@@ -2,6 +2,8 @@ import React, { Component, PropTypes } from 'react';
 import { red600, green900 } from 'material-ui/styles/colors';
 import CircularProgress from 'material-ui/CircularProgress';
 import FontIcon from 'material-ui/FontIcon';
+import FloatingActionButton from 'material-ui/FloatingActionButton';
+import MyLocation from 'material-ui/svg-icons/maps/my-location';
 
 const ol = require('openlayers');
 
@@ -61,6 +63,12 @@ const styles = {
     backgroundColor: 'white',
     boxShadow: '0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24)',
     fontSize: 15,
+  },
+
+  currentLocationButtton: {
+    position: 'absolute',
+    bottom: 16,
+    right: 20,
   }
 };
 
@@ -126,6 +134,7 @@ export default class GreenNavMap extends Component {
       }
       return quadKeyDigits.join('');
     };
+
     const trafficLayer = new ol.layer.Tile({
       visible: false,
       source: new ol.source.XYZ({
@@ -291,6 +300,10 @@ export default class GreenNavMap extends Component {
     </div>
   )
 
+  zoomToCurrent = () => {
+    this.state.map.getView().setCenter(this.props.rangePolygonOriginCoordinates);
+  }
+
   hideRangePolygon = () => {
     this.state.map.getLayers().getArray()[6].setSource(undefined);
   }
@@ -334,6 +347,17 @@ export default class GreenNavMap extends Component {
           place
         </FontIcon>
         <div
+          style={styles.currentLocationButtton}
+          id="currentLocationButtton"
+        >
+          <FloatingActionButton
+            mini={1}
+            onTouchTap={this.zoomToCurrent}
+          >
+            <MyLocation />
+          </FloatingActionButton>
+        </div>
+        <div
           style={styles.locationDisplayContainer}
           id="locationDisplay"
         >
@@ -358,6 +382,7 @@ GreenNavMap.propTypes = {
   findingRoute: PropTypes.bool,
   locationPickerCoordinates: PropTypes.array,
   locationPickerCoordinatesTransformed: PropTypes.array,
+  rangePolygonOriginCoordinates: PropTypes.array,
   setRangePolygonOrigin: PropTypes.func.isRequired,
   setLocationPickerCoordinates: PropTypes.func.isRequired
 };
@@ -366,5 +391,6 @@ GreenNavMap.defaultProps = {
   longitude: munichLng,
   latitude: munichLat,
   zoom: 11,
-  findingRoute: false
+  findingRoute: false,
+  rangePolygonOriginCoordinates: [1287837.5738597857, 6129818.969679821]
 };

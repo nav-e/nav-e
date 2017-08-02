@@ -61,6 +61,7 @@ export default class GreenNav extends Component {
   }
 
   setLocationPickerCoordinates(coord) {
+    console.log(coord);
     this.setState({ locationPickerCoordinates: coord });
 
     const nCoord = ol.proj.transform(coord, 'EPSG:3857', 'EPSG:4326');
@@ -340,6 +341,7 @@ export default class GreenNav extends Component {
             locationPickerCoordinates={this.state.locationPickerCoordinates}
             locationPickerCoordinatesTransformed={this.state.locationPickerCoordinatesTransformed}
             findingRoute={this.state.findingRoute}
+            rangePolygonOriginCoordinates={this.state.rangePolygonOriginCoordinates}
             setRangePolygonOrigin={this.setRangePolygonOrigin}
             setLocationPickerCoordinates={this.setLocationPickerCoordinates}
           />
