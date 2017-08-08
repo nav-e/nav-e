@@ -22,6 +22,10 @@ const styles = {
   label: {
     color: green50
   },
+
+  unitSelectField: {
+    marginLeft: '24px'
+  }
 };
 
 export default class GreenNav extends Component {
@@ -43,7 +47,7 @@ export default class GreenNav extends Component {
       findingRoute: false,
       rangePolygonOriginCoordinates: undefined,
       rangePolygonDestinationCoordinates: undefined,
-      rangePolygonShowing: false,
+      rangePolygonVisible: false,
       locationPickerCoordinates: undefined,
       locationPickerCoordinatesTransformed: undefined,
       rangeFromField: '',
@@ -61,7 +65,6 @@ export default class GreenNav extends Component {
   }
 
   setLocationPickerCoordinates(coord) {
-    console.log(coord);
     this.setState({ locationPickerCoordinates: coord });
 
     const nCoord = ol.proj.transform(coord, 'EPSG:3857', 'EPSG:4326');
@@ -114,7 +117,6 @@ export default class GreenNav extends Component {
         })
         .catch(err => {
           this.hideLoader();
-          // console.error(`Error: ${err}`);
         });
       }
   }
@@ -133,7 +135,7 @@ export default class GreenNav extends Component {
             const vertices = calculateRangePolygonEPSG3857(range, coord);
             this.hideLoader();
             this.map.setRangePolygon(vertices, coord);
-            this.setState({ rangePolygonShowing: true });
+            this.setState({ rangePolygonVisible: true });
           }
           else {
             this.hideLoader();
@@ -145,7 +147,7 @@ export default class GreenNav extends Component {
 
   hideRangeVisualisation = () => {
     this.map.hideRangePolygon();
-    this.setState({ rangePolygonShowing: false });
+    this.setState({ rangePolygonVisible: false });
   }
 
   toggleDrawer = () => {
@@ -323,7 +325,7 @@ export default class GreenNav extends Component {
             open
             getRoutes={this.getRoutes}
             unitsType={this.state.unitsType}
-            rangePolygonShowing={this.state.rangePolygonShowing}
+            rangePolygonVisible={this.state.rangePolygonVisible}
             getRangeVisualisation={this.getRangeVisualisation}
             hideRangeVisualisation={this.hideRangeVisualisation}
             updateRangeFromField={val => this.setState({ rangeFromField: val })}
@@ -429,9 +431,10 @@ export default class GreenNav extends Component {
           <SelectField
             floatingLabelText="Units"
             value={this.state.unitsType}
+            style={styles.unitSelectField}
             onChange={this.unitsTypeChange}
           >
-            <MenuItem value={0} primaryText="Kilometres" />
+            <MenuItem value={0} primaryText="Kilometers" />
             <MenuItem value={1} primaryText="Miles" />
           </SelectField>
           <h2>Overlays</h2>

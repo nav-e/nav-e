@@ -351,7 +351,7 @@ export default class GreenNavMap extends Component {
           id="currentLocationButtton"
         >
           <FloatingActionButton
-            mini={1}
+            mini
             onTouchTap={this.zoomToCurrent}
           >
             <MyLocation />
@@ -380,9 +380,9 @@ GreenNavMap.propTypes = {
   latitude: PropTypes.number,
   zoom: PropTypes.number,
   findingRoute: PropTypes.bool,
-  locationPickerCoordinates: PropTypes.array,
-  locationPickerCoordinatesTransformed: PropTypes.array,
-  rangePolygonOriginCoordinates: PropTypes.array,
+  locationPickerCoordinates: PropTypes.arrayOf(PropTypes.number),
+  locationPickerCoordinatesTransformed: PropTypes.arrayOf(PropTypes.number),
+  rangePolygonOriginCoordinates: PropTypes.arrayOf(PropTypes.number),
   setRangePolygonOrigin: PropTypes.func.isRequired,
   setLocationPickerCoordinates: PropTypes.func.isRequired
 };
@@ -392,5 +392,7 @@ GreenNavMap.defaultProps = {
   latitude: munichLat,
   zoom: 11,
   findingRoute: false,
+  locationPickerCoordinates: null,
+  locationPickerCoordinatesTransformed: null,
   rangePolygonOriginCoordinates: [1287837.5738597857, 6129818.969679821]
 };

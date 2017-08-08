@@ -230,15 +230,17 @@ export default class Menu extends Component {
   }
 
   convertUnits = (newUnitsType) => {
+    const KM_TO_MILES = 1.609344;
+    const MILES_TO_KM = 1 / 1.609344;
     if (newUnitsType !== this.props.unitsType && this.state.remainingRange > 0) {
       if (newUnitsType === 0) {
         this.setState(prevState => ({
-          remainingRange: prevState.remainingRange * 1.609344
+          remainingRange: prevState.remainingRange * KM_TO_MILES
         }));
       }
       else {
         this.setState(prevState => ({
-          remainingRange: prevState.remainingRange / 1.609344
+          remainingRange: prevState.remainingRange * MILES_TO_KM
         }));
       }
     }
@@ -335,7 +337,7 @@ export default class Menu extends Component {
               remainingRange={this.state.remainingRange}
               updateRemainingRange={this.updateRemainingRange}
               updateBatterySlider={this.updateBatterySlider}
-              rangePolygonShowing={this.props.rangePolygonShowing}
+              rangePolygonVisible={this.props.rangePolygonVisible}
               getRangeVisualisation={this.getRangeVisualisation}
               hideRangeVisualisation={this.props.hideRangeVisualisation}
               getVehicles={this.getVehicles}
@@ -359,7 +361,7 @@ Menu.propTypes = {
   open: PropTypes.bool,
   unitsType: PropTypes.number.isRequired,
   autoCompleteAddress: PropTypes.string.isRequired,
-  rangePolygonShowing: PropTypes.bool.isRequired,
+  rangePolygonVisible: PropTypes.bool.isRequired,
   getRoutes: PropTypes.func.isRequired,
   getRangeVisualisation: PropTypes.func.isRequired,
   hideRangeVisualisation: PropTypes.func.isRequired,

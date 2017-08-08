@@ -42,8 +42,8 @@ const styles = {
     display: 'flex',
   },
 
-  showButton: {
-    marginRight: '18'
+  displayButton: {
+    marginRight: '18px'
   }
 };
 
@@ -103,9 +103,9 @@ export default class ReachabilityTab extends Component {
             label="Display"
             onClick={this.props.getRangeVisualisation}
             icon={<FontIcon className="material-icons">map</FontIcon>}
-            style={styles.showButton}
+            style={styles.displayButton}
           />
-          {this.props.rangePolygonShowing ?
+          {this.props.rangePolygonVisible ?
             <RaisedButton
               label="Hide"
               onClick={this.props.hideRangeVisualisation}
@@ -122,7 +122,7 @@ ReachabilityTab.propTypes = {
   batteryLevel: PropTypes.number.isRequired,
   batteryPecentage: PropTypes.number.isRequired,
   updateBatterySlider: PropTypes.func.isRequired,
-  rangePolygonShowing: PropTypes.bool.isRequired,
+  rangePolygonVisible: PropTypes.bool.isRequired,
   remainingRange: PropTypes.number.isRequired,
   updateRemainingRange: PropTypes.func.isRequired,
   getVehicles: PropTypes.func.isRequired,
