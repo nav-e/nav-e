@@ -14,7 +14,7 @@ import fetch from 'unfetch';
 import Menu from './components/Menu';
 import GreenNavMap from './components/GreenNavMap';
 
-import { testCoordinatesValidity, calculateRangePolygonEPSG3857 } from './reachability';
+import { testCoordinatesValidity, getNearestNode, calculateRangePolygonEPSG3857 } from './reachability';
 
 const GreenNavServerAddress = 'http://localhost:6833/';
 
@@ -132,10 +132,20 @@ export default class GreenNav extends Component {
       testCoordinatesValidity(coord)
         .then((res) => {
           if (res) {
-            const vertices = calculateRangePolygonEPSG3857(range, coord);
-            this.hideLoader();
-            this.map.setRangePolygon(vertices, coord);
-            this.setState({ rangePolygonVisible: true });
+            getNearestNode(coord)
+              .then((node) => {
+                if (node) {
+                  // TODO: Pass node to Range Anxiety API
+                  const vertices = calculateRangePolygonEPSG3857(range, coord);
+                  this.hideLoader();
+                  this.map.setRangePolygon(vertices, coord);
+                  this.setState({ rangePolygonVisible: true });
+                }
+                else {
+                  this.hideLoader();
+                  this.handleInvalidRouteSnackbarOpen();
+                }
+              });
           }
           else {
             this.hideLoader();
