@@ -8,8 +8,6 @@ import MyLocation from 'material-ui/svg-icons/maps/my-location';
 const ol = require('openlayers');
 
 // Placeholder coordinates
-const sgLat = 1.339670;
-const sgLng = 103.805093;
 const munichLat = 48.139;
 const munichLng = 11.566;
 

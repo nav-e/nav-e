@@ -1,6 +1,9 @@
 import ol from 'openlayers';
 import GeographicLib from 'geographiclib'; // For geodesic calculations
 
+const overpassEndpoint = 'http://overpass-api.de/api/interpreter';
+const rangeAnxietyServer = 'http://localhost:8111';
+
 export const testCoordinatesValidity = (coord) => {
   const boundRange = 0.005;
   const nCoord = ol.proj.transform(coord, 'EPSG:3857', 'EPSG:4326');
@@ -8,11 +11,6 @@ export const testCoordinatesValidity = (coord) => {
   // Create bounding box
   const swBound = [nCoord[1] - boundRange, nCoord[0] - boundRange];
   const neBound = [nCoord[1] + boundRange, nCoord[0] + boundRange];
-  const body = `[out:json][timeout:100];
-   way["highway"~"primary|secondary|tertiary|trunk|service|residential|
-   primary_link|secondary_link|tertiary_link|unclassified|living_street|
-   road|motorway_link|trunk_link|motorway"]["access"!~"no|private"]
-   (${swBound[0]},${swBound[1]},${neBound[0]},${neBound[1]}); out count;`;
 
   const reqOptions = {
     method: 'POST',
@@ -24,27 +22,19 @@ export const testCoordinatesValidity = (coord) => {
      (${swBound[0]},${swBound[1]},${neBound[0]},${neBound[1]}); out count;`
   };
 
-  // make api requests
-  const overpassEndpoint = 'http://overpass-api.de/api/interpreter';
-
   return fetch(overpassEndpoint, reqOptions)
           .then((response) => {
             if (response.status > 400) {
               throw new Error('Failed to load route data!');
             }
-            else {
-              return response.json();
-            }
+            return response.json();
           }).then((data) => {
             const wayCount = data.elements[0].tags.ways;
             if (wayCount > 0) {
               return true;
             }
             return false;
-          }).catch((error) => {
-            console.error('Request failed', error);
-            return false;
-          });
+          }).catch(() => false);
 };
 
 export const getNearestNode = (coord) => {
@@ -62,26 +52,38 @@ export const getNearestNode = (coord) => {
      out;`
   };
 
-  // make api requests
-  const overpassEndpoint = 'http://overpass-api.de/api/interpreter';
-
   return fetch(overpassEndpoint, reqOptions)
           .then((response) => {
             if (response.status > 400) {
               throw new Error('Failed to load node data!');
             }
-            else {
-              return response.json();
-            }
+            return response.json();
           }).then((data) => {
             if (data.elements.length > 0) {
               return data.elements[0].id;
             }
             return false;
-          }).catch((error) => {
-            console.error('Request failed', error);
-            return false;
-          });
+          }).catch(() => false);
+};
+
+export const calculateRangeAnxietyPolygon = (nodeId, range) => {
+  const apiEndpoint = `${rangeAnxietyServer}/greennav/polygon?startNode=${nodeId}&range=${range}`;
+
+  return fetch(apiEndpoint)
+          .then((response) => {
+            if (response.status > 400) {
+              throw new Error('Failed to load polygon data!');
+            }
+            return response.json();
+          }).then((data) => {
+            const polygon = data.features[0].geometry.coordinates[0];
+            const vertices = [];
+            for (let i = 0; i < polygon.length; i += 1) {
+              const point = [polygon[i][1], polygon[i][0]];
+              vertices.push(point);
+            }
+            return vertices;
+          }).catch(() => false);
 };
 
 export const calculateRangePolygonEPSG3857 = (range, coord) => {
@@ -99,23 +101,6 @@ export const calculateRangePolygonEPSG3857 = (range, coord) => {
 
   return vertices;
 };
-
-// const calculateRangePolygonEPSG4326 = (range, lat, long) => {
-//   const geod = GeographicLib.Geodesic.WGS84;
-//
-//   const vertices = [];
-//   let angle = 0; // in degrees
-//   console.log(lat, long);
-//
-//   for (let i = 0; i < 14; i += 1) {
-//     const r = geod.Direct(lat, long, angle, range * 1000);
-//     angle += 25;
-//     const coords = [r.lon2, r.lat2]; // in long lat
-//     vertices.push(coords);
-//   }
-//
-//   return vertices;
-// };
 
 // const calculateRangePolygonWithDestination = (range, clat, clong,
 //                                               dlat, dlong) => {
