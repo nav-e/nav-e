@@ -74,6 +74,31 @@ npm start
 
 The web interface is now accessible at http://localhost:3000/ by default, see your terminal for details.
 
+
+## Docker Setup
+
+[Docker](https://www.docker.com/) allows packaging an application with all of its dependencies into a container.
+
+```zsh
+git clone https://github.com/Greennav/GreenNav.git
+cd GreenNav
+```
+
+#### Build
+We will start by building a Docker image for the application (```Dockerfile``` contains the command-line instructions).
+
+```
+docker build -t greennav-web-interface .
+```
+
+##### Run
+Finally we run the image as a container, making the web interface available at http://localhost:3000/.
+
+```
+docker run -d --rm -p 3000:3000 --name greennav-web-interface greennav-web-interface:latest
+```
+
+
 ### Development
 
 #### Git Workflow
