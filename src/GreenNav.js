@@ -64,22 +64,22 @@ export default class GreenNav extends Component {
     this.setState({ rangePolygonOriginCoordinates: coord });
   }
 
+  setRangePolygonDestination(coord) {
+    this.setState({ rangePolygonOriginCoordinates: coord });
+  }
+
   setLocationPickerCoordinates(coord) {
     this.setState({ locationPickerCoordinates: coord });
 
     const nCoord = ol.proj.transform(coord, 'EPSG:3857', 'EPSG:4326');
     this.setState({ locationPickerCoordinatesTransformed: nCoord });
     if (this.state.rangeFromFieldSelected) {
-      this.setState({
-        rangeFromField: nCoord.map(i => i.toFixed(6)).join(', '),
-        rangePolygonOriginCoordinates: coord
-      });
+      this.setRangePolygonOrigin(coord);
+      this.setState({ rangeFromField: nCoord.map(i => i.toFixed(6)).join(', ') });
     }
     else if (this.state.rangeToFieldSelected) {
-      this.setState({
-        rangeToField: nCoord.map(i => i.toFixed(6)).join(', '),
-        rangePolygonDestinationCoordinates: coord
-      });
+      this.setRangePolygonDestination(coord);
+      this.setState({ rangeToField: nCoord.map(i => i.toFixed(6)).join(', ') });
     }
   }
 
@@ -280,6 +280,34 @@ export default class GreenNav extends Component {
     });
   }
 
+  updateRangeFromField = (val) => {
+    this.setState({ rangeFromField: val });
+    const coord = this.isEPSG3857Coordinate(val);
+    if (coord) {
+      this.setRangePolygonOrigin(ol.proj.transform(coord, 'EPSG:4326', 'EPSG:3857'));
+    }
+  }
+
+  updateRangeToField = (val) => {
+    this.setState({ rangeToField: val });
+    const coord = this.isEPSG3857Coordinate(val);
+    if (coord) {
+      this.setRangePolygonDestination(ol.proj.transform(coord, 'EPSG:4326', 'EPSG:3857'));
+    }
+  }
+
+  isEPSG3857Coordinate = (val) => {
+    const valArray = val.replace(/\s+/g, '').split(',');
+    if (valArray.length === 2) {
+      const lng = parseFloat(valArray[0]);
+      const lat = parseFloat(valArray[1]);
+      if (lng <= 180 && lng >= -180 && lat <= 45 && lat >= -45) {
+        return [lng, lat];
+      }
+    }
+    return false;
+  }
+
   render() {
     const infoActions = [
       <FlatButton
@@ -343,10 +371,10 @@ export default class GreenNav extends Component {
             rangePolygonVisible={this.state.rangePolygonVisible}
             getRangeVisualisation={this.getRangeVisualisation}
             hideRangeVisualisation={this.hideRangeVisualisation}
-            updateRangeFromField={val => this.setState({ rangeFromField: val })}
+            updateRangeFromField={this.updateRangeFromField}
             updateRangeFromSelected={this.updateRangeFromSelected}
             rangeFromField={this.state.rangeFromField}
-            updateRangeToField={val => this.setState({ rangeToField: val })}
+            updateRangeToField={this.updateRangeToField}
             updateRangeToSelected={this.updateRangeToSelected}
             rangeToField={this.state.rangeToField}
             handleIndicateStartSnackbarOpen={this.handleIndicateStartSnackbarOpen}

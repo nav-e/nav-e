@@ -38,7 +38,7 @@ export const testCoordinatesValidity = (coord) => {
 };
 
 export const getNearestNode = (coord) => {
-  const boundRange = 0.00025;
+  const boundRange = 0.0004;
   const nCoord = ol.proj.transform(coord, 'EPSG:3857', 'EPSG:4326');
 
   // Create bounding box
