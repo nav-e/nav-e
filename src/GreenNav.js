@@ -84,18 +84,18 @@ export default class GreenNav extends Component {
   }
 
   getRoutes = (waypoints) => {
-    var routes = [];
+    const routes = [];
     let counterRoutes = 0;
     if (waypoints.length > 0) {
       this.showLoader();
     }
 
-    for(let i = 0; i < waypoints.length-1; i++) {
+    for (let i = 0; i < waypoints.length - 1; i += 1) {
       const startOsmId = waypoints[i];
-      const destinationOsmId = waypoints[i+1];
+      const destinationOsmId = waypoints[i + 1];
       const url = `${GreenNavServerAddress}astar/from/${startOsmId}/to/${destinationOsmId}`;
       fetch(url)
-        .then(response => {
+        .then((response) => {
           if (response.status > 400) {
             throw new Error('Failed to load route data!');
           }
@@ -104,21 +104,21 @@ export default class GreenNav extends Component {
           }
         })
         .then(routeReceived => {
-          //The array received from rt-library is actually from dest to orig, so we gotta reverse for now.
+          // The array received from rt-library is actually from dest to orig,
+          // so we gotta reverse for now.
           routes[i] = routeReceived.reverse();
-          counterRoutes++;
-          //We use counterRoutes instead of "i" because we don't know the order that routes will be received.
-          if(counterRoutes == waypoints.length-1) {
-              let finalRoute = [];
-              routes.forEach(route => finalRoute = finalRoute.concat(route));
-              this.hideLoader();
-              this.map.setRoute(finalRoute);
+          counterRoutes += 1;
+          // We use counterRoutes instead of "i" because we don't know the order that
+          // routes will be received.
+          if (counterRoutes === waypoints.length - 1) {
+            let finalRoute = [];
+            routes.forEach(route => finalRoute = finalRoute.concat(route));
+            this.hideLoader();
+            this.map.setRoute(finalRoute);
           }
         })
-        .catch(err => {
-          this.hideLoader();
-        });
-      }
+        .catch(() => this.hideLoader());
+    }
   }
 
   getRangeVisualisation = (range) => {

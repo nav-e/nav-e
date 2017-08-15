@@ -68,7 +68,7 @@ export const getNearestNode = (coord) => {
 
 export const calculateRangeAnxietyPolygon = (nodeId, range) => {
   const apiEndpoint = `${rangeAnxietyServer}/greennav/polygon?startNode=${nodeId}&range=${range}`;
-  
+
   return fetch(apiEndpoint)
           .then((response) => {
             if (response.status > 400) {
