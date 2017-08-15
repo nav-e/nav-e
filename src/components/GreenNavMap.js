@@ -10,6 +10,8 @@ const ol = require('openlayers');
 // Placeholder coordinates
 const munichLat = 48.139;
 const munichLng = 11.566;
+const jordanLat = 31.949;
+const jordanLng = 35.922;
 
 const styles = {
   container: {
@@ -96,12 +98,12 @@ export default class GreenNavMap extends Component {
     });
 
     const osmLayer = new ol.layer.Tile({
-      visible: true,
+      visible: !this.props.mapType,
       source: new ol.source.OSM()
     });
 
     const googleLayer = new ol.layer.Tile({
-      visible: false,
+      visible: this.props.mapType,
       source: new ol.source.OSM({
         url: 'http://mt{0-3}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}',
         attributions: [
@@ -374,6 +376,7 @@ export default class GreenNavMap extends Component {
 }
 
 GreenNavMap.propTypes = {
+  mapType: PropTypes.number,
   longitude: PropTypes.number,
   latitude: PropTypes.number,
   zoom: PropTypes.number,
@@ -386,8 +389,9 @@ GreenNavMap.propTypes = {
 };
 
 GreenNavMap.defaultProps = {
-  longitude: munichLng,
-  latitude: munichLat,
+  mapType: 0,
+  longitude: jordanLng,
+  latitude: jordanLat,
   zoom: 11,
   findingRoute: false,
   locationPickerCoordinates: null,

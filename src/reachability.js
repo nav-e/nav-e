@@ -68,7 +68,7 @@ export const getNearestNode = (coord) => {
 
 export const calculateRangeAnxietyPolygon = (nodeId, range) => {
   const apiEndpoint = `${rangeAnxietyServer}/greennav/polygon?startNode=${nodeId}&range=${range}`;
-
+  
   return fetch(apiEndpoint)
           .then((response) => {
             if (response.status > 400) {
@@ -76,12 +76,7 @@ export const calculateRangeAnxietyPolygon = (nodeId, range) => {
             }
             return response.json();
           }).then((data) => {
-            const polygon = data.features[0].geometry.coordinates[0];
-            const vertices = [];
-            for (let i = 0; i < polygon.length; i += 1) {
-              const point = [polygon[i][1], polygon[i][0]];
-              vertices.push(point);
-            }
+            const vertices = data.features[0].geometry.coordinates[0];
             return vertices;
           }).catch(() => false);
 };
@@ -89,7 +84,6 @@ export const calculateRangeAnxietyPolygon = (nodeId, range) => {
 export const calculateRangePolygonEPSG3857 = (range, coord) => {
   const nCoord = ol.proj.transform(coord, 'EPSG:3857', 'EPSG:4326');
   const geod = GeographicLib.Geodesic.WGS84;
-
   const vertices = [];
   let angle = 0; // in degrees
   for (let i = 0; i < 14; i += 1) {
@@ -98,7 +92,6 @@ export const calculateRangePolygonEPSG3857 = (range, coord) => {
     const coords = [r.lon2, r.lat2]; // in long lat
     vertices.push(coords);
   }
-
   return vertices;
 };
 

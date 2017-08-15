@@ -12,6 +12,9 @@ import Paper from 'material-ui/Paper';
 import { green700 } from 'material-ui/styles/colors';
 import ReachabilityTab from './ReachabilityTab';
 
+const MILES_TO_KM = 1.609344;
+const KM_TO_MILES = 1 / 1.609344;
+
 const styles = {
   container: {
     display: 'flex',
@@ -82,7 +85,6 @@ const styles = {
 };
 
 export default class Menu extends Component {
-
   constructor(props) {
     super(props);
     this.state = {
@@ -125,7 +127,12 @@ export default class Menu extends Component {
 
   getRangeVisualisation = () => {
     if (this.state.remainingRange > 0) {
-      this.props.getRangeVisualisation(this.state.remainingRange);
+      if (this.props.unitsType === 1) {
+        this.props.getRangeVisualisation(this.state.remainingRange * MILES_TO_KM);
+      }
+      else {
+        this.props.getRangeVisualisation(this.state.remainingRange);
+      }
     }
     else {
       this.props.handleRemainingRangeSnackbarOpen();
@@ -230,10 +237,8 @@ export default class Menu extends Component {
   }
 
   convertUnits = (newUnitsType) => {
-    const KM_TO_MILES = 1.609344;
-    const MILES_TO_KM = 1 / 1.609344;
     if (newUnitsType !== this.props.unitsType && this.state.remainingRange > 0) {
-      if (newUnitsType === 0) {
+      if (newUnitsType === 1) {
         this.setState(prevState => ({
           remainingRange: prevState.remainingRange * KM_TO_MILES
         }));
