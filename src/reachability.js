@@ -66,9 +66,25 @@ export const getNearestNode = (coord) => {
           }).catch(() => false);
 };
 
-export const calculateRangeAnxietyPolygon = (nodeId, range) => {
+export const getRangeAnxietyPolygonWithNode = (nodeId, range) => {
   const apiEndpoint = `${rangeAnxietyServer}/greennav/polygon?startNode=${nodeId}&range=${range}`;
 
+  return fetch(apiEndpoint)
+          .then((response) => {
+            if (response.status > 400) {
+              throw new Error('Failed to load polygon data!');
+            }
+            return response.json();
+          }).then((data) => {
+            const vertices = data.features[0].geometry.coordinates[0];
+            return vertices;
+          }).catch(() => false);
+};
+
+export const getRangeAnxietyPolygonWithCoordinate = (coord, range) => {
+  const nCoord = ol.proj.transform(coord, 'EPSG:3857', 'EPSG:4326');
+  const apiEndpoint = `${rangeAnxietyServer}/greennav/polygon?startlat=${nCoord[1]}&startlng=${nCoord[0]}&range=${range}`;
+  console.log(apiEndpoint)
   return fetch(apiEndpoint)
           .then((response) => {
             if (response.status > 400) {

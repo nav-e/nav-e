@@ -14,7 +14,8 @@ import fetch from 'unfetch';
 import Menu from './components/Menu';
 import GreenNavMap from './components/GreenNavMap';
 
-import { testCoordinatesValidity, getNearestNode, calculateRangeAnxietyPolygon } from './reachability';
+import { testCoordinatesValidity, getNearestNode,
+         getRangeAnxietyPolygonWithNode, getRangeAnxietyPolygonWithCoordinate } from './reachability';
 
 const GreenNavServerAddress = 'http://localhost:6833/';
 
@@ -131,26 +132,39 @@ export default class GreenNav extends Component {
       testCoordinatesValidity(coord)
         .then((res) => {
           if (res) {
-            getNearestNode(coord)
-              .then((node) => {
-                if (node) {
-                  calculateRangeAnxietyPolygon(node, range)
-                    .then((vertices) => {
-                      this.hideLoader();
-                      if (vertices) {
-                        this.map.setRangePolygon(vertices, coord);
-                        this.setState({ rangePolygonVisible: true });
-                      }
-                      else {
-                        this.handleInvalidRouteSnackbarOpen();
-                      }
-                    });
+            // Using Coordinate
+            getRangeAnxietyPolygonWithCoordinate(coord, range)
+              .then((vertices) => {
+                this.hideLoader();
+                if (vertices) {
+                  this.map.setRangePolygon(vertices, coord);
+                  this.setState({ rangePolygonVisible: true });
                 }
                 else {
-                  this.hideLoader();
                   this.handleInvalidRouteSnackbarOpen();
                 }
               });
+            // Using OSM Node
+            // getNearestNode(coord)
+            //   .then((node) => {
+            //     if (node) {
+            //       getRangeAnxietyPolygonWithNode(node, range)
+            //         .then((vertices) => {
+            //           this.hideLoader();
+            //           if (vertices) {
+            //             this.map.setRangePolygon(vertices, coord);
+            //             this.setState({ rangePolygonVisible: true });
+            //           }
+            //           else {
+            //             this.handleInvalidRouteSnackbarOpen();
+            //           }
+            //         });
+            //     }
+            //     else {
+            //       this.hideLoader();
+            //       this.handleInvalidRouteSnackbarOpen();
+            //     }
+            //   });
           }
           else {
             this.hideLoader();
