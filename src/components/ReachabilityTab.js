@@ -94,7 +94,7 @@ export default class ReachabilityTab extends Component {
           onChange={this.props.updateRemainingRange}
           style={styles.rangeTextField}
           floatingLabelText="Remaining Range"
-          value={Math.round(this.props.remainingRange) || ''}
+          value={Math.round(this.props.remainingRange * 100) / 100 || ''}
         />
         <div
           style={styles.buttonDiv}

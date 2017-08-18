@@ -262,7 +262,7 @@ export default class Menu extends Component {
 
   updateRemainingRange = (event, value) => {
     // TODO: Set remainingRange to distance in km/miles based on batteryLevel and car model
-    this.setState({ remainingRange: parseInt(value, 10) });
+    this.setState({ remainingRange: parseFloat(value) });
   }
 
   render() {
