@@ -84,6 +84,7 @@ export const getRangeAnxietyPolygonWithNode = (nodeId, range) => {
 export const getRangeAnxietyPolygonWithCoordinate = (coord, range) => {
   const nCoord = ol.proj.transform(coord, 'EPSG:3857', 'EPSG:4326');
   const apiEndpoint = `${rangeAnxietyServer}/greennav/polygon?startlat=${nCoord[1]}&startlng=${nCoord[0]}&range=${range}`;
+
   return fetch(apiEndpoint)
           .then((response) => {
             if (response.status > 400) {
