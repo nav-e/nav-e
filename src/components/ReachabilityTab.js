@@ -8,6 +8,7 @@ import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
 import TextField from 'material-ui/TextField';
 import { green700 } from 'material-ui/styles/colors';
+import { GOOGLE_MAP_KEY } from '../config';
 
 const styles = {
   menu: {
@@ -52,12 +53,14 @@ const styles = {
 export default class ReachabilityTab extends Component {
   constructor(props) {
     super(props);
-    const map = new window.google.maps.Map(document.getElementById('gmap'));
     this.state = {
-      autocompleteService: new window.google.maps.places.AutocompleteService(),
-      placesService: new window.google.maps.places.PlacesService(map),
       dataSource: [],
     };
+
+    window.google.load('maps', '3', {
+      other_params: `key=${GOOGLE_MAP_KEY}&libraries=places`
+    });
+    window.google.setOnLoadCallback(this.initialize);
   }
 
   getCoordinateFromPlaceId = id => new Promise((resolve) => {
@@ -67,6 +70,14 @@ export default class ReachabilityTab extends Component {
       }
     });
   })
+
+  initialize = () => {
+    const map = new window.google.maps.Map(document.getElementById('gmap'));
+    this.setState({
+      autocompleteService: new window.google.maps.places.AutocompleteService(),
+      placesService: new window.google.maps.places.PlacesService(map),
+    });
+  }
 
   handleToRequest = (chosenRequest) => {
     this.getCoordinateFromPlaceId(chosenRequest.value).then((coord) => {
