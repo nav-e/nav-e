@@ -354,6 +354,8 @@ export default class Menu extends Component {
               updateRangeToField={val => this.props.updateRangeToField(val)}
               updateRangeToSelected={e => this.props.updateRangeToSelected(e)}
               rangeToField={this.props.rangeToField}
+              setRangePolygonOrigin={val => this.props.setRangePolygonOrigin(val)}
+              setRangePolygonDestination={val => this.props.setRangePolygonDestination(val)}
             />
           </Tab>
         </Tabs>
@@ -376,6 +378,8 @@ Menu.propTypes = {
   rangeToField: PropTypes.string.isRequired,
   updateRangeToField: PropTypes.func.isRequired,
   updateRangeToSelected: PropTypes.func.isRequired,
+  setRangePolygonOrigin: PropTypes.func.isRequired,
+  setRangePolygonDestination: PropTypes.func.isRequired,
   handleIndicateStartSnackbarOpen: PropTypes.func.isRequired,
   handleRemainingRangeSnackbarOpen: PropTypes.func.isRequired,
 };
