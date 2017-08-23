@@ -8,7 +8,7 @@ import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
 import TextField from 'material-ui/TextField';
 import { green700 } from 'material-ui/styles/colors';
-import { GOOGLE_MAP_KEY } from '../config';
+import config from '../config';
 
 const styles = {
   menu: {
@@ -58,7 +58,7 @@ export default class ReachabilityTab extends Component {
     };
 
     window.google.load('maps', '3', {
-      other_params: `key=${GOOGLE_MAP_KEY}&libraries=places`
+      other_params: `key=${config.GOOGLE_MAP_KEY}&libraries=places`
     });
     window.google.setOnLoadCallback(this.initialize);
   }

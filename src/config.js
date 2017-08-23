@@ -1,4 +1,6 @@
 // API KEYS
-const GOOGLE_MAP_KEY = 'REPLACE WITH YOUR API KEY';
+const config = {
+  GOOGLE_MAP_KEY: 'REPLACE WITH YOUR API KEY',
+};
 
-export { GOOGLE_MAP_KEY };
+export default config;

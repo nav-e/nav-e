@@ -45,6 +45,13 @@ sudo n stable
 # sudo n latest
 ```
 
+#### Get an API Key from the Google API Console
+Location search and autocomplete is provided by Google Map's Javascript Library.
+
+Step 1: Follow instructions on [Google's Developer Documentation](https://developers.google.com/maps/documentation/javascript/get-api-key) to register a project and get an unrestricted API key.
+
+Step 2: Replace placeholder string in config.js with your generated API key.
+
 ### Setup
 
 ```zsh
