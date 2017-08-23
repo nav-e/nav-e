@@ -1,6 +1,4 @@
 import React, { Component, PropTypes } from 'react';
-import ol from 'openlayers';
-import AutoComplete from 'material-ui/AutoComplete';
 import Slider from 'material-ui/Slider';
 import RaisedButton from 'material-ui/RaisedButton';
 import FontIcon from 'material-ui/FontIcon';
@@ -29,9 +27,9 @@ const styles = {
     fontSize: '14px'
   },
 
-  autoCompleteWrapper: {
+  textField: {
+    display: 'inherit',
     position: 'relative',
-    display: 'flex'
   },
 
   rangeTextField: {
@@ -50,88 +48,23 @@ const styles = {
 };
 
 export default class ReachabilityTab extends Component {
-  constructor(props) {
-    super(props);
-    const map = new window.google.maps.Map(document.getElementById('gmap'));
-    this.state = {
-      autocompleteService: new window.google.maps.places.AutocompleteService(),
-      placesService: new window.google.maps.places.PlacesService(map),
-      dataSource: [],
-    };
-  }
-
-  getCoordinateFromPlaceId = id => new Promise((resolve) => {
-    this.state.placesService.getDetails({ placeId: id }, (results, status) => {
-      if (status === window.google.maps.places.PlacesServiceStatus.OK) {
-        resolve([results.geometry.location.lng(), results.geometry.location.lat()]);
-      }
-    });
-  })
-
-  handleToRequest = (chosenRequest) => {
-    this.getCoordinateFromPlaceId(chosenRequest.value).then((coord) => {
-      this.props.setRangePolygonDestination(ol.proj.transform(coord, 'EPSG:4326', 'EPSG:3857'));
-    });
-  }
-
-  handleFromRequest = (chosenRequest) => {
-    this.getCoordinateFromPlaceId(chosenRequest.value).then((coord) => {
-      this.props.setRangePolygonOrigin(ol.proj.transform(coord, 'EPSG:4326', 'EPSG:3857'));
-    });
-  }
-
-  updateFromInput = (value) => {
-    this.props.updateRangeFromField(value);
-    this.updateAutocomplete(value);
-  };
-
-  updateToInput = (value) => {
-    this.props.updateRangeToField(value);
-    this.updateAutocomplete(value);
-  };
-
-  updateAutocomplete = (value) => {
-    this.state.autocompleteService.getQueryPredictions({ input: value }, (predictions, status) => {
-      if (status === window.google.maps.places.PlacesServiceStatus.OK) {
-        const results = [];
-        predictions.forEach((prediction) => {
-          results.push({
-            text: prediction.description,
-            value: prediction.place_id,
-          });
-        });
-        this.setState({ dataSource: results });
-      }
-    });
-  };
-
   render() {
     return (
       <div style={styles.menu}>
-        <div style={styles.autoCompleteWrapper}>
-          <AutoComplete
-            searchText={this.props.rangeFromField}
-            floatingLabelText="From"
-            onClick={() => this.props.updateRangeFromSelected(true)}
-            onNewRequest={this.handleFromRequest}
-            onUpdateInput={this.updateFromInput}
-            dataSource={this.state.dataSource}
-            filter={AutoComplete.noFilter}
-            fullWidth
-          />
-        </div>
-        <div style={styles.autoCompleteWrapper}>
-          <AutoComplete
-            searchText={this.props.rangeToField}
-            floatingLabelText="To"
-            onClick={() => this.props.updateRangeToSelected(true)}
-            onNewRequest={this.handleToRequest}
-            onUpdateInput={this.updateToInput}
-            dataSource={this.state.dataSource}
-            filter={AutoComplete.noFilter}
-            fullWidth
-          />
-        </div>
+        <TextField
+          onClick={() => this.props.updateRangeFromSelected(true)}
+          onChange={(e, val) => this.props.updateRangeFromField(val)}
+          style={styles.textField}
+          floatingLabelText="From"
+          value={this.props.rangeFromField}
+        />
+        <TextField
+          onClick={() => this.props.updateRangeToSelected(true)}
+          onChange={(e, val) => this.props.updateRangeToField(val)}
+          style={styles.textField}
+          floatingLabelText="To"
+          value={this.props.rangeToField}
+        />
         <SelectField
           floatingLabelText="Vehicle"
           value={this.props.vehicle}
@@ -202,6 +135,4 @@ ReachabilityTab.propTypes = {
   rangeToField: PropTypes.string.isRequired,
   updateRangeToField: PropTypes.func.isRequired,
   updateRangeToSelected: PropTypes.func.isRequired,
-  setRangePolygonOrigin: PropTypes.func.isRequired,
-  setRangePolygonDestination: PropTypes.func.isRequired,
 };

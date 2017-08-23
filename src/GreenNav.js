@@ -391,8 +391,6 @@ export default class GreenNav extends Component {
             updateRangeToField={this.updateRangeToField}
             updateRangeToSelected={this.updateRangeToSelected}
             rangeToField={this.state.rangeToField}
-            setRangePolygonOrigin={this.setRangePolygonOrigin}
-            setRangePolygonDestination={this.setRangePolygonDestination}
             handleIndicateStartSnackbarOpen={this.handleIndicateStartSnackbarOpen}
             handleRemainingRangeSnackbarOpen={this.handleRemainingRangeSnackbarOpen}
           />
