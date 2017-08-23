@@ -46,6 +46,7 @@ export default class GreenNav extends Component {
       trafficEnabled: false,
       windEnabled: false,
       findingRoute: false,
+      userLocationCoordinates: undefined,
       rangePolygonOriginCoordinates: undefined,
       rangePolygonDestinationCoordinates: undefined,
       rangePolygonVisible: false,
@@ -57,8 +58,18 @@ export default class GreenNav extends Component {
       rangeToFieldSelected: false,
     };
 
-    this.setRangePolygonOrigin = this.setRangePolygonOrigin.bind(this);
     this.setLocationPickerCoordinates = this.setLocationPickerCoordinates.bind(this);
+    this.setUserLocationCoordinates = this.setUserLocationCoordinates.bind(this);
+    this.setRangePolygonAutocompleteOrigin = this.setRangePolygonAutocompleteOrigin.bind(this);
+    this.setRangePolygonAutocompleteDestination =
+      this.setRangePolygonAutocompleteDestination.bind(this);
+  }
+
+  setUserLocationCoordinates(coord) {
+    this.setState({ userLocationCoordinates: coord });
+    if (this.state.rangePolygonOriginCoordinates === undefined) {
+      this.setRangePolygonOrigin(coord);
+    }
   }
 
   setRangePolygonOrigin(coord) {
@@ -66,7 +77,25 @@ export default class GreenNav extends Component {
   }
 
   setRangePolygonDestination(coord) {
-    this.setState({ rangePolygonOriginCoordinates: coord });
+    this.setState({ rangePolygonDestinationCoordinates: coord });
+  }
+
+  setRangePolygonAutocompleteOrigin(coord) {
+    const nCoord = ol.proj.transform(coord, 'EPSG:4326', 'EPSG:3857');
+    this.setRangePolygonOrigin(nCoord);
+    this.setState({
+      locationPickerCoordinatesTransformed: coord
+    });
+    this.map.setAutocompleteLocationMarker(nCoord);
+  }
+
+  setRangePolygonAutocompleteDestination(coord) {
+    const nCoord = ol.proj.transform(coord, 'EPSG:4326', 'EPSG:3857');
+    this.setRangePolygonDestination(nCoord);
+    this.setState({
+      locationPickerCoordinatesTransformed: coord
+    });
+    this.map.setAutocompleteLocationMarker(nCoord);
   }
 
   setLocationPickerCoordinates(coord) {
@@ -391,8 +420,8 @@ export default class GreenNav extends Component {
             updateRangeToField={this.updateRangeToField}
             updateRangeToSelected={this.updateRangeToSelected}
             rangeToField={this.state.rangeToField}
-            setRangePolygonOrigin={this.setRangePolygonOrigin}
-            setRangePolygonDestination={this.setRangePolygonDestination}
+            setRangePolygonAutocompleteOrigin={this.setRangePolygonAutocompleteOrigin}
+            setRangePolygonAutocompleteDestination={this.setRangePolygonAutocompleteDestination}
             handleIndicateStartSnackbarOpen={this.handleIndicateStartSnackbarOpen}
             handleRemainingRangeSnackbarOpen={this.handleRemainingRangeSnackbarOpen}
           />
@@ -402,9 +431,9 @@ export default class GreenNav extends Component {
             locationPickerCoordinates={this.state.locationPickerCoordinates}
             locationPickerCoordinatesTransformed={this.state.locationPickerCoordinatesTransformed}
             findingRoute={this.state.findingRoute}
-            rangePolygonOriginCoordinates={this.state.rangePolygonOriginCoordinates}
-            setRangePolygonOrigin={this.setRangePolygonOrigin}
+            userLocationCoordinates={this.state.userLocationCoordinates}
             setLocationPickerCoordinates={this.setLocationPickerCoordinates}
+            setUserLocationCoordinates={this.setUserLocationCoordinates}
           />
         </div>
 

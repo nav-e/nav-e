@@ -82,7 +82,7 @@ export default class ReachabilityTab extends Component {
   handleToRequest = (chosenRequest) => {
     if (chosenRequest.value) {
       this.getCoordinateFromPlaceId(chosenRequest.value).then((coord) => {
-        this.props.setRangePolygonDestination(ol.proj.transform(coord, 'EPSG:4326', 'EPSG:3857'));
+        this.props.setRangePolygonAutocompleteDestination(coord);
       });
     }
   }
@@ -90,27 +90,23 @@ export default class ReachabilityTab extends Component {
   handleFromRequest = (chosenRequest) => {
     if (chosenRequest.value) {
       this.getCoordinateFromPlaceId(chosenRequest.value).then((coord) => {
-        this.props.setRangePolygonOrigin(ol.proj.transform(coord, 'EPSG:4326', 'EPSG:3857'));
+        this.props.setRangePolygonAutocompleteOrigin(coord);
       });
     }
   }
 
   updateFromInput = (value) => {
     this.props.updateRangeFromField(value);
-    if (value.length > 0) {
-      this.updateAutocomplete(value);
-    }
+    this.updateAutocomplete(value);
   };
 
   updateToInput = (value) => {
     this.props.updateRangeToField(value);
-    if (value.length > 0) {
-      this.updateAutocomplete(value);
-    }
+    this.updateAutocomplete(value);
   };
 
   updateAutocomplete = (value) => {
-    this.state.autocompleteService.getQueryPredictions({ input: value }, (predictions, status) => {
+    const callback = (predictions, status) => {
       if (status === window.google.maps.places.PlacesServiceStatus.OK) {
         const results = [];
         predictions.forEach((prediction) => {
@@ -126,7 +122,11 @@ export default class ReachabilityTab extends Component {
       else {
         this.setState({ dataSource: [] });
       }
-    });
+    };
+
+    if (value.length > 0 && this.state.autocompleteService) {
+      this.state.autocompleteService.getQueryPredictions({ input: value }, callback);
+    }
   };
 
   render() {
@@ -226,6 +226,6 @@ ReachabilityTab.propTypes = {
   rangeToField: PropTypes.string.isRequired,
   updateRangeToField: PropTypes.func.isRequired,
   updateRangeToSelected: PropTypes.func.isRequired,
-  setRangePolygonOrigin: PropTypes.func.isRequired,
-  setRangePolygonDestination: PropTypes.func.isRequired,
+  setRangePolygonAutocompleteOrigin: PropTypes.func.isRequired,
+  setRangePolygonAutocompleteDestination: PropTypes.func.isRequired,
 };

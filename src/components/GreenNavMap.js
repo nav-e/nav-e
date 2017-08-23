@@ -213,7 +213,7 @@ export default class GreenNavMap extends Component {
     geolocation.on('change', () => {
       const p = geolocation.getPosition();
       userLocationMarker.setPosition(p);
-      this.props.setRangePolygonOrigin(p);
+      this.props.setUserLocationCoordinates(p);
       view.setCenter([p[0], p[1]]); // centers view to position
     });
 
@@ -254,6 +254,11 @@ export default class GreenNavMap extends Component {
       this.state.map.getLayers().getArray()[1].setVisible(true);
       this.state.map.getLayers().getArray()[0].setVisible(false);
     }
+  }
+
+  setAutocompleteLocationMarker = (coord) => {
+    this.state.map.getOverlayById('locationPicker').setPosition(coord);
+    this.state.map.getView().setCenter(coord);
   }
 
   setRangePolygon = (vertices, center) => {
@@ -301,7 +306,7 @@ export default class GreenNavMap extends Component {
   )
 
   zoomToCurrent = () => {
-    this.state.map.getView().setCenter(this.props.rangePolygonOriginCoordinates);
+    this.state.map.getView().setCenter(this.props.userLocationCoordinates);
   }
 
   hideRangePolygon = () => {
@@ -383,9 +388,9 @@ GreenNavMap.propTypes = {
   findingRoute: PropTypes.bool,
   locationPickerCoordinates: PropTypes.arrayOf(PropTypes.number),
   locationPickerCoordinatesTransformed: PropTypes.arrayOf(PropTypes.number),
-  rangePolygonOriginCoordinates: PropTypes.arrayOf(PropTypes.number),
-  setRangePolygonOrigin: PropTypes.func.isRequired,
-  setLocationPickerCoordinates: PropTypes.func.isRequired
+  userLocationCoordinates: PropTypes.arrayOf(PropTypes.number),
+  setLocationPickerCoordinates: PropTypes.func.isRequired,
+  setUserLocationCoordinates: PropTypes.func.isRequired,
 };
 
 GreenNavMap.defaultProps = {
@@ -396,5 +401,5 @@ GreenNavMap.defaultProps = {
   findingRoute: false,
   locationPickerCoordinates: null,
   locationPickerCoordinatesTransformed: null,
-  rangePolygonOriginCoordinates: [1287837.5738597857, 6129818.969679821]
+  userLocationCoordinates: [1287837.5738597857, 6129818.969679821],
 };
