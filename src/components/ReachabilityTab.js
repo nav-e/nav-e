@@ -93,12 +93,16 @@ export default class ReachabilityTab extends Component {
 
   updateFromInput = (value) => {
     this.props.updateRangeFromField(value);
-    this.updateAutocomplete(value);
+    if (value.length > 0) {
+      this.updateAutocomplete(value);
+    }
   };
 
   updateToInput = (value) => {
     this.props.updateRangeToField(value);
-    this.updateAutocomplete(value);
+    if (value.length > 0) {
+      this.updateAutocomplete(value);
+    }
   };
 
   updateAutocomplete = (value) => {
@@ -106,12 +110,17 @@ export default class ReachabilityTab extends Component {
       if (status === window.google.maps.places.PlacesServiceStatus.OK) {
         const results = [];
         predictions.forEach((prediction) => {
-          results.push({
-            text: prediction.description,
-            value: prediction.place_id,
-          });
+          if (prediction.description && prediction.place_id) {
+            results.push({
+              text: prediction.description,
+              value: prediction.place_id,
+            });
+          }
         });
         this.setState({ dataSource: results });
+      }
+      else {
+        this.setState({ dataSource: [] });
       }
     });
   };
