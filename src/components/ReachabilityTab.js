@@ -80,15 +80,19 @@ export default class ReachabilityTab extends Component {
   }
 
   handleToRequest = (chosenRequest) => {
-    this.getCoordinateFromPlaceId(chosenRequest.value).then((coord) => {
-      this.props.setRangePolygonDestination(ol.proj.transform(coord, 'EPSG:4326', 'EPSG:3857'));
-    });
+    if (chosenRequest.value) {
+      this.getCoordinateFromPlaceId(chosenRequest.value).then((coord) => {
+        this.props.setRangePolygonDestination(ol.proj.transform(coord, 'EPSG:4326', 'EPSG:3857'));
+      });
+    }
   }
 
   handleFromRequest = (chosenRequest) => {
-    this.getCoordinateFromPlaceId(chosenRequest.value).then((coord) => {
-      this.props.setRangePolygonOrigin(ol.proj.transform(coord, 'EPSG:4326', 'EPSG:3857'));
-    });
+    if (chosenRequest.value) {
+      this.getCoordinateFromPlaceId(chosenRequest.value).then((coord) => {
+        this.props.setRangePolygonOrigin(ol.proj.transform(coord, 'EPSG:4326', 'EPSG:3857'));
+      });
+    }
   }
 
   updateFromInput = (value) => {
