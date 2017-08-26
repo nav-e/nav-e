@@ -165,7 +165,7 @@ export default class GreenNav extends Component {
             getRangeAnxietyPolygonWithCoordinate(coord, range)
               .then((vertices) => {
                 this.hideLoader();
-                if (vertices) {
+                if (vertices !== false) {
                   this.map.setRangePolygon(vertices, coord);
                   this.setState({ rangePolygonVisible: true });
                 }

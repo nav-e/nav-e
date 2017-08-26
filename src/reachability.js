@@ -1,5 +1,7 @@
 import ol from 'openlayers';
 import GeographicLib from 'geographiclib'; // For geodesic calculations
+import convex from '@turf/convex';
+import { featureCollection, point } from '@turf/helpers';
 
 const overpassEndpoint = 'http://overpass-api.de/api/interpreter';
 const rangeAnxietyServer = 'http://localhost:8111';
@@ -93,7 +95,12 @@ export const getRangeAnxietyPolygonWithCoordinate = (coord, range) => {
             return response.json();
           }).then((data) => {
             const vertices = data.features[0].geometry.coordinates[0];
-            return vertices;
+            const pointsArray = [];
+            for (let i = 0; i < vertices.length; i += 1) {
+              pointsArray.push(point(vertices[i]));
+            }
+            const hull = convex(featureCollection(pointsArray));
+            return hull.geometry.coordinates[0];
           }).catch(() => false);
 };
 

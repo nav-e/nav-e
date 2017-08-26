@@ -13,6 +13,8 @@
     "react-scripts": "^0.7.0"
   },
   "dependencies": {
+    "@turf/convex": "^4.6.0",
+    "@turf/helpers": "^4.6.0",
     "geographiclib": "^1.48.0",
     "material-ui": "^0.16.4",
     "openlayers": "^3.19.1",
