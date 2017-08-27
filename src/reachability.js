@@ -10,7 +10,7 @@ export const testCoordinatesValidity = (coord) => {
   const boundRange = 0.005;
   const nCoord = ol.proj.transform(coord, 'EPSG:3857', 'EPSG:4326');
 
-  // Create bounding box
+  // Create bounding box for search
   const swBound = [nCoord[1] - boundRange, nCoord[0] - boundRange];
   const neBound = [nCoord[1] + boundRange, nCoord[0] + boundRange];
 
@@ -32,6 +32,7 @@ export const testCoordinatesValidity = (coord) => {
             return response.json();
           }).then((data) => {
             const wayCount = data.elements[0].tags.ways;
+            // coord is valid if any road is present in bounding box
             if (wayCount > 0) {
               return true;
             }
@@ -53,9 +54,9 @@ export const getRangeAnxietyPolygonWithCoordinate = (coord, range) => {
           }).then((data) => {
             const vertices = data.features[0].geometry.coordinates[0];
             const pointsArray = [];
-            for (let i = 0; i < vertices.length; i += 1) {
-              pointsArray.push(point(vertices[i]));
-            }
+            // convert vertices to turf.js points
+            vertices.forEach(vertex => pointsArray.push(point(vertex)));
+            // apply convex hull computation
             const hull = convex(featureCollection(pointsArray));
             return hull.geometry.coordinates[0];
           }).catch(() => false);

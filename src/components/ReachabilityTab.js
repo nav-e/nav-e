@@ -108,6 +108,7 @@ export default class ReachabilityTab extends Component {
     const callback = (predictions, status) => {
       if (status === window.google.maps.places.PlacesServiceStatus.OK) {
         const results = [];
+        // add autocomplete prediction only for valid description and place_id
         predictions.forEach((prediction) => {
           if (prediction.description && prediction.place_id) {
             results.push({

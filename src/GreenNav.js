@@ -45,12 +45,12 @@ export default class GreenNav extends Component {
       trafficEnabled: false,
       windEnabled: false,
       findingRoute: false,
-      userLocationCoordinates: undefined,
-      rangePolygonOriginCoordinates: undefined,
-      rangePolygonDestinationCoordinates: undefined,
+      userLocationCoordinates: undefined, // in EPSG:3857
+      rangePolygonOriginCoordinates: undefined, // in EPSG:3857
+      rangePolygonDestinationCoordinates: undefined, // in EPSG:3857
       rangePolygonVisible: false,
-      locationPickerCoordinates: undefined,
-      locationPickerCoordinatesTransformed: undefined,
+      locationPickerCoordinates: undefined, // in EPSG:3857
+      locationPickerCoordinatesTransformed: undefined, // in EPSG:4326
       rangeFromField: '',
       rangeFromFieldSelected: false,
       rangeToField: '',
@@ -67,22 +67,14 @@ export default class GreenNav extends Component {
   setUserLocationCoordinates(coord) {
     this.setState({ userLocationCoordinates: coord });
     if (this.state.rangePolygonOriginCoordinates === undefined) {
-      this.setRangePolygonOrigin(coord);
+      this.setState({ rangePolygonOriginCoordinates: coord });
     }
-  }
-
-  setRangePolygonOrigin(coord) {
-    this.setState({ rangePolygonOriginCoordinates: coord });
-  }
-
-  setRangePolygonDestination(coord) {
-    this.setState({ rangePolygonDestinationCoordinates: coord });
   }
 
   setRangePolygonAutocompleteOrigin(coord) {
     const nCoord = ol.proj.transform(coord, 'EPSG:4326', 'EPSG:3857');
-    this.setRangePolygonOrigin(nCoord);
     this.setState({
+      rangePolygonOriginCoordinates: nCoord,
       locationPickerCoordinatesTransformed: coord
     });
     this.map.setAutocompleteLocationMarker(nCoord);
@@ -90,8 +82,8 @@ export default class GreenNav extends Component {
 
   setRangePolygonAutocompleteDestination(coord) {
     const nCoord = ol.proj.transform(coord, 'EPSG:4326', 'EPSG:3857');
-    this.setRangePolygonDestination(nCoord);
     this.setState({
+      rangePolygonDestinationCoordinates: nCoord,
       locationPickerCoordinatesTransformed: coord
     });
     this.map.setAutocompleteLocationMarker(nCoord);
@@ -99,16 +91,19 @@ export default class GreenNav extends Component {
 
   setLocationPickerCoordinates(coord) {
     this.setState({ locationPickerCoordinates: coord });
-
     const nCoord = ol.proj.transform(coord, 'EPSG:3857', 'EPSG:4326');
     this.setState({ locationPickerCoordinatesTransformed: nCoord });
+    // update textfield with coordinate if selected
     if (this.state.rangeFromFieldSelected) {
-      this.setRangePolygonOrigin(coord);
-      this.setState({ rangeFromField: nCoord.map(i => i.toFixed(6)).join(', ') });
+      this.setState({
+        rangePolygonOriginCoordinates: coord,
+        rangeFromField: nCoord.map(i => i.toFixed(6)).join(', ') });
     }
     else if (this.state.rangeToFieldSelected) {
-      this.setRangePolygonDestination(coord);
-      this.setState({ rangeToField: nCoord.map(i => i.toFixed(6)).join(', ') });
+      this.setState({
+        rangePolygonDestinationCoordinates: coord,
+        rangeToField: nCoord.map(i => i.toFixed(6)).join(', ')
+      });
     }
   }
 
@@ -159,10 +154,11 @@ export default class GreenNav extends Component {
     }
     else {
       this.showLoader();
+      // test if origin coordinate has valid roads
       testCoordinatesValidity(coord)
         .then((res) => {
           if (res) {
-            // Using Coordinate
+            // gets vertices of range anxiety polygon
             getRangeAnxietyPolygonWithCoordinate(coord, range)
               .then((vertices) => {
                 this.hideLoader();
@@ -290,6 +286,7 @@ export default class GreenNav extends Component {
   }
 
   updateRangeFromSelected = (e) => {
+    // selects rangeFromField and unselect rangeToField
     this.setState({
       rangeFromFieldSelected: e,
       rangeToFieldSelected: !e
@@ -297,6 +294,7 @@ export default class GreenNav extends Component {
   }
 
   updateRangeToSelected = (e) => {
+    // selects rangeToField and unselects rangeFromField
     this.setState({
       rangeFromFieldSelected: !e,
       rangeToFieldSelected: e
@@ -305,25 +303,30 @@ export default class GreenNav extends Component {
 
   updateRangeFromField = (val) => {
     this.setState({ rangeFromField: val });
-    const coord = this.isEPSG3857Coordinate(val);
+    const coord = this.isEPSG4326Coordinate(val);
     if (coord) {
-      this.setRangePolygonOrigin(ol.proj.transform(coord, 'EPSG:4326', 'EPSG:3857'));
+      this.setState({
+        rangePolygonOriginCoordinates: ol.proj.transform(coord, 'EPSG:4326', 'EPSG:3857')
+      });
     }
   }
 
   updateRangeToField = (val) => {
     this.setState({ rangeToField: val });
-    const coord = this.isEPSG3857Coordinate(val);
+    const coord = this.isEPSG4326Coordinate(val);
     if (coord) {
-      this.setRangePolygonDestination(ol.proj.transform(coord, 'EPSG:4326', 'EPSG:3857'));
+      this.setState({
+        rangePolygonDestinationCoordinates: ol.proj.transform(coord, 'EPSG:4326', 'EPSG:3857')
+      });
     }
   }
 
-  isEPSG3857Coordinate = (val) => {
+  isEPSG4326Coordinate = (val) => {
     const valArray = val.replace(/\s+/g, '').split(',');
     if (valArray.length === 2) {
       const lng = parseFloat(valArray[0]);
       const lat = parseFloat(valArray[1]);
+      // returns formatted coordinate if true
       if (lng <= 180 && lng >= -180 && lat <= 45 && lat >= -45) {
         return [lng, lat];
       }

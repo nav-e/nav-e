@@ -210,9 +210,10 @@ export default class GreenNavMap extends Component {
 
     geolocation.on('change', () => {
       const p = geolocation.getPosition();
-      userLocationMarker.setPosition(p);
       this.props.setUserLocationCoordinates(p);
-      view.setCenter([p[0], p[1]]); // centers view to position
+       // set position on userLocationMarker and center view to position
+      userLocationMarker.setPosition(p);
+      view.setCenter([p[0], p[1]]);
     });
 
     this.state = {
@@ -304,6 +305,7 @@ export default class GreenNavMap extends Component {
   )
 
   zoomToCurrent = () => {
+    // center view on user location
     this.state.map.getView().setCenter(this.props.userLocationCoordinates);
   }
 
