@@ -14,8 +14,7 @@ import fetch from 'unfetch';
 import Menu from './components/Menu';
 import GreenNavMap from './components/GreenNavMap';
 
-import { testCoordinatesValidity, getNearestNode,
-         getRangeAnxietyPolygonWithNode, getRangeAnxietyPolygonWithCoordinate } from './reachability';
+import { testCoordinatesValidity, getRangeAnxietyPolygonWithCoordinate } from './reachability';
 
 const GreenNavServerAddress = 'http://localhost:6833/';
 
@@ -173,27 +172,6 @@ export default class GreenNav extends Component {
                   this.handleInvalidRouteSnackbarOpen();
                 }
               });
-            // Using OSM Node
-            // getNearestNode(coord)
-            //   .then((node) => {
-            //     if (node) {
-            //       getRangeAnxietyPolygonWithNode(node, range)
-            //         .then((vertices) => {
-            //           this.hideLoader();
-            //           if (vertices) {
-            //             this.map.setRangePolygon(vertices, coord);
-            //             this.setState({ rangePolygonVisible: true });
-            //           }
-            //           else {
-            //             this.handleInvalidRouteSnackbarOpen();
-            //           }
-            //         });
-            //     }
-            //     else {
-            //       this.hideLoader();
-            //       this.handleInvalidRouteSnackbarOpen();
-            //     }
-            //   });
           }
           else {
             this.hideLoader();
