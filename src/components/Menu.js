@@ -308,7 +308,7 @@ export default class Menu extends Component {
                 fullWidth
               >
                 {this.getVehicles().map((vehicle, index) => (
-                  <MenuItem key={index} value={index} primaryText={vehicle} />
+                  <MenuItem key={vehicle} value={index} primaryText={vehicle} />
                 ))}
               </SelectField>
               <p style={styles.batteryLevel}>

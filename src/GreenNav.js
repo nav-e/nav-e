@@ -132,7 +132,7 @@ export default class GreenNav extends Component {
             return response.json();
           }
         })
-        .then(routeReceived => {
+        .then((routeReceived) => {
           // The array received from rt-library is actually from dest to orig,
           // so we gotta reverse for now.
           routes[i] = routeReceived.reverse();
@@ -141,9 +141,11 @@ export default class GreenNav extends Component {
           // routes will be received.
           if (counterRoutes === waypoints.length - 1) {
             let finalRoute = [];
-            routes.forEach(route => finalRoute = finalRoute.concat(route));
+            for (let j = 0; j < routes.length; j += 1) {
+              finalRoute = finalRoute.concat(routes[j]);
+            }
             this.hideLoader();
-            this.map.setRoute(finalRoute);
+            this.map.setRoute(routes[0]);
           }
         })
         .catch(() => this.hideLoader());

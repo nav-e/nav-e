@@ -1,5 +1,4 @@
 import React, { Component, PropTypes } from 'react';
-import ol from 'openlayers';
 import AutoComplete from 'material-ui/AutoComplete';
 import Slider from 'material-ui/Slider';
 import RaisedButton from 'material-ui/RaisedButton';
