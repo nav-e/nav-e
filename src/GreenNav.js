@@ -12,7 +12,7 @@ import fetch from 'unfetch';
 import Menu from './components/Menu';
 import GreenNavMap from './components/GreenNavMap';
 
-const GreenNavServerAddress = 'http://localhost:6833/';
+const GreenNavServerAddress = 'http://localhost:8080/';
 
 const styles = {
   label: {
