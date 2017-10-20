@@ -16,7 +16,7 @@ import GreenNavMap from './components/GreenNavMap';
 
 import { testCoordinatesValidity, getRangeAnxietyPolygonWithCoordinate } from './reachability';
 
-const GreenNavServerAddress = 'http://localhost:6833/';
+const GreenNavServerAddress = 'http://localhost:8080/';
 
 const styles = {
   label: {
