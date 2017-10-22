@@ -6,8 +6,9 @@ This project aims to provide a reference implementation for a GreenNav (Green Na
 
 ## TL;DR
 
-- Clone `GreenNav` and `rt-library`
-- `npm install` and `npm start` for both
+- Clone `nav-e` and `routing`
+- `npm install` and `npm start` for this repo
+- `go get && go run main.go` for `routing`
 - Chose `Hector-Otto` to `Parc Princesse Antoinette` from suggestions -> `GET ROUTE`
 - Contribute :wink:
 
@@ -48,20 +49,18 @@ sudo n stable
 ### Setup
 
 ```zsh
-git clone https://github.com/Greennav/GreenNav.git
-cd GreenNav
+git clone https://github.com/nav-e/nav-e.git
+cd nav-e
 npm install
 ```
 
 ### :heavy_exclamation_mark: Don't forget the back-end
 
-We are currently working on new back-end in Java. Until then, there is a working [demo](https://github.com/Greennav/rt-library) that offers address search and routing functionality using Node.js.
-
 ```zsh
-git clone https://github.com/Greennav/rt-library.git
-cd rt-library
-npm install
-npm start
+git clone https://github.com/nav-e/routing.git
+cd routing
+go get
+go run main.go
 ```
 
 To show a route, you have to pick a suggestion. `Hector-Otto` to `Parc Princesse Antoinette` is one example.
