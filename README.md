@@ -1,6 +1,6 @@
-# GreenNav
+# nav-e
 
-This project aims to provide a reference implementation for a GreenNav (Green Navigation) front end. It makes use of the different react elements created for GreenNav.
+This project aims to provide a reference implementation for a nav-e front end. It makes use of the different react elements created for nav-e.
 
 ![Screenshot](https://cloud.githubusercontent.com/assets/1525818/20647282/91a869c0-b490-11e6-9fda-ff542229dade.gif)
 
