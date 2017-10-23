@@ -18,6 +18,10 @@ const styles = {
   label: {
     color: green50
   },
+
+  dialogBorder: {
+    border: 'solid #1B5E20',
+  },
 };
 
 export default class GreenNav extends Component {
@@ -228,13 +232,14 @@ export default class GreenNav extends Component {
         </Dialog>
 
         <Dialog
-          title=""
+          title="Contact"
           actions={contactActions}
           modal={false}
           open={this.state.openContactDialog}
           onRequestClose={this.handleContactClose}
+          contentStyle={styles.dialogBorder}
         >
-          <h2>Contact</h2>
+        {/*}  <h2>Contact</h2> */}
           <p>There are several ways to contact us. For questions about coding, issues, etc. please
             use <a href="https://github.com/Greennav">Github</a>
           </p>
