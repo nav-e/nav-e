@@ -46,6 +46,13 @@ sudo n stable
 # sudo n latest
 ```
 
+#### Get an API Key from the Google API Console
+Location search and autocomplete is provided by Google Map's Javascript Library.
+
+Step 1: Follow instructions on [Google's Developer Documentation](https://developers.google.com/maps/documentation/javascript/get-api-key) to register a project and get an unrestricted API key.
+
+Step 2: Replace placeholder string in config.js with your generated API key.
+
 ### Setup
 
 ```zsh
@@ -72,6 +79,31 @@ npm start
 ```
 
 The web interface is now accessible at http://localhost:3000/ by default, see your terminal for details.
+
+
+## Docker Setup
+
+[Docker](https://www.docker.com/) allows packaging an application with all of its dependencies into a container.
+
+```zsh
+git clone https://github.com/Greennav/GreenNav.git
+cd GreenNav
+```
+
+#### Build
+We will start by building a Docker image for the application (```Dockerfile``` contains the command-line instructions).
+
+```
+docker build -t greennav-web-interface .
+```
+
+##### Run
+Finally we run the image as a container, making the web interface available at http://localhost:3000/.
+
+```
+docker run -d --rm -p 3000:3000 --name greennav-web-interface greennav-web-interface:latest
+```
+
 
 ### Development
 

@@ -10,6 +10,10 @@ import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
 import Paper from 'material-ui/Paper';
 import { green700 } from 'material-ui/styles/colors';
+import ReachabilityTab from './ReachabilityTab';
+
+const MILES_TO_KM = 1.609344;
+const KM_TO_MILES = 1 / 1.609344;
 
 const styles = {
   container: {
@@ -32,11 +36,15 @@ const styles = {
   },
 
   menu: {
-    margin: '10px 25px 30px'
+    margin: '10px 20px 30px'
   },
 
   slider: {
     marginBottom: '25px'
+  },
+
+  reachabilitySlider: {
+    marginBottom: '0px'
   },
 
   autoCompleteWrapper: {
@@ -67,18 +75,26 @@ const styles = {
     fontWeight: 'bold',
     color: green700,
     fontSize: '14px'
+  },
+
+  textField: {
+    display: 'inherit',
+    position: 'relative',
+    marginBottom: '25px'
   }
 };
 
 export default class Menu extends Component {
-
   constructor(props) {
     super(props);
     this.state = {
       vehicle: 0,
       open: this.props.open,
       dataSource: [],
-      autoCompletes: [{ id: 1, label: 'From', route: '' }, { id: 2, label: 'To', route: '' }]
+      autoCompletes: [{ id: 1, label: 'From', route: '' }, { id: 2, label: 'To', route: '' }],
+      batteryPecentage: 100,
+      batteryLevel: 1.0,
+      remainingRange: 0,
     };
     this.autoCompleteId = 3;
     this.xhr = new XMLHttpRequest();
@@ -105,8 +121,21 @@ export default class Menu extends Component {
       this.props.getRoutes(routes);
     }
     else {
-      // TODO: implement notifications (Thomas GSoC Project - see polymer reference branch)
-      alert('Please select a start and destination from the suggestions');
+      this.props.handleIndicateStartSnackbarOpen();
+    }
+  }
+
+  getRangeVisualisation = () => {
+    if (this.state.remainingRange > 0) {
+      if (this.props.unitsType === 1) {
+        this.props.getRangeVisualisation(this.state.remainingRange * MILES_TO_KM);
+      }
+      else {
+        this.props.getRangeVisualisation(this.state.remainingRange);
+      }
+    }
+    else {
+      this.props.handleRemainingRangeSnackbarOpen();
     }
   }
 
@@ -207,6 +236,35 @@ export default class Menu extends Component {
     this.setState({ vehicle: value });
   }
 
+  convertUnits = (newUnitsType) => {
+    if (newUnitsType !== this.props.unitsType && this.state.remainingRange > 0) {
+      if (newUnitsType === 1) {
+        this.setState(prevState => ({
+          remainingRange: prevState.remainingRange * KM_TO_MILES
+        }));
+      }
+      else {
+        this.setState(prevState => ({
+          remainingRange: prevState.remainingRange * MILES_TO_KM
+        }));
+      }
+    }
+  }
+
+  updateBatterySlider = (event, value) => {
+    // TODO: Set remainingRange to distance in km/miles based on batteryLevel and car model
+    this.setState({
+      batteryPecentage: parseInt(value * 100, 10),
+      batteryLevel: value,
+      remainingRange: parseInt(value * 100, 10),
+    });
+  }
+
+  updateRemainingRange = (event, value) => {
+    // TODO: Set remainingRange to distance in km/miles based on batteryLevel and car model
+    this.setState({ remainingRange: parseFloat(value) });
+  }
+
   render() {
     return (
       <Paper style={this.state.open ? styles.container : { display: 'none' }} zDepth={5} rounded={false}>
@@ -215,7 +273,7 @@ export default class Menu extends Component {
           inkBarStyle={styles.active}
           style={styles.tabs}
         >
-          <Tab label="Route" style={styles.tab}>
+          <Tab label="Route">
             <div style={styles.menu}>
               {this.getAllAutoCompletes()}
               <div>
@@ -250,25 +308,22 @@ export default class Menu extends Component {
                 fullWidth
               >
                 {this.getVehicles().map((vehicle, index) => (
-                  <MenuItem key={index} value={index} primaryText={vehicle} />
+                  <MenuItem key={vehicle} value={index} primaryText={vehicle} />
                 ))}
               </SelectField>
-
               <p style={styles.batteryLevel}>
                 <span>Battery Level</span>
                 <span
                   style={styles.batteryLevelValue}
                   ref={node => (this.batteryLevel = node)}
                 >
-                  100%
+                  {`${this.state.batteryPecentage}%`}
                 </span>
               </p>
               <Slider
-                onChange={(e, val) => {
-                  this.batteryLevel.innerText = `${parseInt(val * 100, 10)}%`;
-                }}
+                onChange={this.updateBatterySlider}
+                value={this.state.batteryLevel}
                 sliderStyle={styles.slider}
-                defaultValue={1}
               />
               <RaisedButton
                 label="Get Route"
@@ -277,12 +332,33 @@ export default class Menu extends Component {
               />
             </div>
           </Tab>
-          <Tab label="Reachability" style={styles.tab}>
-            <div style={styles.menu}>
-              <p>
-                This feature is currently disabled
-              </p>
-            </div>
+          <Tab
+            label="Reachability"
+            style={styles.tab}
+          >
+            <ReachabilityTab
+              batteryLevel={this.state.batteryLevel}
+              batteryPecentage={this.state.batteryPecentage}
+              remainingRange={this.state.remainingRange}
+              updateRemainingRange={this.updateRemainingRange}
+              updateBatterySlider={this.updateBatterySlider}
+              rangePolygonVisible={this.props.rangePolygonVisible}
+              getRangeVisualisation={this.getRangeVisualisation}
+              hideRangeVisualisation={this.props.hideRangeVisualisation}
+              getVehicles={this.getVehicles}
+              vehicle={this.state.vehicle}
+              vehicleChange={this.vehicleChange}
+              updateRangeFromField={val => this.props.updateRangeFromField(val)}
+              updateRangeFromSelected={e => this.props.updateRangeFromSelected(e)}
+              rangeFromField={this.props.rangeFromField}
+              updateRangeToField={val => this.props.updateRangeToField(val)}
+              updateRangeToSelected={e => this.props.updateRangeToSelected(e)}
+              rangeToField={this.props.rangeToField}
+              setRangePolygonAutocompleteOrigin={val =>
+                this.props.setRangePolygonAutocompleteOrigin(val)}
+              setRangePolygonAutocompleteDestination={val =>
+                this.props.setRangePolygonAutocompleteDestination(val)}
+            />
           </Tab>
         </Tabs>
       </Paper>
@@ -292,8 +368,22 @@ export default class Menu extends Component {
 
 Menu.propTypes = {
   open: PropTypes.bool,
+  unitsType: PropTypes.number.isRequired,
   autoCompleteAddress: PropTypes.string.isRequired,
-  getRoute: PropTypes.func.isRequired
+  rangePolygonVisible: PropTypes.bool.isRequired,
+  getRoutes: PropTypes.func.isRequired,
+  getRangeVisualisation: PropTypes.func.isRequired,
+  hideRangeVisualisation: PropTypes.func.isRequired,
+  rangeFromField: PropTypes.string.isRequired,
+  updateRangeFromField: PropTypes.func.isRequired,
+  updateRangeFromSelected: PropTypes.func.isRequired,
+  rangeToField: PropTypes.string.isRequired,
+  updateRangeToField: PropTypes.func.isRequired,
+  updateRangeToSelected: PropTypes.func.isRequired,
+  setRangePolygonAutocompleteOrigin: PropTypes.func.isRequired,
+  setRangePolygonAutocompleteDestination: PropTypes.func.isRequired,
+  handleIndicateStartSnackbarOpen: PropTypes.func.isRequired,
+  handleRemainingRangeSnackbarOpen: PropTypes.func.isRequired,
 };
 
 Menu.defaultProps = {

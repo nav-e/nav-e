@@ -1,8 +1,15 @@
 import React, { Component, PropTypes } from 'react';
-import { red600 } from 'material-ui/styles/colors';
+import { red600, green900 } from 'material-ui/styles/colors';
 import CircularProgress from 'material-ui/CircularProgress';
+import FontIcon from 'material-ui/FontIcon';
+import FloatingActionButton from 'material-ui/FloatingActionButton';
+import MyLocation from 'material-ui/svg-icons/maps/my-location';
 
 const ol = require('openlayers');
+
+// Placeholder coordinates
+const jordanLat = 31.949;
+const jordanLng = 35.922;
 
 const styles = {
   container: {
@@ -37,11 +44,33 @@ const styles = {
     height: '100%',
     width: '100%',
     background: 'rgba(254, 254, 254, .5)'
+  },
+
+  locationDisplayContainer: {
+    position: 'absolute',
+    display: 'flex',
+    justifyContent: 'center',
+    bottom: 15,
+    left: 0,
+    right: 0,
+  },
+
+  locationDisplayView: {
+    width: 'fit-content',
+    padding: '12px 20px 12px 20px',
+    backgroundColor: 'white',
+    boxShadow: '0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24)',
+    fontSize: 15,
+  },
+
+  currentLocationButtton: {
+    position: 'absolute',
+    bottom: 16,
+    right: 20,
   }
 };
 
 export default class GreenNavMap extends Component {
-
   constructor(props) {
     super(props);
 
@@ -52,17 +81,27 @@ export default class GreenNavMap extends Component {
       })
     });
 
+    const polygonStyle = new ol.style.Style({
+      stroke: new ol.style.Stroke({
+        color: 'rgba(138, 159, 220, 0.9)',
+        width: 2
+      }),
+      fill: new ol.style.Fill({
+        color: 'rgba(199, 216, 240, 0.28)'
+      })
+    });
+
     const routeLayer = new ol.layer.Vector({
       style: lineStyle
     });
 
     const osmLayer = new ol.layer.Tile({
-      visible: true,
+      visible: !this.props.mapType,
       source: new ol.source.OSM()
     });
 
     const googleLayer = new ol.layer.Tile({
-      visible: false,
+      visible: this.props.mapType,
       source: new ol.source.OSM({
         url: 'http://mt{0-3}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}',
         attributions: [
@@ -70,6 +109,11 @@ export default class GreenNavMap extends Component {
           new ol.Attribution({ html: '<a href="https://developers.google.com/maps/terms">Terms of Use.</a>' })
         ]
       })
+    });
+
+    const rangePolygonLayer = new ol.layer.Vector({
+      style: polygonStyle,
+      visible: true,
     });
 
     // Traffic layer
@@ -88,6 +132,7 @@ export default class GreenNavMap extends Component {
       }
       return quadKeyDigits.join('');
     };
+
     const trafficLayer = new ol.layer.Tile({
       visible: false,
       source: new ol.source.XYZ({
@@ -125,16 +170,55 @@ export default class GreenNavMap extends Component {
       })
     });
 
+    const view = new ol.View({
+      center: ol.proj.fromLonLat([this.props.longitude, this.props.latitude]),
+      zoom: this.props.zoom
+    });
+
+    const userLocationMarker = new ol.Overlay({
+      id: 'userLocation',
+      positioning: 'center-center',
+      stopEvent: false
+    });
+
+    const locationPickerMarker = new ol.Overlay({
+      id: 'locationPicker',
+      positioning: 'center-center',
+      stopEvent: false
+    });
+
     const map = new ol.Map({
-      layers: [osmLayer, googleLayer, routeLayer, trafficLayer, temperatureLayer, windLayer],
-      view: new ol.View({
-        center: ol.proj.fromLonLat([this.props.longitude, this.props.latitude]),
-        zoom: this.props.zoom
-      })
+      layers: [osmLayer, googleLayer, routeLayer, trafficLayer,
+        temperatureLayer, windLayer, rangePolygonLayer],
+      overlays: [userLocationMarker, locationPickerMarker],
+      view
+    });
+
+    map.on('singleclick', (evt) => {
+      const p = evt.coordinate;
+      this.props.setLocationPickerCoordinates(p);
+      locationPickerMarker.setPosition(this.props.locationPickerCoordinates);
+    });
+
+    const geolocation = new ol.Geolocation({
+      tracking: true,
+      trackingOptions: {
+        enableHighAccuracy: true
+      },
+      projection: view.getProjection()
+    });
+
+    geolocation.on('change', () => {
+      const p = geolocation.getPosition();
+      this.props.setUserLocationCoordinates(p);
+       // set position on userLocationMarker and center view to position
+      userLocationMarker.setPosition(p);
+      view.setCenter([p[0], p[1]]);
     });
 
     this.state = {
       map,
+      pickerPosition: undefined,
       traffic: false,
       temperature: false,
       wind: false
@@ -142,8 +226,18 @@ export default class GreenNavMap extends Component {
   }
 
   componentDidMount() {
+    const locationDisplayControl = new ol.control.Control({
+      id: 'locationDisplayControl',
+      element: document.getElementById('locationDisplay')
+    });
+
     this.state.map.setTarget(this.map);
     window.addEventListener('resize', this.updateSize);
+    this.state.map.getOverlayById('userLocation')
+      .setElement(document.getElementById('userLocationMarker'));
+    this.state.map.getOverlayById('locationPicker')
+      .setElement(document.getElementById('locationPickerMarker'));
+    this.state.map.addControl(locationDisplayControl);
   }
 
   componentWillUnmount() {
@@ -159,6 +253,26 @@ export default class GreenNavMap extends Component {
       this.state.map.getLayers().getArray()[1].setVisible(true);
       this.state.map.getLayers().getArray()[0].setVisible(false);
     }
+  }
+
+  setAutocompleteLocationMarker = (coord) => {
+    this.state.map.getOverlayById('locationPicker').setPosition(coord);
+    this.state.map.getView().setCenter(coord);
+  }
+
+  setRangePolygon = (vertices, center) => {
+    const polygon = new ol.geom.Polygon([vertices]);
+    const feature = new ol.Feature({
+      geometry: polygon
+    });
+    feature.getGeometry().transform('EPSG:4326', 'EPSG:3857');
+    const source = new ol.source.Vector({ features: [feature] });
+    this.state.map.getLayers().getArray()[6].setSource(source);
+    this.state.map.getView().fit(
+      polygon,
+      this.state.map.getSize(),
+      { padding: [20, 20, 20, 40], });
+    this.state.map.getView().setCenter(center);
   }
 
   setRoute = (route) => {
@@ -190,6 +304,15 @@ export default class GreenNavMap extends Component {
     </div>
   )
 
+  zoomToCurrent = () => {
+    // center view on user location
+    this.state.map.getView().setCenter(this.props.userLocationCoordinates);
+  }
+
+  hideRangePolygon = () => {
+    this.state.map.getLayers().getArray()[6].setSource(undefined);
+  }
+
   toggleTraffic = () => {
     this.setState({ traffic: !this.state.traffic });
     this.state.map.getLayers().getArray()[3].setVisible(!this.state.traffic);
@@ -214,21 +337,69 @@ export default class GreenNavMap extends Component {
       <div style={styles.container}>
         {this.props.findingRoute ? this.getLoader() : ''}
         <div style={styles.map} ref={c => (this.map = c)} />
+        <FontIcon
+          className="material-icons"
+          id="userLocationMarker"
+          color={green900}
+        >
+          my_location
+        </FontIcon>
+        <FontIcon
+          className="material-icons"
+          id="locationPickerMarker"
+          color={green900}
+        >
+          place
+        </FontIcon>
+        <div
+          style={styles.currentLocationButtton}
+          id="currentLocationButtton"
+        >
+          <FloatingActionButton
+            mini
+            onTouchTap={this.zoomToCurrent}
+          >
+            <MyLocation />
+          </FloatingActionButton>
+        </div>
+        <div
+          style={styles.locationDisplayContainer}
+          id="locationDisplay"
+        >
+          {this.props.locationPickerCoordinatesTransformed ?
+            <div
+              style={styles.locationDisplayView}
+            >
+              {this.props.locationPickerCoordinatesTransformed.map(i => i.toFixed(6))
+              .join(', ')}
+            </div> : null
+          }
+        </div>
       </div>
     );
   }
 }
 
 GreenNavMap.propTypes = {
+  mapType: PropTypes.number,
   longitude: PropTypes.number,
   latitude: PropTypes.number,
   zoom: PropTypes.number,
-  findingRoute: PropTypes.bool
+  findingRoute: PropTypes.bool,
+  locationPickerCoordinates: PropTypes.arrayOf(PropTypes.number),
+  locationPickerCoordinatesTransformed: PropTypes.arrayOf(PropTypes.number),
+  userLocationCoordinates: PropTypes.arrayOf(PropTypes.number),
+  setLocationPickerCoordinates: PropTypes.func.isRequired,
+  setUserLocationCoordinates: PropTypes.func.isRequired,
 };
 
 GreenNavMap.defaultProps = {
-  longitude: 11.566,
-  latitude: 48.139,
+  mapType: 0,
+  longitude: jordanLng,
+  latitude: jordanLat,
   zoom: 11,
-  findingRoute: false
+  findingRoute: false,
+  locationPickerCoordinates: null,
+  locationPickerCoordinatesTransformed: null,
+  userLocationCoordinates: [1287837.5738597857, 6129818.969679821],
 };
