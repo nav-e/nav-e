@@ -455,17 +455,17 @@ export default class GreenNav extends Component {
           open={this.state.openInfoDialog}
           onRequestClose={this.handleInfoClose}
         >
-          <h2>Green Navigation</h2>
-          <p>The GreenNav organization is a community of young researchers and students at the
+          <h2>Nav-e</h2>
+          <p>The nav-e organization is a community of young researchers and students at the
             University of Lübeck.We decided not long ago to go open source in order to collaborate
             with others and to show what we are working on.
           </p>
-          <p>The projects of the GreenNav organization are closely related to the student projects
+          <p>The projects of the nav-e organization are closely related to the student projects
             at the university’s computer science program. However, with this organisation we
             invite everyone to participate in the development of experimental routing systems.
           <br />
-            <a href="http://greennav.github.io/what-is-greennav.html">
-              Get more information about GreenNav
+            <a href="http://nav-e.github.io/" target="_blank">
+              Get more information about Nav-e
             </a>
           </p>
         </Dialog>
@@ -479,9 +479,9 @@ export default class GreenNav extends Component {
         >
           <h2>Contact</h2>
           <p>There are several ways to contact us. For questions about coding, issues, etc. please
-            use <a href="https://github.com/Greennav">Github</a>
+            use <a href="https://github.com/nav-e" target="_blank">Github</a>
           </p>
-          <p>For more general questions use our <a href="https://plus.google.com/communities/110704433153909631379">G+ page</a> or <a href="https://groups.google.com/forum/#!forum/greennav">Google Groups</a></p>
+          <p>For more general questions use our <a href="https://plus.google.com/communities/110704433153909631379" target="_blank">G+ page</a> or <a href="https://groups.google.com/forum/#!forum/greennav" target="_blank">Google Groups</a></p>
         </Dialog>
 
         <Dialog
