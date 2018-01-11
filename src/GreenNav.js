@@ -362,7 +362,7 @@ export default class GreenNav extends Component {
           <ToolbarGroup firstChild>
             <FontIcon className="material-icons" onClick={this.toggleDrawer}>
               menu</FontIcon>
-            <img alt="GreenNav" src="/images/logo-64.png" />
+            <img alt="Nav-e" src="/images/logo-64.png" />
           </ToolbarGroup>
 
           <ToolbarGroup>
