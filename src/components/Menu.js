@@ -95,6 +95,7 @@ export default class Menu extends Component {
       batteryPecentage: 100,
       batteryLevel: 1.0,
       remainingRange: 0,
+      checkMenuSelection: { from: 0, to: 0 },
     };
     this.autoCompleteId = 3;
     this.xhr = new XMLHttpRequest();
@@ -116,7 +117,7 @@ export default class Menu extends Component {
 
   getRoute = () => {
     const autoCompletes = this.state.autoCompletes;
-    if (autoCompletes.every(elem => elem.route !== '')) {
+    if (autoCompletes.every(elem => elem.route !== '') && (this.state.checkMenuSelection.from === 1) && this.state.checkMenuSelection.to === 1) {
       const routes = autoCompletes.map(elem => elem.route);
       this.props.getRoutes(routes);
     }
@@ -165,6 +166,24 @@ export default class Menu extends Component {
                   return autoCompleteElem;
                 });
               this.setState({ autoCompletes: updatedAutoCompletes });
+              const newCheckMenuSelection = this.state.checkMenuSelection;
+              if (autoComplete.id === 1) {
+                newCheckMenuSelection.from = 1;
+              }
+              else if (autoComplete.id === 2) {
+                newCheckMenuSelection.to = 1;
+              }
+              this.setState({ checkMenuSelection: newCheckMenuSelection });
+            }}
+            onClose={() => {
+              const newCheckMenuSelection = this.state.checkMenuSelection;
+              if (autoComplete.id === 1) {
+                newCheckMenuSelection.from = 0;
+              }
+              else if (autoComplete.id === 2) {
+                newCheckMenuSelection.to = 0;
+              }
+              this.setState({ checkMenuSelection: newCheckMenuSelection });
             }}
             dataSource={this.state.dataSource}
             onUpdateInput={this.handleUpdate}
