@@ -55,6 +55,8 @@ export default class GreenNav extends Component {
       rangeFromFieldSelected: false,
       rangeToField: '',
       rangeToFieldSelected: false,
+      openErrorFailedSnackbar: false,
+      snackbarMessage: '',
     };
 
     this.setLocationPickerCoordinates = this.setLocationPickerCoordinates.bind(this);
@@ -124,26 +126,34 @@ export default class GreenNav extends Component {
             throw new Error('Failed to load route data!');
           }
           else {
-            return response.json();
+            return response.text();
           }
         })
         .then((routeReceived) => {
           // The array received from rt-library is actually from dest to orig,
           // so we gotta reverse for now.
-          routes[i] = routeReceived.reverse();
-          counterRoutes += 1;
-          // We use counterRoutes instead of "i" because we don't know the order that
-          // routes will be received.
-          if (counterRoutes === waypoints.length - 1) {
-            let finalRoute = [];
-            for (let j = 0; j < routes.length; j += 1) {
-              finalRoute = finalRoute.concat(routes[j]);
+          try {
+            routes[i] = routeReceived.reverse();
+            counterRoutes += 1;
+            // We use counterRoutes instead of "i" because we don't know the order that
+            // routes will be received.
+            if (counterRoutes === waypoints.length - 1) {
+              let finalRoute = [];
+              for (let j = 0; j < routes.length; j += 1) {
+                finalRoute = finalRoute.concat(routes[j]);
+              }
+              this.hideLoader();
+              this.map.setRoute(routes[0]);
             }
-            this.hideLoader();
-            this.map.setRoute(routes[0]);
+          }
+          catch (err) {
+            throw new Error(routeReceived);
           }
         })
-        .catch(() => this.hideLoader());
+        .catch((error) => {
+          this.hideLoader();
+          this.handleErrorFailedRequestOpen(error.message);
+        });
     }
   }
 
@@ -190,6 +200,14 @@ export default class GreenNav extends Component {
 
   updateMapSize = () => {
     this.map.updateSize();
+  }
+
+  handleErrorFailedRequestOpen = (error) => {
+    this.setState({ openErrorFailedSnackbar: true, snackbarMessage: error });
+  }
+
+  handleErrorFailedRequestClose = () => {
+    this.setState({ openErrorFailedSnackbar: false, snackbarMessage: '' });
   }
 
   handleIndicateStartSnackbarOpen = () => {
@@ -407,6 +425,8 @@ export default class GreenNav extends Component {
             setRangePolygonAutocompleteDestination={this.setRangePolygonAutocompleteDestination}
             handleIndicateStartSnackbarOpen={this.handleIndicateStartSnackbarOpen}
             handleRemainingRangeSnackbarOpen={this.handleRemainingRangeSnackbarOpen}
+            handleErrorFailedRequestOpen={this.handleErrorFailedRequestOpen}
+
           />
           <GreenNavMap
             ref={c => (this.map = c)}
@@ -419,6 +439,13 @@ export default class GreenNav extends Component {
             setUserLocationCoordinates={this.setUserLocationCoordinates}
           />
         </div>
+
+        <Snackbar
+          open={this.state.openErrorFailedSnackbar}
+          message={this.state.snackbarMessage}
+          autoHideDuration={4000}
+          onRequestClose={this.handleErrorFailedRequestClose}
+        />
 
         <Snackbar
           open={this.state.openIndicateStartSnackbar}
