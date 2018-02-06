@@ -228,7 +228,7 @@ export default class Menu extends Component {
       this.props.handleErrorFailedRequestOpen('Request Failed');
     };
 
-    this.xhr.open('GET', `${this.props.autoCompleteAddress}search/${address}`, true);
+    this.xhr.open('GET', `${this.props.autoCompleteAddress}search/${encodeURIComponent(address)}`, true);
     this.xhr.send();
   }
 
