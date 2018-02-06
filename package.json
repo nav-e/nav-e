@@ -3,24 +3,24 @@
   "version": "0.1.2",
   "private": true,
   "devDependencies": {
-    "babel-eslint": "^7.1.1",
-    "eslint": "^3.15.0",
-    "eslint-config-airbnb": "^14.0.0",
-    "eslint-plugin-compat": "^1.0.1",
+    "babel-eslint": "^8.1.2",
+    "eslint": "^4.14.0",
+    "eslint-config-airbnb": "^16.1.0",
+    "eslint-plugin-compat": "^2.1.0",
     "eslint-plugin-import": "^2.2.0",
-    "eslint-plugin-jsx-a11y": "^4.0.0",
-    "eslint-plugin-react": "^6.9.0",
-    "react-scripts": "^0.7.0"
+    "eslint-plugin-jsx-a11y": "^6.0.3",
+    "eslint-plugin-react": "^7.5.1",
+    "react-scripts": "^1.0.17"
   },
   "dependencies": {
-    "@turf/convex": "^4.6.0",
-    "@turf/helpers": "^4.6.0",
-    "material-ui": "^0.16.4",
-    "openlayers": "^3.19.1",
-    "react": "^15.4.1",
-    "react-dom": "^15.4.1",
-    "react-tap-event-plugin": "^2.0.1",
-    "unfetch": "^2.1.2"
+    "@turf/convex": "^5.1.5",
+    "@turf/helpers": "^5.1.5",
+    "material-ui": "^0.20.0",
+    "openlayers": "^4.6.4",
+    "react": "^16.2.0",
+    "react-dom": "^16.2.0",
+    "react-tap-event-plugin": "^3.0.2",
+    "unfetch": "^3.0.0"
   },
   "scripts": {
     "start": "react-scripts start",

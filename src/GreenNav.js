@@ -55,6 +55,8 @@ export default class GreenNav extends Component {
       rangeFromFieldSelected: false,
       rangeToField: '',
       rangeToFieldSelected: false,
+      openErrorFailedSnackbar: false,
+      snackbarMessage: '',
     };
 
     this.setLocationPickerCoordinates = this.setLocationPickerCoordinates.bind(this);
@@ -124,26 +126,34 @@ export default class GreenNav extends Component {
             throw new Error('Failed to load route data!');
           }
           else {
-            return response.json();
+            return response.text();
           }
         })
         .then((routeReceived) => {
           // The array received from rt-library is actually from dest to orig,
           // so we gotta reverse for now.
-          routes[i] = routeReceived.reverse();
-          counterRoutes += 1;
-          // We use counterRoutes instead of "i" because we don't know the order that
-          // routes will be received.
-          if (counterRoutes === waypoints.length - 1) {
-            let finalRoute = [];
-            for (let j = 0; j < routes.length; j += 1) {
-              finalRoute = finalRoute.concat(routes[j]);
+          try {
+            routes[i] = routeReceived.reverse();
+            counterRoutes += 1;
+            // We use counterRoutes instead of "i" because we don't know the order that
+            // routes will be received.
+            if (counterRoutes === waypoints.length - 1) {
+              let finalRoute = [];
+              for (let j = 0; j < routes.length; j += 1) {
+                finalRoute = finalRoute.concat(routes[j]);
+              }
+              this.hideLoader();
+              this.map.setRoute(routes[0]);
             }
-            this.hideLoader();
-            this.map.setRoute(routes[0]);
+          }
+          catch (err) {
+            throw new Error(routeReceived);
           }
         })
-        .catch(() => this.hideLoader());
+        .catch((error) => {
+          this.hideLoader();
+          this.handleErrorFailedRequestOpen(error.message);
+        });
     }
   }
 
@@ -190,6 +200,14 @@ export default class GreenNav extends Component {
 
   updateMapSize = () => {
     this.map.updateSize();
+  }
+
+  handleErrorFailedRequestOpen = (error) => {
+    this.setState({ openErrorFailedSnackbar: true, snackbarMessage: error });
+  }
+
+  handleErrorFailedRequestClose = () => {
+    this.setState({ openErrorFailedSnackbar: false, snackbarMessage: '' });
   }
 
   handleIndicateStartSnackbarOpen = () => {
@@ -407,6 +425,8 @@ export default class GreenNav extends Component {
             setRangePolygonAutocompleteDestination={this.setRangePolygonAutocompleteDestination}
             handleIndicateStartSnackbarOpen={this.handleIndicateStartSnackbarOpen}
             handleRemainingRangeSnackbarOpen={this.handleRemainingRangeSnackbarOpen}
+            handleErrorFailedRequestOpen={this.handleErrorFailedRequestOpen}
+
           />
           <GreenNavMap
             ref={c => (this.map = c)}
@@ -419,6 +439,13 @@ export default class GreenNav extends Component {
             setUserLocationCoordinates={this.setUserLocationCoordinates}
           />
         </div>
+
+        <Snackbar
+          open={this.state.openErrorFailedSnackbar}
+          message={this.state.snackbarMessage}
+          autoHideDuration={4000}
+          onRequestClose={this.handleErrorFailedRequestClose}
+        />
 
         <Snackbar
           open={this.state.openIndicateStartSnackbar}
@@ -455,17 +482,17 @@ export default class GreenNav extends Component {
           open={this.state.openInfoDialog}
           onRequestClose={this.handleInfoClose}
         >
-          <h2>Green Navigation</h2>
-          <p>The GreenNav organization is a community of young researchers and students at the
+          <h2>Nav-e</h2>
+          <p>The nav-e organization is a community of young researchers and students at the
             University of Lübeck.We decided not long ago to go open source in order to collaborate
             with others and to show what we are working on.
           </p>
-          <p>The projects of the GreenNav organization are closely related to the student projects
+          <p>The projects of the nav-e organization are closely related to the student projects
             at the university’s computer science program. However, with this organisation we
             invite everyone to participate in the development of experimental routing systems.
           <br />
-            <a href="http://greennav.github.io/what-is-greennav.html">
-              Get more information about GreenNav
+            <a href="http://nav-e.github.io/" target="_blank">
+              Get more information about Nav-e
             </a>
           </p>
         </Dialog>
@@ -479,9 +506,9 @@ export default class GreenNav extends Component {
         >
           <h2>Contact</h2>
           <p>There are several ways to contact us. For questions about coding, issues, etc. please
-            use <a href="https://github.com/Greennav">Github</a>
+            use <a href="https://github.com/nav-e" target="_blank">Github</a>
           </p>
-          <p>For more general questions use our <a href="https://plus.google.com/communities/110704433153909631379">G+ page</a> or <a href="https://groups.google.com/forum/#!forum/greennav">Google Groups</a></p>
+          <p>For more general questions use our <a href="https://plus.google.com/communities/110704433153909631379" target="_blank">G+ page</a> or <a href="https://groups.google.com/forum/#!forum/greennav" target="_blank">Google Groups</a></p>
         </Dialog>
 
         <Dialog

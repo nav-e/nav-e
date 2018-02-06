@@ -224,6 +224,10 @@ export default class Menu extends Component {
       }
     };
 
+    this.xhr.onerror = () => {
+      this.props.handleErrorFailedRequestOpen('Request Failed');
+    };
+
     this.xhr.open('GET', `${this.props.autoCompleteAddress}search/${encodeURIComponent(address)}`, true);
     this.xhr.send();
   }
@@ -384,6 +388,7 @@ Menu.propTypes = {
   setRangePolygonAutocompleteDestination: PropTypes.func.isRequired,
   handleIndicateStartSnackbarOpen: PropTypes.func.isRequired,
   handleRemainingRangeSnackbarOpen: PropTypes.func.isRequired,
+  handleErrorFailedRequestOpen: PropTypes.func.isRequired,
 };
 
 Menu.defaultProps = {
