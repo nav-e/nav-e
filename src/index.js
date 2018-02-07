@@ -4,7 +4,7 @@ import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import injectTapEventPlugin from 'react-tap-event-plugin';
 import gnMuiTheme from './styles/gnMuiTheme';
-import GreenNav from './GreenNav';
+import Nav_e from './Nav-e';
 
 // Needed for onTouchTap
 // http://stackoverflow.com/a/34015469/988941
@@ -13,7 +13,7 @@ injectTapEventPlugin();
 
 ReactDOM.render(
   <MuiThemeProvider muiTheme={getMuiTheme(gnMuiTheme)}>
-    <GreenNav />
+    <Nav_e />
   </MuiThemeProvider>,
   document.getElementById('root')
 );

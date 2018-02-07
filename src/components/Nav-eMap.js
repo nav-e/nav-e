@@ -70,7 +70,7 @@ const styles = {
   }
 };
 
-export default class GreenNavMap extends Component {
+export default class NaveMap extends Component {
   constructor(props) {
     super(props);
 
@@ -380,7 +380,7 @@ export default class GreenNavMap extends Component {
   }
 }
 
-GreenNavMap.propTypes = {
+NaveMap.propTypes = {
   mapType: PropTypes.number,
   longitude: PropTypes.number,
   latitude: PropTypes.number,
@@ -393,7 +393,7 @@ GreenNavMap.propTypes = {
   setUserLocationCoordinates: PropTypes.func.isRequired,
 };
 
-GreenNavMap.defaultProps = {
+NaveMap.defaultProps = {
   mapType: 0,
   longitude: jordanLng,
   latitude: jordanLat,
