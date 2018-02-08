@@ -381,7 +381,7 @@ export default class Nav_e extends Component {
           <ToolbarGroup firstChild>
             <FontIcon className="material-icons" onClick={this.toggleDrawer}>
               menu</FontIcon>
-            <img alt="GreenNav" src="/images/nav.png" style={{ height:'50px',paddingLeft:"10px" }}/>
+            <img alt="GreenNav" src="/images/nav-e.png" style={{ height:'50px',paddingLeft:"10px" }}/>
           </ToolbarGroup>
 
           <ToolbarGroup>
