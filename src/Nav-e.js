@@ -12,11 +12,11 @@ import MenuItem from 'material-ui/MenuItem';
 import fetch from 'unfetch';
 
 import Menu from './components/Menu';
-import GreenNavMap from './components/GreenNavMap';
+import NaveMap from './components/Nav-eMap';
 
 import { testCoordinatesValidity, getRangeAnxietyPolygonWithCoordinate } from './reachability';
 
-const GreenNavServerAddress = 'http://localhost:8080/';
+const NaveServerAddress = 'http://localhost:8080/';
 
 const styles = {
   label: {
@@ -28,7 +28,7 @@ const styles = {
   }
 };
 
-export default class GreenNav extends Component {
+export default class Nav_e extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -119,10 +119,11 @@ export default class GreenNav extends Component {
     for (let i = 0; i < waypoints.length - 1; i += 1) {
       const startOsmId = waypoints[i];
       const destinationOsmId = waypoints[i + 1];
-      const url = `${GreenNavServerAddress}astar/from/${startOsmId}/to/${destinationOsmId}`;
+      const url = `${NaveServerAddress}astar/from/${startOsmId}/to/${destinationOsmId}`;
       fetch(url)
         .then((response) => {
           if (response.status > 400) {
+            console.log("Server Error");
             throw new Error('Failed to load route data!');
           }
           else {
@@ -380,7 +381,7 @@ export default class GreenNav extends Component {
           <ToolbarGroup firstChild>
             <FontIcon className="material-icons" onClick={this.toggleDrawer}>
               menu</FontIcon>
-            <img alt="GreenNav" src="/images/logo-64.png" />
+            <img alt="GreenNav" src="/images/nav-e.png" style={{ height:'50px',paddingLeft:"10px" }}/>
           </ToolbarGroup>
 
           <ToolbarGroup>
@@ -406,7 +407,7 @@ export default class GreenNav extends Component {
 
         <div style={{ display: 'flex', flex: '1 0' }}>
           <Menu
-            autoCompleteAddress={GreenNavServerAddress}
+            autoCompleteAddress={NaveServerAddress}
             locationPickerCoordinates={this.state.locationPickerCoordinatesTransformed}
             ref={c => (this.drawer = c)}
             open
@@ -428,7 +429,7 @@ export default class GreenNav extends Component {
             handleErrorFailedRequestOpen={this.handleErrorFailedRequestOpen}
 
           />
-          <GreenNavMap
+          <NaveMap
             ref={c => (this.map = c)}
             mapType={this.state.mapType}
             locationPickerCoordinates={this.state.locationPickerCoordinates}
