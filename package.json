@@ -1,5 +1,5 @@
 {
-  "name": "GreenNav",
+  "name": "Nav-e",
   "version": "0.1.2",
   "private": true,
   "devDependencies": {
@@ -13,10 +13,11 @@
     "react-scripts": "^1.0.17"
   },
   "dependencies": {
-    "@turf/convex": "^5.1.5",
+    "@turf/convex": "^6.0.3",
     "@turf/helpers": "^6.0.0",
     "material-ui": "^0.20.0",
     "openlayers": "^4.6.4",
+    "prop-types": "^15.6.1",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
     "react-tap-event-plugin": "^3.0.2",

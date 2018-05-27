@@ -1,9 +1,10 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
 import { red600, green900 } from 'material-ui/styles/colors';
 import CircularProgress from 'material-ui/CircularProgress';
 import FontIcon from 'material-ui/FontIcon';
 import FloatingActionButton from 'material-ui/FloatingActionButton';
 import MyLocation from 'material-ui/svg-icons/maps/my-location';
+import PropTypes from 'prop-types';
 
 const ol = require('openlayers');
 

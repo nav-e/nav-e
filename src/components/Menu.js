@@ -1,4 +1,4 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
 import { Tabs, Tab } from 'material-ui/Tabs';
 import AutoComplete from 'material-ui/AutoComplete';
 import Slider from 'material-ui/Slider';
@@ -11,6 +11,7 @@ import MenuItem from 'material-ui/MenuItem';
 import Paper from 'material-ui/Paper';
 import { green700 } from 'material-ui/styles/colors';
 import ReachabilityTab from './ReachabilityTab';
+import PropTypes from 'prop-types';
 
 const MILES_TO_KM = 1.609344;
 const KM_TO_MILES = 1 / 1.609344;
