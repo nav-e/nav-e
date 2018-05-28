@@ -492,7 +492,7 @@ export default class Nav_e extends Component {
             at the university’s computer science program. However, with this organisation we
             invite everyone to participate in the development of experimental routing systems.
           <br />
-            <a href="http://nav-e.github.io/" target="_blank">
+            <a href="http://nav-e.github.io/" rel="noopener noreferrer" target="_blank">
               Get more information about Nav-e
             </a>
           </p>
@@ -507,9 +507,9 @@ export default class Nav_e extends Component {
         >
           <h2>Contact</h2>
           <p>There are several ways to contact us. For questions about coding, issues, etc. please
-            use <a href="https://github.com/nav-e" target="_blank">Github</a>
+            use <a href="https://github.com/nav-e" rel="noopener noreferrer" target="_blank">Github</a>
           </p>
-          <p>For more general questions use our <a href="https://plus.google.com/communities/110704433153909631379" target="_blank">G+ page</a> or <a href="https://groups.google.com/forum/#!forum/greennav" target="_blank">Google Groups</a></p>
+          <p>For more general questions use our <a href="https://plus.google.com/communities/110704433153909631379" rel="noopener noreferrer" target="_blank">G+ page</a> or <a href="https://groups.google.com/forum/#!forum/greennav" rel="noopener noreferrer" target="_blank">Google Groups</a></p>
         </Dialog>
 
         <Dialog

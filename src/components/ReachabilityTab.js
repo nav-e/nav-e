@@ -1,4 +1,4 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
 import AutoComplete from 'material-ui/AutoComplete';
 import Slider from 'material-ui/Slider';
 import RaisedButton from 'material-ui/RaisedButton';
@@ -8,6 +8,7 @@ import MenuItem from 'material-ui/MenuItem';
 import TextField from 'material-ui/TextField';
 import { green700 } from 'material-ui/styles/colors';
 import config from '../config';
+import PropTypes from 'prop-types';
 
 const styles = {
   menu: {
