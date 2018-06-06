@@ -1,16 +1,8 @@
 import React, { Component } from 'react';
 import ol from 'openlayers';
-import { Toolbar, ToolbarGroup, ToolbarSeparator, ToolbarTitle } from 'material-ui/Toolbar';
-import FlatButton from 'material-ui/FlatButton';
-import { green50 } from 'material-ui/styles/colors';
-import FontIcon from 'material-ui/FontIcon';
-import Dialog from 'material-ui/Dialog';
 import Snackbar from 'material-ui/Snackbar';
-import Toggle from 'material-ui/Toggle';
-import SelectField from 'material-ui/SelectField';
-import MenuItem from 'material-ui/MenuItem';
 import fetch from 'unfetch';
-
+import Navbar from './components/Navbar';
 import Menu from './components/Menu';
 import NaveMap from './components/Nav-eMap';
 
@@ -18,23 +10,10 @@ import { testCoordinatesValidity, getRangeAnxietyPolygonWithCoordinate } from '.
 
 const NaveServerAddress = 'http://localhost:8080/';
 
-const styles = {
-  label: {
-    color: green50
-  },
-
-  unitSelectField: {
-    marginLeft: '24px'
-  }
-};
-
 export default class Nav_e extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      openInfoDialog: false,
-      openContactDialog: false,
-      openMapDialog: false,
       openInvalidRouteSnackbar: false,
       openAllowAccessSnackbar: false,
       openIndicateStartSnackbar: false,
@@ -43,6 +22,7 @@ export default class Nav_e extends Component {
       unitsType: 0,
       temperatureEnabled: false,
       trafficEnabled: false,
+      openMapDialog: false,
       windEnabled: false,
       findingRoute: false,
       userLocationCoordinates: undefined, // in EPSG:3857
@@ -186,7 +166,6 @@ export default class Nav_e extends Component {
     this.map.hideRangePolygon();
     this.setState({ rangePolygonVisible: false });
   };
-
   toggleDrawer = () => {
     this.drawer.toggle(this.updateMapSize);
   };
@@ -233,30 +212,6 @@ export default class Nav_e extends Component {
 
   handleAllowAccessSnackbarClose = () => {
     this.setState({ openAllowAccessSnackbar: false });
-  };
-
-  handleInfoOpen = () => {
-    this.setState({ openInfoDialog: true });
-  };
-
-  handleInfoClose = () => {
-    this.setState({ openInfoDialog: false });
-  };
-
-  handleContactOpen = () => {
-    this.setState({ openContactDialog: true });
-  };
-
-  handleContactClose = () => {
-    this.setState({ openContactDialog: false });
-  };
-
-  handleMapOpen = () => {
-    this.setState({ openMapDialog: true });
-  };
-
-  handleMapClose = () => {
-    this.setState({ openMapDialog: false });
   };
 
   mapTypeChange = (event, index, value) => {
@@ -346,50 +301,27 @@ export default class Nav_e extends Component {
   };
 
   render() {
-    const infoActions = [<FlatButton label="Ok" onClick={this.handleInfoClose} />];
-
-    const contactActions = [<FlatButton label="Ok" onClick={this.handleContactClose} />];
-
-    const mapActions = [<FlatButton label="Finish" onClick={this.handleMapClose} />];
-
     return (
       <div style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
-        <Toolbar>
-          <ToolbarGroup firstChild>
-            <FontIcon className="material-icons" onClick={this.toggleDrawer}>
-              menu
-            </FontIcon>
-            <img alt="GreenNav" src="/images/nav-e.png" style={{ height: '50px', paddingLeft: '10px' }} />
-          </ToolbarGroup>
-
-          <ToolbarGroup>
-            <ToolbarTitle text="Map Options" />
-            <FontIcon className="material-icons" onClick={this.handleMapOpen}>
-              map
-            </FontIcon>
-            <ToolbarSeparator />
-            <FlatButton
-              label="Info"
-              labelStyle={styles.label}
-              onClick={this.handleInfoOpen}
-              icon={
-                <FontIcon className="material-icons" color={green50}>
-                  info
-                </FontIcon>
-              }
-            />
-            <FlatButton
-              label="Contact"
-              labelStyle={styles.label}
-              onClick={this.handleContactOpen}
-              icon={
-                <FontIcon className="material-icons" color={green50}>
-                  email
-                </FontIcon>
-              }
-            />
-          </ToolbarGroup>
-        </Toolbar>
+        <Navbar
+          mapType={this.state.mapType}
+          unitsTypeChangeType={this.state.unitsTypeChangeType}
+          mapTypeChange={this.mapTypeChange}
+          toggleTraffic={this.toggleTraffic}
+          toggleTemperature={this.toggleTemperature}
+          toggleWind={this.toggleWind}
+          temperatureEnabled={this.state.temperatureEnabled}
+          windEnabled={this.state.windEnabled}
+          trafficEnabled={this.state.trafficEnabled}
+          toggleDrawer={this.toggleDrawer}
+          unitsTypeChange={this.unitsTypeChange}
+          locationPickerCoordinates={this.state.locationPickerCoordinates}
+          locationPickerCoordinatesTransformed={this.state.locationPickerCoordinatesTransformed}
+          findingRoute={this.state.findingRoute}
+          userLocationCoordinates={this.state.userLocationCoordinates}
+          setLocationPickerCoordinates={this.setLocationPickerCoordinates}
+          setUserLocationCoordinates={this.setUserLocationCoordinates}
+        />
 
         <div style={{ display: 'flex', flex: '1 0' }}>
           <Menu
@@ -460,107 +392,6 @@ export default class Nav_e extends Component {
           autoHideDuration={4000}
           onRequestClose={this.handleAllowAccessSnackbarClose}
         />
-
-        <Dialog
-          title=""
-          actions={infoActions}
-          modal={false}
-          open={this.state.openInfoDialog}
-          onRequestClose={this.handleInfoClose}
-        >
-          <h2>Nav-e</h2>
-          <p>
-            The nav-e organization is a community of young researchers and students at the University of Lübeck.We
-            decided not long ago to go open source in order to collaborate with others and to show what we are working
-            on.
-          </p>
-          <p>
-            The projects of the nav-e organization are closely related to the student projects at the university’s
-            computer science program. However, with this organisation we invite everyone to participate in the
-            development of experimental routing systems.
-            <br />
-            <a href="http://nav-e.github.io/" rel="noopener noreferrer" target="_blank">
-              Get more information about Nav-e
-            </a>
-          </p>
-        </Dialog>
-
-        <Dialog
-          title=""
-          actions={contactActions}
-          modal={false}
-          open={this.state.openContactDialog}
-          onRequestClose={this.handleContactClose}
-        >
-          <h2>Contact</h2>
-          <p>
-            There are several ways to contact us. For questions about coding, issues, etc. please use{' '}
-            <a href="https://github.com/nav-e" rel="noopener noreferrer" target="_blank">
-              Github
-            </a>
-          </p>
-          <p>
-            For more general questions use our{' '}
-            <a
-              href="https://plus.google.com/communities/110704433153909631379"
-              rel="noopener noreferrer"
-              target="_blank"
-            >
-              G+ page
-            </a>{' '}
-            or{' '}
-            <a href="https://groups.google.com/forum/#!forum/greennav" rel="noopener noreferrer" target="_blank">
-              Google Groups
-            </a>
-          </p>
-        </Dialog>
-
-        <Dialog
-          title="Map Settings"
-          actions={mapActions}
-          modal={false}
-          open={this.state.openMapDialog}
-          onRequestClose={this.handleMapClose}
-        >
-          <SelectField floatingLabelText="Map Type" value={this.state.mapType} onChange={this.mapTypeChange}>
-            <MenuItem value={0} primaryText="OpenStreetMap" />
-            <MenuItem value={1} primaryText="Google Map" />
-          </SelectField>
-          <SelectField
-            floatingLabelText="Units"
-            value={this.state.unitsType}
-            style={styles.unitSelectField}
-            onChange={this.unitsTypeChange}
-          >
-            <MenuItem value={0} primaryText="Kilometers" />
-            <MenuItem value={1} primaryText="Miles" />
-          </SelectField>
-          <h2>Overlays</h2>
-          <Toggle
-            label="Traffic"
-            toggled={this.state.trafficEnabled}
-            onToggle={this.toggleTraffic}
-            labelPosition="right"
-            thumbSwitchedStyle={styles.thumbSwitched}
-            trackSwitchedStyle={styles.trackSwitched}
-          />
-          <Toggle
-            label="Temperature"
-            toggled={this.state.temperatureEnabled}
-            onToggle={this.toggleTemperature}
-            labelPosition="right"
-            thumbSwitchedStyle={styles.thumbSwitched}
-            trackSwitchedStyle={styles.trackSwitched}
-          />
-          <Toggle
-            label="Wind"
-            toggled={this.state.windEnabled}
-            onToggle={this.toggleWind}
-            labelPosition="right"
-            thumbSwitchedStyle={styles.thumbSwitched}
-            trackSwitchedStyle={styles.trackSwitched}
-          />
-        </Dialog>
       </div>
     );
   }
