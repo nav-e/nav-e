@@ -53,7 +53,7 @@ const styles = {
     justifyContent: 'center',
     bottom: 15,
     left: 0,
-    right: 0,
+    right: 0
   },
 
   locationDisplayView: {
@@ -61,13 +61,13 @@ const styles = {
     padding: '12px 20px 12px 20px',
     backgroundColor: 'white',
     boxShadow: '0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24)',
-    fontSize: 15,
+    fontSize: 15
   },
 
   currentLocationButtton: {
     position: 'absolute',
     bottom: 16,
-    right: 20,
+    right: 20
   }
 };
 
@@ -114,7 +114,7 @@ export default class NaveMap extends Component {
 
     const rangePolygonLayer = new ol.layer.Vector({
       style: polygonStyle,
-      visible: true,
+      visible: true
     });
 
     // Traffic layer
@@ -189,13 +189,12 @@ export default class NaveMap extends Component {
     });
 
     const map = new ol.Map({
-      layers: [osmLayer, googleLayer, routeLayer, trafficLayer,
-        temperatureLayer, windLayer, rangePolygonLayer],
+      layers: [osmLayer, googleLayer, routeLayer, trafficLayer, temperatureLayer, windLayer, rangePolygonLayer],
       overlays: [userLocationMarker, locationPickerMarker],
       view
     });
 
-    map.on('singleclick', (evt) => {
+    map.on('singleclick', evt => {
       const p = evt.coordinate;
       this.props.setLocationPickerCoordinates(p);
       locationPickerMarker.setPosition(this.props.locationPickerCoordinates);
@@ -212,7 +211,7 @@ export default class NaveMap extends Component {
     geolocation.on('change', () => {
       const p = geolocation.getPosition();
       this.props.setUserLocationCoordinates(p);
-       // set position on userLocationMarker and center view to position
+      // set position on userLocationMarker and center view to position
       userLocationMarker.setPosition(p);
       view.setCenter([p[0], p[1]]);
     });
@@ -234,10 +233,8 @@ export default class NaveMap extends Component {
 
     this.state.map.setTarget(this.map);
     window.addEventListener('resize', this.updateSize);
-    this.state.map.getOverlayById('userLocation')
-      .setElement(document.getElementById('userLocationMarker'));
-    this.state.map.getOverlayById('locationPicker')
-      .setElement(document.getElementById('locationPickerMarker'));
+    this.state.map.getOverlayById('userLocation').setElement(document.getElementById('userLocationMarker'));
+    this.state.map.getOverlayById('locationPicker').setElement(document.getElementById('locationPickerMarker'));
     this.state.map.addControl(locationDisplayControl);
   }
 
@@ -245,21 +242,32 @@ export default class NaveMap extends Component {
     window.removeEventListener('resize', this.updateSize);
   }
 
-  setMapType = (mapType) => {
+  setMapType = mapType => {
     if (mapType === 0) {
-      this.state.map.getLayers().getArray()[0].setVisible(true);
-      this.state.map.getLayers().getArray()[1].setVisible(false);
+      this.state.map
+        .getLayers()
+        .getArray()[0]
+        .setVisible(true);
+      this.state.map
+        .getLayers()
+        .getArray()[1]
+        .setVisible(false);
+    } else {
+      this.state.map
+        .getLayers()
+        .getArray()[1]
+        .setVisible(true);
+      this.state.map
+        .getLayers()
+        .getArray()[0]
+        .setVisible(false);
     }
-    else {
-      this.state.map.getLayers().getArray()[1].setVisible(true);
-      this.state.map.getLayers().getArray()[0].setVisible(false);
-    }
-  }
+  };
 
-  setAutocompleteLocationMarker = (coord) => {
+  setAutocompleteLocationMarker = coord => {
     this.state.map.getOverlayById('locationPicker').setPosition(coord);
     this.state.map.getView().setCenter(coord);
-  }
+  };
 
   setRangePolygon = (vertices, center) => {
     const polygon = new ol.geom.Polygon([vertices]);
@@ -268,17 +276,17 @@ export default class NaveMap extends Component {
     });
     feature.getGeometry().transform('EPSG:4326', 'EPSG:3857');
     const source = new ol.source.Vector({ features: [feature] });
-    this.state.map.getLayers().getArray()[6].setSource(source);
-    this.state.map.getView().fit(
-      polygon,
-      this.state.map.getSize(),
-      { padding: [20, 20, 20, 40], });
+    this.state.map
+      .getLayers()
+      .getArray()[6]
+      .setSource(source);
+    this.state.map.getView().fit(polygon, this.state.map.getSize(), { padding: [20, 20, 20, 40] });
     this.state.map.getView().setCenter(center);
-  }
+  };
 
-  setRoute = (route) => {
+  setRoute = route => {
     const coords = [];
-    route.forEach((point) => {
+    route.forEach(point => {
       coords.push([point.lon, point.lat]);
     });
     const lineString = new ol.geom.LineString(coords);
@@ -295,86 +303,81 @@ export default class NaveMap extends Component {
 
     this.state.map.getView().setCenter(ol.proj.transform([coords[0][0], coords[0][1]], 'EPSG:4326', 'EPSG:3857'));
     this.state.map.getView().fit(lineString, this.state.map.getSize());
-    this.state.map.getLayers().getArray()[2].setSource(source);
-  }
+    this.state.map
+      .getLayers()
+      .getArray()[2]
+      .setSource(source);
+  };
 
   getLoader = () => (
     <div style={styles.loaderWrapper}>
       <div style={styles.hider} />
       <CircularProgress style={styles.loader} />
     </div>
-  )
+  );
 
   zoomToCurrent = () => {
     // center view on user location
     this.state.map.getView().setCenter(this.props.userLocationCoordinates);
-  }
+  };
 
   hideRangePolygon = () => {
-    this.state.map.getLayers().getArray()[6].setSource(undefined);
-  }
+    this.state.map
+      .getLayers()
+      .getArray()[6]
+      .setSource(undefined);
+  };
 
   toggleTraffic = () => {
     this.setState({ traffic: !this.state.traffic });
-    this.state.map.getLayers().getArray()[3].setVisible(!this.state.traffic);
-  }
+    this.state.map
+      .getLayers()
+      .getArray()[3]
+      .setVisible(!this.state.traffic);
+  };
 
   toggleTemperature = () => {
     this.setState({ temperature: !this.state.temperature });
-    this.state.map.getLayers().getArray()[4].setVisible(!this.state.temperature);
-  }
+    this.state.map
+      .getLayers()
+      .getArray()[4]
+      .setVisible(!this.state.temperature);
+  };
 
   toggleWind = () => {
     this.setState({ wind: !this.state.wind });
-    this.state.map.getLayers().getArray()[5].setVisible(!this.state.wind);
-  }
+    this.state.map
+      .getLayers()
+      .getArray()[5]
+      .setVisible(!this.state.wind);
+  };
 
   updateSize = () => {
     this.state.map.updateSize();
-  }
+  };
 
   render() {
     return (
       <div style={styles.container}>
         {this.props.findingRoute ? this.getLoader() : ''}
         <div style={styles.map} ref={c => (this.map = c)} />
-        <FontIcon
-          className="material-icons"
-          id="userLocationMarker"
-          color={green900}
-        >
+        <FontIcon className="material-icons" id="userLocationMarker" color={green900}>
           my_location
         </FontIcon>
-        <FontIcon
-          className="material-icons"
-          id="locationPickerMarker"
-          color={green900}
-        >
+        <FontIcon className="material-icons" id="locationPickerMarker" color={green900}>
           place
         </FontIcon>
-        <div
-          style={styles.currentLocationButtton}
-          id="currentLocationButtton"
-        >
-          <FloatingActionButton
-            mini
-            onTouchTap={this.zoomToCurrent}
-          >
+        <div style={styles.currentLocationButtton} id="currentLocationButtton">
+          <FloatingActionButton mini onClick={this.zoomToCurrent}>
             <MyLocation />
           </FloatingActionButton>
         </div>
-        <div
-          style={styles.locationDisplayContainer}
-          id="locationDisplay"
-        >
-          {this.props.locationPickerCoordinatesTransformed ?
-            <div
-              style={styles.locationDisplayView}
-            >
-              {this.props.locationPickerCoordinatesTransformed.map(i => i.toFixed(6))
-              .join(', ')}
-            </div> : null
-          }
+        <div style={styles.locationDisplayContainer} id="locationDisplay">
+          {this.props.locationPickerCoordinatesTransformed ? (
+            <div style={styles.locationDisplayView}>
+              {this.props.locationPickerCoordinatesTransformed.map(i => i.toFixed(6)).join(', ')}
+            </div>
+          ) : null}
         </div>
       </div>
     );
@@ -391,7 +394,7 @@ NaveMap.propTypes = {
   locationPickerCoordinatesTransformed: PropTypes.arrayOf(PropTypes.number),
   userLocationCoordinates: PropTypes.arrayOf(PropTypes.number),
   setLocationPickerCoordinates: PropTypes.func.isRequired,
-  setUserLocationCoordinates: PropTypes.func.isRequired,
+  setUserLocationCoordinates: PropTypes.func.isRequired
 };
 
 NaveMap.defaultProps = {
@@ -402,5 +405,5 @@ NaveMap.defaultProps = {
   findingRoute: false,
   locationPickerCoordinates: null,
   locationPickerCoordinatesTransformed: null,
-  userLocationCoordinates: [1287837.5738597857, 6129818.969679821],
+  userLocationCoordinates: [1287837.5738597857, 6129818.969679821]
 };

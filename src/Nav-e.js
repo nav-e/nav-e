@@ -56,14 +56,13 @@ export default class Nav_e extends Component {
       rangeToField: '',
       rangeToFieldSelected: false,
       openErrorFailedSnackbar: false,
-      snackbarMessage: '',
+      snackbarMessage: ''
     };
 
     this.setLocationPickerCoordinates = this.setLocationPickerCoordinates.bind(this);
     this.setUserLocationCoordinates = this.setUserLocationCoordinates.bind(this);
     this.setRangePolygonAutocompleteOrigin = this.setRangePolygonAutocompleteOrigin.bind(this);
-    this.setRangePolygonAutocompleteDestination =
-      this.setRangePolygonAutocompleteDestination.bind(this);
+    this.setRangePolygonAutocompleteDestination = this.setRangePolygonAutocompleteDestination.bind(this);
   }
 
   setUserLocationCoordinates(coord) {
@@ -99,9 +98,9 @@ export default class Nav_e extends Component {
     if (this.state.rangeFromFieldSelected) {
       this.setState({
         rangePolygonOriginCoordinates: coord,
-        rangeFromField: nCoord.map(i => i.toFixed(6)).join(', ') });
-    }
-    else if (this.state.rangeToFieldSelected) {
+        rangeFromField: nCoord.map(i => i.toFixed(6)).join(', ')
+      });
+    } else if (this.state.rangeToFieldSelected) {
       this.setState({
         rangePolygonDestinationCoordinates: coord,
         rangeToField: nCoord.map(i => i.toFixed(6)).join(', ')
@@ -109,7 +108,7 @@ export default class Nav_e extends Component {
     }
   }
 
-  getRoutes = (waypoints) => {
+  getRoutes = waypoints => {
     const routes = [];
     let counterRoutes = 0;
     if (waypoints.length > 0) {
@@ -121,16 +120,15 @@ export default class Nav_e extends Component {
       const destinationOsmId = waypoints[i + 1];
       const url = `${NaveServerAddress}astar/from/${startOsmId}/to/${destinationOsmId}`;
       fetch(url)
-        .then((response) => {
+        .then(response => {
           if (response.status > 400) {
-            console.log("Server Error");
+            console.log('Server Error');
             throw new Error('Failed to load route data!');
-          }
-          else {
+          } else {
             return response.text();
           }
         })
-        .then((routeReceived) => {
+        .then(routeReceived => {
           // The array received from rt-library is actually from dest to orig,
           // so we gotta reverse for now.
           try {
@@ -146,181 +144,175 @@ export default class Nav_e extends Component {
               this.hideLoader();
               this.map.setRoute(routes[0]);
             }
-          }
-          catch (err) {
+          } catch (err) {
             throw new Error(routeReceived);
           }
         })
-        .catch((error) => {
+        .catch(error => {
           this.hideLoader();
           this.handleErrorFailedRequestOpen(error.message);
         });
     }
-  }
+  };
 
-  getRangeVisualisation = (range) => {
+  getRangeVisualisation = range => {
     const coord = this.state.rangePolygonOriginCoordinates;
     if (!coord) {
       this.handleAllowAccessSnackbarOpen();
-    }
-    else {
+    } else {
       this.showLoader();
       // test if origin coordinate has valid roads
-      testCoordinatesValidity(coord)
-        .then((res) => {
-          if (res) {
-            // gets vertices of range anxiety polygon
-            getRangeAnxietyPolygonWithCoordinate(coord, range)
-              .then((vertices) => {
-                this.hideLoader();
-                if (vertices !== false) {
-                  this.map.setRangePolygon(vertices, coord);
-                  this.setState({ rangePolygonVisible: true });
-                }
-                else {
-                  this.handleInvalidRouteSnackbarOpen();
-                }
-              });
-          }
-          else {
+      testCoordinatesValidity(coord).then(res => {
+        if (res) {
+          // gets vertices of range anxiety polygon
+          getRangeAnxietyPolygonWithCoordinate(coord, range).then(vertices => {
             this.hideLoader();
-            this.handleInvalidRouteSnackbarOpen();
-          }
-        });
+            if (vertices !== false) {
+              this.map.setRangePolygon(vertices, coord);
+              this.setState({ rangePolygonVisible: true });
+            } else {
+              this.handleInvalidRouteSnackbarOpen();
+            }
+          });
+        } else {
+          this.hideLoader();
+          this.handleInvalidRouteSnackbarOpen();
+        }
+      });
     }
-  }
+  };
 
   hideRangeVisualisation = () => {
     this.map.hideRangePolygon();
     this.setState({ rangePolygonVisible: false });
-  }
+  };
 
   toggleDrawer = () => {
     this.drawer.toggle(this.updateMapSize);
-  }
+  };
 
   updateMapSize = () => {
     this.map.updateSize();
-  }
+  };
 
-  handleErrorFailedRequestOpen = (error) => {
+  handleErrorFailedRequestOpen = error => {
     this.setState({ openErrorFailedSnackbar: true, snackbarMessage: error });
-  }
+  };
 
   handleErrorFailedRequestClose = () => {
     this.setState({ openErrorFailedSnackbar: false, snackbarMessage: '' });
-  }
+  };
 
   handleIndicateStartSnackbarOpen = () => {
     this.setState({ openIndicateStartSnackbar: true });
-  }
+  };
 
-  handleIndicateStartSnackbarClose= () => {
+  handleIndicateStartSnackbarClose = () => {
     this.setState({ openIndicateStartSnackbar: false });
-  }
+  };
 
   handleRemainingRangeSnackbarOpen = () => {
     this.setState({ openRemainingRangeSnackbar: true });
-  }
+  };
 
-  handleRemainingRangeSnackbarClose= () => {
+  handleRemainingRangeSnackbarClose = () => {
     this.setState({ openRemainingRangeSnackbar: false });
-  }
+  };
 
   handleInvalidRouteSnackbarOpen = () => {
     this.setState({ openInvalidRouteSnackbar: true });
-  }
+  };
 
   handleInvalidRouteSnackbarClose = () => {
     this.setState({ openInvalidRouteSnackbar: false });
-  }
+  };
 
   handleAllowAccessSnackbarOpen = () => {
     this.setState({ openAllowAccessSnackbar: true });
-  }
+  };
 
   handleAllowAccessSnackbarClose = () => {
     this.setState({ openAllowAccessSnackbar: false });
-  }
+  };
 
   handleInfoOpen = () => {
     this.setState({ openInfoDialog: true });
-  }
+  };
 
   handleInfoClose = () => {
     this.setState({ openInfoDialog: false });
-  }
+  };
 
   handleContactOpen = () => {
     this.setState({ openContactDialog: true });
-  }
+  };
 
   handleContactClose = () => {
     this.setState({ openContactDialog: false });
-  }
+  };
 
   handleMapOpen = () => {
     this.setState({ openMapDialog: true });
-  }
+  };
 
   handleMapClose = () => {
     this.setState({ openMapDialog: false });
-  }
+  };
 
   mapTypeChange = (event, index, value) => {
     this.setState({ mapType: value });
     this.map.setMapType(value);
-  }
+  };
 
   unitsTypeChange = (event, index, value) => {
     this.drawer.convertUnits(value);
     this.setState({ unitsType: value });
-  }
+  };
 
   toggleTraffic = () => {
     this.setState({ trafficEnabled: !this.state.trafficEnabled });
     this.map.toggleTraffic();
-  }
+  };
 
   toggleWind = () => {
     this.setState({ windEnabled: !this.state.windEnabled });
     this.map.toggleWind();
-  }
+  };
 
   toggleTemperature = () => {
     this.setState({ temperatureEnabled: !this.state.temperatureEnabled });
     this.map.toggleTemperature();
-  }
+  };
 
   showLoader = () => {
     // show loader for requests that take more than 400ms to complete
     this.searchTimeout = setTimeout(() => {
       this.setState({ findingRoute: true });
     }, 400);
-  }
+  };
 
   hideLoader = () => {
     clearTimeout(this.searchTimeout);
     this.setState({ findingRoute: false });
-  }
+  };
 
-  updateRangeFromSelected = (e) => {
+  updateRangeFromSelected = e => {
     // selects rangeFromField and unselect rangeToField
     this.setState({
       rangeFromFieldSelected: e,
       rangeToFieldSelected: !e
     });
-  }
+  };
 
-  updateRangeToSelected = (e) => {
+  updateRangeToSelected = e => {
     // selects rangeToField and unselects rangeFromField
     this.setState({
       rangeFromFieldSelected: !e,
       rangeToFieldSelected: e
     });
-  }
+  };
 
-  updateRangeFromField = (val) => {
+  updateRangeFromField = val => {
     this.setState({ rangeFromField: val });
     const coord = this.isEPSG4326Coordinate(val);
     if (coord) {
@@ -328,9 +320,9 @@ export default class Nav_e extends Component {
         rangePolygonOriginCoordinates: ol.proj.transform(coord, 'EPSG:4326', 'EPSG:3857')
       });
     }
-  }
+  };
 
-  updateRangeToField = (val) => {
+  updateRangeToField = val => {
     this.setState({ rangeToField: val });
     const coord = this.isEPSG4326Coordinate(val);
     if (coord) {
@@ -338,9 +330,9 @@ export default class Nav_e extends Component {
         rangePolygonDestinationCoordinates: ol.proj.transform(coord, 'EPSG:4326', 'EPSG:3857')
       });
     }
-  }
+  };
 
-  isEPSG4326Coordinate = (val) => {
+  isEPSG4326Coordinate = val => {
     const valArray = val.replace(/\s+/g, '').split(',');
     if (valArray.length === 2) {
       const lng = parseFloat(valArray[0]);
@@ -351,57 +343,51 @@ export default class Nav_e extends Component {
       }
     }
     return false;
-  }
+  };
 
   render() {
-    const infoActions = [
-      <FlatButton
-        label="Ok"
-        onTouchTap={this.handleInfoClose}
-      />,
-    ];
+    const infoActions = [<FlatButton label="Ok" onClick={this.handleInfoClose} />];
 
-    const contactActions = [
-      <FlatButton
-        label="Ok"
-        onTouchTap={this.handleContactClose}
-      />,
-    ];
+    const contactActions = [<FlatButton label="Ok" onClick={this.handleContactClose} />];
 
-    const mapActions = [
-      <FlatButton
-        label="Finish"
-        onTouchTap={this.handleMapClose}
-      />,
-    ];
+    const mapActions = [<FlatButton label="Finish" onClick={this.handleMapClose} />];
 
     return (
       <div style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
         <Toolbar>
           <ToolbarGroup firstChild>
             <FontIcon className="material-icons" onClick={this.toggleDrawer}>
-              menu</FontIcon>
-            <img alt="GreenNav" src="/images/nav-e.png" style={{ height:'50px',paddingLeft:"10px" }}/>
+              menu
+            </FontIcon>
+            <img alt="GreenNav" src="/images/nav-e.png" style={{ height: '50px', paddingLeft: '10px' }} />
           </ToolbarGroup>
 
           <ToolbarGroup>
             <ToolbarTitle text="Map Options" />
-            <FontIcon className="material-icons" onTouchTap={this.handleMapOpen}>
-              map</FontIcon>
+            <FontIcon className="material-icons" onClick={this.handleMapOpen}>
+              map
+            </FontIcon>
             <ToolbarSeparator />
             <FlatButton
               label="Info"
               labelStyle={styles.label}
-              onTouchTap={this.handleInfoOpen}
-              icon={<FontIcon className="material-icons" color={green50}>info</FontIcon>}
+              onClick={this.handleInfoOpen}
+              icon={
+                <FontIcon className="material-icons" color={green50}>
+                  info
+                </FontIcon>
+              }
             />
             <FlatButton
               label="Contact"
               labelStyle={styles.label}
-              onTouchTap={this.handleContactOpen}
-              icon={<FontIcon className="material-icons" color={green50}>email</FontIcon>}
+              onClick={this.handleContactOpen}
+              icon={
+                <FontIcon className="material-icons" color={green50}>
+                  email
+                </FontIcon>
+              }
             />
-
           </ToolbarGroup>
         </Toolbar>
 
@@ -427,7 +413,6 @@ export default class Nav_e extends Component {
             handleIndicateStartSnackbarOpen={this.handleIndicateStartSnackbarOpen}
             handleRemainingRangeSnackbarOpen={this.handleRemainingRangeSnackbarOpen}
             handleErrorFailedRequestOpen={this.handleErrorFailedRequestOpen}
-
           />
           <NaveMap
             ref={c => (this.map = c)}
@@ -484,14 +469,16 @@ export default class Nav_e extends Component {
           onRequestClose={this.handleInfoClose}
         >
           <h2>Nav-e</h2>
-          <p>The nav-e organization is a community of young researchers and students at the
-            University of Lübeck.We decided not long ago to go open source in order to collaborate
-            with others and to show what we are working on.
+          <p>
+            The nav-e organization is a community of young researchers and students at the University of Lübeck.We
+            decided not long ago to go open source in order to collaborate with others and to show what we are working
+            on.
           </p>
-          <p>The projects of the nav-e organization are closely related to the student projects
-            at the university’s computer science program. However, with this organisation we
-            invite everyone to participate in the development of experimental routing systems.
-          <br />
+          <p>
+            The projects of the nav-e organization are closely related to the student projects at the university’s
+            computer science program. However, with this organisation we invite everyone to participate in the
+            development of experimental routing systems.
+            <br />
             <a href="http://nav-e.github.io/" rel="noopener noreferrer" target="_blank">
               Get more information about Nav-e
             </a>
@@ -506,10 +493,26 @@ export default class Nav_e extends Component {
           onRequestClose={this.handleContactClose}
         >
           <h2>Contact</h2>
-          <p>There are several ways to contact us. For questions about coding, issues, etc. please
-            use <a href="https://github.com/nav-e" rel="noopener noreferrer" target="_blank">Github</a>
+          <p>
+            There are several ways to contact us. For questions about coding, issues, etc. please use{' '}
+            <a href="https://github.com/nav-e" rel="noopener noreferrer" target="_blank">
+              Github
+            </a>
           </p>
-          <p>For more general questions use our <a href="https://plus.google.com/communities/110704433153909631379" rel="noopener noreferrer" target="_blank">G+ page</a> or <a href="https://groups.google.com/forum/#!forum/greennav" rel="noopener noreferrer" target="_blank">Google Groups</a></p>
+          <p>
+            For more general questions use our{' '}
+            <a
+              href="https://plus.google.com/communities/110704433153909631379"
+              rel="noopener noreferrer"
+              target="_blank"
+            >
+              G+ page
+            </a>{' '}
+            or{' '}
+            <a href="https://groups.google.com/forum/#!forum/greennav" rel="noopener noreferrer" target="_blank">
+              Google Groups
+            </a>
+          </p>
         </Dialog>
 
         <Dialog
@@ -519,11 +522,7 @@ export default class Nav_e extends Component {
           open={this.state.openMapDialog}
           onRequestClose={this.handleMapClose}
         >
-          <SelectField
-            floatingLabelText="Map Type"
-            value={this.state.mapType}
-            onChange={this.mapTypeChange}
-          >
+          <SelectField floatingLabelText="Map Type" value={this.state.mapType} onChange={this.mapTypeChange}>
             <MenuItem value={0} primaryText="OpenStreetMap" />
             <MenuItem value={1} primaryText="Google Map" />
           </SelectField>
