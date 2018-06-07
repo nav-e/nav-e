@@ -305,7 +305,7 @@ export default class Nav_e extends Component {
       <div style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
         <Navbar
           mapType={this.state.mapType}
-          unitsTypeChangeType={this.state.unitsTypeChangeType}
+          unitsType={this.state.unitsType}
           mapTypeChange={this.mapTypeChange}
           toggleTraffic={this.toggleTraffic}
           toggleTemperature={this.toggleTemperature}
